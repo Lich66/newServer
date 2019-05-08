@@ -20,8 +20,15 @@ app.configure('production|development', 'connector', function () {
         {
             connector: pinus.connectors.hybridconnector,
             heartbeat: 3,
-            useDict: true,
-            useProtobuf: true
+            // useDict: true,
+            // useProtobuf: true
+        });
+});
+app.configure('production|development', 'gate', function () {
+    app.set('connectorConfig',
+        {
+            connector: pinus.connectors.hybridconnector,
+            // useProtobuf: true
         });
 });
 
