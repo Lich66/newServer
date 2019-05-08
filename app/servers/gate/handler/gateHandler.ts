@@ -1,0 +1,73 @@
+import { Application, FrontendSession } from 'pinus';
+import { IEntryReturn } from '../../../interface/gate/handler/gateInterface';
+import { dispatch } from '../../../util/dispatcher';
+
+export default function (app: Application) {
+    return new Handler(app);
+}
+
+export class Handler {
+    private app: Application
+    constructor(app: Application) {
+        this.app = app;
+    }
+
+    /**
+     * New client entry.
+     *
+     * @param  {Object}   userinfo     request message
+     * @return {Object}   entryReturn  response message
+     */
+    async queryEntry(): Promise<IEntryReturn> {
+        
+        let connectors = this.app.getServersByType('connector');
+        if (!connectors || connectors.length === 0) {
+            return {
+                code: 500
+            };
+        }
+        // 这里写死了获取手机号 毕竟负载均衡都是假的，以后再改
+        let res = dispatch(Math.random().toString(), connectors);
+        return {
+            code: 0,
+            data: {
+                host: res.host,
+                port: res.clientPort
+            }
+
+        };
+    }
+
+    /**
+     * Publish route for mqtt connector.
+     *
+     * @param  {Object}   msg     request message
+     * @param  {Object}   session current session object
+     * @param  {Function} next    next step callback
+     * @return {Void}
+     */
+    async publish(msg: any, session: FrontendSession) {
+        let result = {
+            topic: 'publish',
+            payload: JSON.stringify({ code: 200, msg: 'publish message is ok.' })
+        };
+        return result;
+    }
+
+    /**
+     * Subscribe route for mqtt connector.
+     *
+     * @param  {Object}   msg     request message
+     * @param  {Object}   session current session object
+     * @param  {Function} next    next step callback
+     * @return {Void}
+     */
+    async subscribe(msg: any, session: FrontendSession) {
+        let result = {
+            topic: 'subscribe',
+            payload: JSON.stringify({ code: 200, msg: 'subscribe message is ok.' })
+        };
+        return result;
+    }
+
+}

@@ -6,4 +6,4 @@ try {
 } catch (error) {
     
 }
-copydir.sync('./config', './dist/config');
+copydir.sync('./config', './dist/config',{});
