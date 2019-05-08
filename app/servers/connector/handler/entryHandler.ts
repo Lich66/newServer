@@ -18,6 +18,7 @@ export class Handler {
      * @return {Void}
      */
     async entry(msg: any, session: FrontendSession) {
+        console.log(msg);
         return { code: 200, msg: 'game server is ok.' };
     }
 
