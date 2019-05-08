@@ -20,6 +20,14 @@
         "args": "--inspect=10003"
       }
     ],
+    "user": [
+      {
+        "id": "user-server-1",
+        "host": "127.0.0.1",
+        "port": 3160,
+        "args": " --inspect=10005"
+      }
+    ],
     "hall": [
       {
         "id": "hall-server-1",
@@ -64,6 +72,14 @@
         "clientPort": 3014,
         "frontend": true,
         "args": "--inspect=10004"
+      }
+    ],
+    "user": [
+      {
+        "id": "user-server-1",
+        "host": "127.0.0.1",
+        "port": 3160,
+        "args": " --inspect=10005"
       }
     ],
     "hall": [
