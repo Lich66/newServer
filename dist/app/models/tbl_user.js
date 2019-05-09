@@ -14,20 +14,12 @@ let tbl_user = class tbl_user extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.Column,
-    __metadata("design:type", String)
-], tbl_user.prototype, "username", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
     __metadata("design:type", Number)
 ], tbl_user.prototype, "userid", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
 ], tbl_user.prototype, "usernick", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", String)
-], tbl_user.prototype, "password", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
@@ -39,11 +31,7 @@ __decorate([
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", Number)
-], tbl_user.prototype, "gold", void 0);
-__decorate([
-    sequelize_typescript_1.Column,
-    __metadata("design:type", Number)
-], tbl_user.prototype, "roomcard", void 0);
+], tbl_user.prototype, "diamond", void 0);
 __decorate([
     sequelize_typescript_1.Column,
     __metadata("design:type", String)
@@ -72,4 +60,4 @@ tbl_user = __decorate([
     sequelize_typescript_1.Table
 ], tbl_user);
 exports.tbl_user = tbl_user;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX3VzZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF91c2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQTBEO0FBRzFELElBQWEsUUFBUSxHQUFyQixjQUFzQixTQUFRLDRCQUFlO0NBMkM1QyxDQUFBO0FBeENDO0lBREMsNkJBQU07OzBDQUNpQjtBQUd4QjtJQURDLDZCQUFNOzt3Q0FDZTtBQUd0QjtJQURDLDZCQUFNOzswQ0FDaUI7QUFHeEI7SUFEQyw2QkFBTTs7MENBQ2lCO0FBR3hCO0lBREMsNkJBQU07O3VDQUNjO0FBR3JCO0lBREMsNkJBQU07OEJBQ1MsSUFBSTt5Q0FBQztBQUdyQjtJQURDLDZCQUFNOztzQ0FDYTtBQUdwQjtJQURDLDZCQUFNOzswQ0FDaUI7QUFHeEI7SUFEQyw2QkFBTTs7d0NBQ2U7QUFHdEI7SUFEQyw2QkFBTTs7b0NBQ1c7QUFHbEI7SUFEQyw2QkFBTTs7cUNBQ1k7QUFHbkI7SUFEQyw2QkFBTTs7NkNBQ29CO0FBRzNCO0lBREMsNkJBQU07O3lDQUNnQjtBQUd2QjtJQURDLDZCQUFNOzhCQUNXLElBQUk7MkNBQUM7QUExQ1osUUFBUTtJQURwQiw0QkFBSztHQUNPLFFBQVEsQ0EyQ3BCO0FBM0NZLDRCQUFRIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX3VzZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF91c2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQTBEO0FBRzFELElBQWEsUUFBUSxHQUFyQixjQUFzQixTQUFRLDRCQUFlO0NBa0M1QyxDQUFBO0FBL0JDO0lBREMsNkJBQU07O3dDQUNlO0FBR3RCO0lBREMsNkJBQU07OzBDQUNpQjtBQUd4QjtJQURDLDZCQUFNOzt1Q0FDYztBQUdyQjtJQURDLDZCQUFNOzhCQUNTLElBQUk7eUNBQUM7QUFHckI7SUFEQyw2QkFBTTs7eUNBQ2dCO0FBR3ZCO0lBREMsNkJBQU07O3dDQUNlO0FBR3RCO0lBREMsNkJBQU07O29DQUNXO0FBR2xCO0lBREMsNkJBQU07O3FDQUNZO0FBR25CO0lBREMsNkJBQU07OzZDQUNvQjtBQUczQjtJQURDLDZCQUFNOzt5Q0FDZ0I7QUFHdkI7SUFEQyw2QkFBTTs4QkFDVyxJQUFJOzJDQUFDO0FBakNaLFFBQVE7SUFEcEIsNEJBQUs7R0FDTyxRQUFRLENBa0NwQjtBQWxDWSw0QkFBUSJ9

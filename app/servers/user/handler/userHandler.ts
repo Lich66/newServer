@@ -1,6 +1,6 @@
 import { Application, FrontendSession } from 'pinus';
-import { IUserinfo } from '../../../interface/user/handler/userInterface';
-import { Login } from '../../../controller/user/login';
+import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
+import { Login } from '../../../controller/account/login';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -14,15 +14,64 @@ export class Handler {
     /**
      * user login
      *
-     * @param  {Object}   msg     request message
-     * @param  {Object}   session current session object
-     * @param  {Function} next    next step callback
-     * @return {Void}
+     * @param  {Object}   userinfo     request message
+     * @return {object}
      */
-    async auth(userinfo: IUserinfo) {
+    async auth(userinfo: IUserinfo): Promise<IAuthReturn> {
+        let json:IUserinfo={};
+        if (userinfo.token) {
+            json.token = userinfo.token;
+        }else if(userinfo.wxopenid){
+            json.wxopenid = userinfo.wxopenid;
+        }else if(userinfo.xlopenid){
+            json.xlopenid = userinfo.xlopenid;
+        }
+        let result = await Login.login(json);
+        return {
+            code: 0,
+            data: result[0],
+            msg: `${result[1]}`
+        };
+    }
+
+    /**
+     * test login
+     *
+     * @param  {Object}   userinfo     request message
+     * @return {object}
+     */
+    async accountLogin(userinfo: IAccountInfo): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
-        let result = await Login.login(userinfo);
-        return result;
+        let result = await Login.accountLogin(userinfo);
+        return {
+            code: 0,
+            data: result[0],
+            msg: `${result[1]}`
+        };
+    }
+
+    /**
+     * token login
+     *
+     * @param  {Object}   userinfo     request message
+     * @return {object}
+     */
+    async tokenLogin(userinfo: ITokenInfo): Promise<IAuthReturn> {
+        // console.log(JSON.stringify(userinfo));
+        let result = await Login.tokenLogin(userinfo);
+        if (result.token) {
+            return {
+                code: 0,
+                data: result,
+                msg: `登陆成功`
+            };
+        } else {
+            return {
+                code: 0,
+                msg: '用户不存在'
+            };
+        }
+
     }
 
 }

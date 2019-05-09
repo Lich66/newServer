@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const login_1 = require("../../../controller/user/login");
+const login_1 = require("../../../controller/account/login");
 function default_1(app) {
     return new Handler(app);
 }
@@ -20,18 +20,71 @@ class Handler {
     /**
      * user login
      *
-     * @param  {Object}   msg     request message
-     * @param  {Object}   session current session object
-     * @param  {Function} next    next step callback
-     * @return {Void}
+     * @param  {Object}   userinfo     request message
+     * @return {object}
      */
     auth(userinfo) {
         return __awaiter(this, void 0, void 0, function* () {
+            let json = {};
+            if (userinfo.token) {
+                json.token = userinfo.token;
+            }
+            else if (userinfo.wxopenid) {
+                json.wxopenid = userinfo.wxopenid;
+            }
+            else if (userinfo.xlopenid) {
+                json.xlopenid = userinfo.xlopenid;
+            }
+            let result = yield login_1.Login.login(json);
+            return {
+                code: 0,
+                data: result[0],
+                msg: `${result[1]}`
+            };
+        });
+    }
+    /**
+     * test login
+     *
+     * @param  {Object}   userinfo     request message
+     * @return {object}
+     */
+    accountLogin(userinfo) {
+        return __awaiter(this, void 0, void 0, function* () {
             // console.log(JSON.stringify(userinfo));
-            let result = yield login_1.Login.login(userinfo);
-            return result;
+            let result = yield login_1.Login.accountLogin(userinfo);
+            return {
+                code: 0,
+                data: result[0],
+                msg: `${result[1]}`
+            };
+        });
+    }
+    /**
+     * token login
+     *
+     * @param  {Object}   userinfo     request message
+     * @return {object}
+     */
+    tokenLogin(userinfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // console.log(JSON.stringify(userinfo));
+            let result = yield login_1.Login.tokenLogin(userinfo);
+            if (result.token) {
+                return {
+                    code: 0,
+                    data: result,
+                    msg: `登陆成功`
+                };
+            }
+            else {
+                return {
+                    code: 0,
+                    msg: '用户不存在'
+                };
+            }
         });
     }
 }
 exports.Handler = Handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlckhhbmRsZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9hcHAvc2VydmVycy91c2VyL2hhbmRsZXIvdXNlckhhbmRsZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUVBLDBEQUF1RDtBQUV2RCxtQkFBeUIsR0FBZ0I7SUFDckMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUM1QixDQUFDO0FBRkQsNEJBRUM7QUFFRDtJQUNJLFlBQW9CLEdBQWdCO1FBQWhCLFFBQUcsR0FBSCxHQUFHLENBQWE7SUFFcEMsQ0FBQztJQUVEOzs7Ozs7O09BT0c7SUFDRyxJQUFJLENBQUMsUUFBbUI7O1lBQzFCLHlDQUF5QztZQUN6QyxJQUFJLE1BQU0sR0FBRyxNQUFNLGFBQUssQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDekMsT0FBTyxNQUFNLENBQUM7UUFDbEIsQ0FBQztLQUFBO0NBRUo7QUFuQkQsMEJBbUJDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXNlckhhbmRsZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9hcHAvc2VydmVycy91c2VyL2hhbmRsZXIvdXNlckhhbmRsZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUVBLDZEQUEwRDtBQUUxRCxtQkFBeUIsR0FBZ0I7SUFDckMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUM1QixDQUFDO0FBRkQsNEJBRUM7QUFFRDtJQUNJLFlBQW9CLEdBQWdCO1FBQWhCLFFBQUcsR0FBSCxHQUFHLENBQWE7SUFFcEMsQ0FBQztJQUVEOzs7OztPQUtHO0lBQ0csSUFBSSxDQUFDLFFBQW1COztZQUMxQixJQUFJLElBQUksR0FBVyxFQUFFLENBQUM7WUFDdEIsSUFBSSxRQUFRLENBQUMsS0FBSyxFQUFFO2dCQUNoQixJQUFJLENBQUMsS0FBSyxHQUFHLFFBQVEsQ0FBQyxLQUFLLENBQUM7YUFDL0I7aUJBQUssSUFBRyxRQUFRLENBQUMsUUFBUSxFQUFDO2dCQUN2QixJQUFJLENBQUMsUUFBUSxHQUFHLFFBQVEsQ0FBQyxRQUFRLENBQUM7YUFDckM7aUJBQUssSUFBRyxRQUFRLENBQUMsUUFBUSxFQUFDO2dCQUN2QixJQUFJLENBQUMsUUFBUSxHQUFHLFFBQVEsQ0FBQyxRQUFRLENBQUM7YUFDckM7WUFDRCxJQUFJLE1BQU0sR0FBRyxNQUFNLGFBQUssQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDckMsT0FBTztnQkFDSCxJQUFJLEVBQUUsQ0FBQztnQkFDUCxJQUFJLEVBQUUsTUFBTSxDQUFDLENBQUMsQ0FBQztnQkFDZixHQUFHLEVBQUUsR0FBRyxNQUFNLENBQUMsQ0FBQyxDQUFDLEVBQUU7YUFDdEIsQ0FBQztRQUNOLENBQUM7S0FBQTtJQUVEOzs7OztPQUtHO0lBQ0csWUFBWSxDQUFDLFFBQXNCOztZQUNyQyx5Q0FBeUM7WUFDekMsSUFBSSxNQUFNLEdBQUcsTUFBTSxhQUFLLENBQUMsWUFBWSxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQ2hELE9BQU87Z0JBQ0gsSUFBSSxFQUFFLENBQUM7Z0JBQ1AsSUFBSSxFQUFFLE1BQU0sQ0FBQyxDQUFDLENBQUM7Z0JBQ2YsR0FBRyxFQUFFLEdBQUcsTUFBTSxDQUFDLENBQUMsQ0FBQyxFQUFFO2FBQ3RCLENBQUM7UUFDTixDQUFDO0tBQUE7SUFFRDs7Ozs7T0FLRztJQUNHLFVBQVUsQ0FBQyxRQUFvQjs7WUFDakMseUNBQXlDO1lBQ3pDLElBQUksTUFBTSxHQUFHLE1BQU0sYUFBSyxDQUFDLFVBQVUsQ0FBQyxRQUFRLENBQUMsQ0FBQztZQUM5QyxJQUFJLE1BQU0sQ0FBQyxLQUFLLEVBQUU7Z0JBQ2QsT0FBTztvQkFDSCxJQUFJLEVBQUUsQ0FBQztvQkFDUCxJQUFJLEVBQUUsTUFBTTtvQkFDWixHQUFHLEVBQUUsTUFBTTtpQkFDZCxDQUFDO2FBQ0w7aUJBQU07Z0JBQ0gsT0FBTztvQkFDSCxJQUFJLEVBQUUsQ0FBQztvQkFDUCxHQUFHLEVBQUUsT0FBTztpQkFDZixDQUFDO2FBQ0w7UUFFTCxDQUFDO0tBQUE7Q0FFSjtBQXBFRCwwQkFvRUMifQ==

@@ -8,21 +8,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const tbl_user_1 = require("../../models/tbl_user");
+const tbl_account_1 = require("../../models/tbl_account");
+const defaultUser_1 = require("../../gameConfig/defaultUser");
 class Login {
     static login(json) {
         return __awaiter(this, void 0, void 0, function* () {
             // 因为表中没有id
-            yield tbl_user_1.tbl_user.removeAttribute('id');
-            const userone = yield tbl_user_1.tbl_user.findOrCreate({ where: json, defaults: json });
-            if (userone === null) {
-                return null;
-            }
-            else {
-                return userone;
-            }
+            yield tbl_account_1.tbl_account.removeAttribute('id');
+            const userone = yield tbl_account_1.tbl_account.findOrCreate({ where: json, defaults: Object.assign({}, defaultUser_1.defaultUser, json) });
+            return userone;
+        });
+    }
+    static accountLogin(json) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield tbl_account_1.tbl_account.removeAttribute('id');
+            const userone = yield tbl_account_1.tbl_account.findOrCreate({ where: { account: json.account }, defaults: json });
+            return userone;
+        });
+    }
+    static tokenLogin(json) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield tbl_account_1.tbl_account.removeAttribute('id');
+            const userone = yield tbl_account_1.tbl_account.findOne({ where: { account: json.token } });
+            return userone;
         });
     }
 }
 exports.Login = Login;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibG9naW4uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9hcHAvY29udHJvbGxlci91c2VyL2xvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFDQSxvREFBaUQ7QUFDakQ7SUFDVyxNQUFNLENBQU8sS0FBSyxDQUFDLElBQWU7O1lBQ3JDLFdBQVc7WUFDWCxNQUFNLG1CQUFRLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3JDLE1BQU0sT0FBTyxHQUF3QixNQUFNLG1CQUFRLENBQUMsWUFBWSxDQUFDLEVBQUUsS0FBSyxFQUFFLElBQUksRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztZQUNsRyxJQUFJLE9BQU8sS0FBSyxJQUFJLEVBQUU7Z0JBQ2xCLE9BQU8sSUFBSSxDQUFDO2FBQ2Y7aUJBQU07Z0JBQ0gsT0FBTyxPQUFPLENBQUM7YUFDbEI7UUFDTCxDQUFDO0tBQUE7Q0FDSjtBQVhELHNCQVdDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibG9naW4uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9hcHAvY29udHJvbGxlci91c2VyL2xvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFDQSwwREFBdUQ7QUFDdkQsOERBQTJEO0FBRTNEO0lBQ1csTUFBTSxDQUFPLEtBQUssQ0FBQyxJQUFlOztZQUNyQyxXQUFXO1lBQ1gsTUFBTSx5QkFBVyxDQUFDLGVBQWUsQ0FBQyxJQUFJLENBQUMsQ0FBQztZQUN4QyxNQUFNLE9BQU8sR0FBNEIsTUFBTSx5QkFBVyxDQUFDLFlBQVksQ0FBQyxFQUFFLEtBQUssRUFBRSxJQUFJLEVBQUUsUUFBUSxvQkFBTyx5QkFBVyxFQUFLLElBQUksQ0FBRSxFQUFFLENBQUMsQ0FBQztZQUNoSSxPQUFPLE9BQU8sQ0FBQztRQUNuQixDQUFDO0tBQUE7SUFFTSxNQUFNLENBQU8sWUFBWSxDQUFDLElBQWtCOztZQUMvQyxNQUFNLHlCQUFXLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3hDLE1BQU0sT0FBTyxHQUE0QixNQUFNLHlCQUFXLENBQUMsWUFBWSxDQUFDLEVBQUUsS0FBSyxFQUFFLEVBQUUsT0FBTyxFQUFFLElBQUksQ0FBQyxPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztZQUM5SCxPQUFPLE9BQU8sQ0FBQztRQUNuQixDQUFDO0tBQUE7SUFFTSxNQUFNLENBQU8sVUFBVSxDQUFDLElBQWdCOztZQUMzQyxNQUFNLHlCQUFXLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3hDLE1BQU0sT0FBTyxHQUFpQixNQUFNLHlCQUFXLENBQUMsT0FBTyxDQUFDLEVBQUUsS0FBSyxFQUFFLEVBQUUsT0FBTyxFQUFFLElBQUksQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLENBQUM7WUFDNUYsT0FBTyxPQUFPLENBQUE7UUFDbEIsQ0FBQztLQUFBO0NBQ0o7QUFuQkQsc0JBbUJDIn0=

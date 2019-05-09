@@ -4,16 +4,10 @@ import {Table, Column, Model} from 'sequelize-typescript';
 export class tbl_user extends Model<tbl_user> {
 
   @Column
-  public username: string;
-
-  @Column
   public userid: number;
 
   @Column
   public usernick: string;
-
-  @Column
-  public password: string;
 
   @Column
   public image: string;
@@ -22,10 +16,7 @@ export class tbl_user extends Model<tbl_user> {
   public regtime: Date;
 
   @Column
-  public gold: number;
-
-  @Column
-  public roomcard: number;
+  public diamond: number;
 
   @Column
   public region: string;

@@ -1,8 +1,15 @@
 import { IResponse } from "../../global/response";
-export interface IData {
-    host:string;
-    port:number;
+
+export interface IRequest {
+    clientVer:string;
+    platform:string;
+    deviceId:string;
 }
-export interface IEntryReturn extends IResponse{
-    data?:IData;
+
+export interface IData {
+    host: string;
+    port: number;
+}
+export interface IEntryReturn extends IResponse {
+    data?: IData;
 }
