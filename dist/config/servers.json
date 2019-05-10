@@ -1,6 +1,5 @@
 {
   "development": {
-<<<<<<< HEAD
     "connector": [{
       "id": "connector-server-1",
       "host": "127.0.0.1",
@@ -15,13 +14,31 @@
       "host": "127.0.0.1",
       "clientPort": 3014,
       "frontend": true,
-      "args": "--inspect=10002"
+      "args": "--inspect=10003"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "127.0.0.1",
-      "port": 3020,
-      "args": "--inspect=10003"
+      "port": 3160,
+      "args": "--inspect=10005"
+    }],
+    "hall": [{
+      "id": "hall-server-1",
+      "host": "127.0.0.1",
+      "port": 3170,
+      "args": " --inspect=10007"
+    }],
+    "club": [{
+      "id": "club-server-1",
+      "host": "127.0.0.1",
+      "port": 3180,
+      "args": " --inspect=10009"
+    }],
+    "room": [{
+      "id": "room-server-1",
+      "host": "127.0.0.1",
+      "port": 3190,
+      "args": " --inspect=10011"
     }]
   },
   "production": {
@@ -32,128 +49,38 @@
       "clientHost": "127.0.0.1",
       "clientPort": 3010,
       "frontend": true,
-      "args": " --inspect=10004"
+      "args": " --inspect=10002"
     }],
     "gate": [{
       "id": "gate-server-1",
       "host": "127.0.0.1",
       "clientPort": 3014,
       "frontend": true,
-      "args": "--inspect=10005"
+      "args": "--inspect=10004"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "127.0.0.1",
-      "port": 3020,
+      "port": 3160,
       "args": "--inspect=10006"
+    }],
+    "hall": [{
+      "id": "hall-server-1",
+      "host": "127.0.0.1",
+      "port": 3170,
+      "args": " --inspect=10008"
+    }],
+    "club": [{
+      "id": "club-server-1",
+      "host": "127.0.0.1",
+      "port": 3180,
+      "args": " --inspect=10010"
+    }],
+    "room": [{
+      "id": "room-server-1",
+      "host": "127.0.0.1",
+      "port": 3190,
+      "args": " --inspect=10012"
     }]
-=======
-    "connector": [
-      {
-        "id": "connector-server-1",
-        "host": "127.0.0.1",
-        "port": 3150,
-        "clientHost": "127.0.0.1",
-        "clientPort": 3010,
-        "frontend": true,
-        "args": " --inspect=10001"
-      }
-    ],
-    "gate": [
-      {
-        "id": "gate-server-1",
-        "host": "127.0.0.1",
-        "clientPort": 3014,
-        "frontend": true,
-        "args": "--inspect=10003"
-      }
-    ],
-    "user": [
-      {
-        "id": "user-server-1",
-        "host": "127.0.0.1",
-        "port": 3160,
-        "args": " --inspect=10005"
-      }
-    ],
-    "hall": [
-      {
-        "id": "hall-server-1",
-        "host": "127.0.0.1",
-        "port": 3170,
-        "args": " --inspect=10007"
-      }
-    ],
-    "club": [
-      {
-        "id": "club-server-1",
-        "host": "127.0.0.1",
-        "port": 3180,
-        "args": " --inspect=10009"
-      }
-    ],
-    "room": [
-      {
-        "id": "room-server-1",
-        "host": "127.0.0.1",
-        "port": 3190,
-        "args": " --inspect=10011"
-      }
-    ]
-  },
-  "production": {
-    "connector": [
-      {
-        "id": "connector-server-1",
-        "host": "127.0.0.1",
-        "port": 3150,
-        "clientHost": "127.0.0.1",
-        "clientPort": 3010,
-        "frontend": true,
-        "args": " --inspect=10002"
-      }
-    ],
-    "gate": [
-      {
-        "id": "gate-server-1",
-        "host": "127.0.0.1",
-        "clientPort": 3014,
-        "frontend": true,
-        "args": "--inspect=10004"
-      }
-    ],
-    "user": [
-      {
-        "id": "user-server-1",
-        "host": "127.0.0.1",
-        "port": 3160,
-        "args": " --inspect=10005"
-      }
-    ],
-    "hall": [
-      {
-        "id": "hall-server-1",
-        "host": "127.0.0.1",
-        "port": 3170,
-        "args": " --inspect=10008"
-      }
-    ],
-    "club": [
-      {
-        "id": "club-server-1",
-        "host": "127.0.0.1",
-        "port": 3180,
-        "args": " --inspect=10010"
-      }
-    ],
-    "room": [
-      {
-        "id": "room-server-1",
-        "host": "127.0.0.1",
-        "port": 3190,
-        "args": " --inspect=10012"
-      }
-    ]
->>>>>>> lichong
   }
 }
