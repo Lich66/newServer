@@ -2,7 +2,6 @@ import { Application, FrontendSession } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Login } from '../../../controller/account/login';
 import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/handler/userInterface';
-import { ITbl_user } from '../../../interface/models/tbl_user';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -29,11 +28,20 @@ export class Handler {
             json.xlopenid = userinfo.xlopenid;
         }
         let result = await Login.login(json);
-        return {
-            code: 0,
-            data: result,
-            // msg: `${result[1]}`
-        };
+        if(result){
+            return {
+                code: 200,
+                data: result,
+                // msg: `${result[1]}`
+            };
+        }else{
+            return {
+                code: 500,
+                // data: result,
+                msg: `服务错了`
+            };
+        }
+       
     }
 
     /**
