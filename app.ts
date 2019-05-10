@@ -3,7 +3,17 @@ import { preload } from './preload';
 
 import { sequelize } from './app/sequelize/sequelize'
 
-sequelize.sync({ force: true });
+// 同步到数据库 别乱用   这就是从删库到跑路的第一步
+// sequelize.sync({ force: true });
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
 /**
  *  替换全局Promise
  *  自动解析sourcemap

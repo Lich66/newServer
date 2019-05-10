@@ -32,7 +32,7 @@ export class Login {
             try {
                 return sequelize.transaction(async (t) => {
                     // 这里还要生成一个token 注册时候是没有token的
-                    let token = 'xxxxxxxxxxx'
+                    const token = 'xxxxxxxxxxx'
                     let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
                     // 这里面从第三方获取
                     const num = (Math.random() * 1000).toFixed(0)
@@ -42,7 +42,7 @@ export class Login {
                         sex: parseInt(num),
                     }
                     const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
+                    return assign<IUserResponse>(userModel.toJSON(), { token:token });
                 });
             } catch (error) {
                 return null
@@ -71,7 +71,7 @@ export class Login {
                         sex: parseInt(num),
                     }
                     const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
+                    return assign<IUserResponse>(userModel.toJSON(), { token: token });
                 });
             } catch (error) {
                 return null
@@ -100,7 +100,7 @@ export class Login {
                         sex: parseInt(num),
                     }
                     const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
+                    return assign<IUserResponse>(userModel.toJSON(), { token: token });
                 });
             } catch (error) {
                 return null
