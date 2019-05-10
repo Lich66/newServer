@@ -1,4 +1,4 @@
-import {Table, Column, Model} from 'sequelize-typescript';
+import {Table, Column, Model, PrimaryKey, AutoIncrement} from 'sequelize-typescript';
 
 @Table
 export class tbl_account extends Model<tbl_account> {
@@ -11,7 +11,9 @@ export class tbl_account extends Model<tbl_account> {
 
   @Column
   public xlopenid: string;
-
+  
+  @AutoIncrement
+  @PrimaryKey
   @Column
   public uid: number;
 

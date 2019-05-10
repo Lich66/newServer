@@ -1,9 +1,7 @@
-import { Model } from "sequelize-typescript";
 import { IResponse } from "../../global/response";
-import { ITbl_account } from "../../models/tbl_account";
+import { IUser } from "../../models/tbl_user";
 
-
-export interface IUser {
+export interface IUserRequest {
     userid?: number;
     usernick?: string;
     image?: string;
@@ -17,42 +15,25 @@ export interface IUser {
     logintime?: Date;
 }
 
-export interface IUserModel extends Model<IUserModel>,IUser {
-    
+export interface IUserResponse extends IUser {
+    token: string;
 }
 
-export interface IUserinfo {
+export interface IUserinfoRequest {
     token?: string;
     wxopenid?: string;
     xlopenid?: string;
 }
 
-export interface IUserinfoModel extends Model<IUserinfoModel> {
-    token?: string;
-    wxopenid?: string;
-    xlopenid?: string;
+export interface IAccountInfoRequest {
+    account: string;
+    password: string;
 }
 
-export interface IAccountInfo {
-    account?: string;
-    password?: string;
+export interface ITokenInfoRequest {
+    token: string;
 }
-
-export interface IAccountInfoModel extends Model<IAccountInfoModel> {
-    account?: string;
-    password?: string;
-}
-
-
-export interface ITokenInfo {
-    token?: string;
-}
-
-export interface ITokenInfoModel extends Model<ITokenInfoModel> {
-    token?: string;
-}
-
 
 export interface IAuthReturn extends IResponse {
-    data?: ITbl_account;
+    data?: IUserResponse;
 }

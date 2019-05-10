@@ -1,8 +1,8 @@
-import {Table, Column, Model} from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey } from 'sequelize-typescript';
 
 @Table
 export class tbl_user extends Model<tbl_user> {
-
+  @PrimaryKey
   @Column
   public userid: number;
 
