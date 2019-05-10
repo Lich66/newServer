@@ -1,6 +1,8 @@
 import { Application, FrontendSession } from 'pinus';
-import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
+// import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Login } from '../../../controller/account/login';
+import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/handler/userInterface';
+import { ITbl_user } from '../../../interface/models/tbl_user';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -17,20 +19,20 @@ export class Handler {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async auth(userinfo: IUserinfo): Promise<IAuthReturn> {
-        let json:IUserinfo={};
+    async auth(userinfo: IUserinfoRequest): Promise<IAuthReturn> {
+        let json: IUserinfoRequest = {};
         if (userinfo.token) {
             json.token = userinfo.token;
-        }else if(userinfo.wxopenid){
+        } else if (userinfo.wxopenid) {
             json.wxopenid = userinfo.wxopenid;
-        }else if(userinfo.xlopenid){
+        } else if (userinfo.xlopenid) {
             json.xlopenid = userinfo.xlopenid;
         }
         let result = await Login.login(json);
         return {
             code: 0,
-            data: result[0],
-            msg: `${result[1]}`
+            data: result,
+            // msg: `${result[1]}`
         };
     }
 
@@ -40,13 +42,12 @@ export class Handler {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async accountLogin(userinfo: IAccountInfo): Promise<IAuthReturn> {
+    async accountLogin(userinfo: IAccountInfoRequest): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         let result = await Login.accountLogin(userinfo);
         return {
             code: 0,
-            data: result[0],
-            msg: `${result[1]}`
+            data: result,
         };
     }
 
@@ -56,7 +57,7 @@ export class Handler {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async tokenLogin(userinfo: ITokenInfo): Promise<IAuthReturn> {
+    async tokenLogin(userinfo: ITokenInfoRequest): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         let result = await Login.tokenLogin(userinfo);
         if (result.token) {
