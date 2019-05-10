@@ -42,7 +42,6 @@ export class Login {
                         sex: parseInt(num),
                     }
                     const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    userModel.toJSON();
                     return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
                 });
             } catch (error) {
