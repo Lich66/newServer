@@ -32,7 +32,7 @@ export class Login {
             try {
                 return sequelize.transaction(async (t) => {
                     // 这里还要生成一个token 注册时候是没有token的
-                    const token = 'xxxxxxxxxxx'
+                    const token = json.token
                     let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
                     // 这里面从第三方获取
                     const num = (Math.random() * 1000).toFixed(0)
@@ -61,7 +61,7 @@ export class Login {
             try {
                 return sequelize.transaction(async (t) => {
                     // 这里还要生成一个token 注册时候是没有token的
-                    let token = 'xxxxxxxxxxx'
+                    let token = json.account
                     let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
                     // 这里面从第三方获取
                     const num = (Math.random() * 1000).toFixed(0)
@@ -90,7 +90,7 @@ export class Login {
             try {
                 return sequelize.transaction(async (t) => {
                     // 这里还要生成一个token 注册时候是没有token的
-                    let token = 'xxxxxxxxxxx'
+                    let token = json.token
                     let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
                     // 这里面从第三方获取
                     const num = (Math.random() * 1000).toFixed(0)
