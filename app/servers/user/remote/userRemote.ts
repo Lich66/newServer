@@ -1,7 +1,7 @@
 import { Application, RemoterClass, FrontendSession } from 'pinus';
 // // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/Remote/userInterface';
 import { Login } from '../../../controller/account/login';
-import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
+import { IUserinfoRequest, IAccountInfoRequest, ITokenInfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
 
 export default function (app: Application) {
     return new Remote(app);
@@ -44,22 +44,10 @@ export class Remote {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async accountLogin(userinfo: IAccountInfoRequest): Promise<IAuthReturn> {
+    async accountLogin(userinfo: IAccountInfoRequest): Promise<IUserResponse> {
         // console.log(JSON.stringify(userinfo));
-        let result = await Login.accountLogin(userinfo);
-        if(result){
-            return {
-                code: 200,
-                data: result,
-                // msg: `${result[1]}`
-            };
-        }else{
-            return {
-                code: 500,
-                // data: result,
-                msg: `账号密码不符合`
-            };
-        }
+        return  await Login.accountLogin(userinfo);
+        
     }
 
     /**
@@ -68,21 +56,9 @@ export class Remote {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async tokenLogin(userinfo: ITokenInfoRequest): Promise<IAuthReturn> {
+    async tokenLogin(userinfo: ITokenInfoRequest): Promise<IUserResponse> {
         // console.log(JSON.stringify(userinfo));
-        let result = await Login.tokenLogin(userinfo);
-        if (result) {
-            return {
-                code: 200,
-                data: result,
-                msg: `登陆成功`
-            };
-        } else {
-            return {
-                code: 500,
-                msg: '用户不存在'
-            };
-        }
+        return await Login.tokenLogin(userinfo);
 
     }
 
