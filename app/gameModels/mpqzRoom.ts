@@ -22,11 +22,15 @@ export class MPQZRoom {
     advancedOptions: string[];
     lazarilloDeTormes: string;
 
+    userList: string[];
+    onlookerList: string[];
+
     constructor(channel: Channel) {
         this.channel = channel;
     }
 
-    initRoom(roomId: string, userId: string, config: number[][], roomConfig: IRoomConfig) {
+    initRoom(roomId: string, userId: string, config: number[][], roomConfig: IRoomConfig, createTime: string) {
+        this.createTime = createTime;
         this.roomId = roomId;
         this.creatorId = userId;
         this.roomConfig = config;
@@ -48,5 +52,14 @@ export class MPQZRoom {
 
     getChannel(): Channel {
         return this.channel;
+    }
+
+    hasUser(userId: string) {
+        for (let i = 0; i < this.userList.length; i++) {
+            if (this.userList[i] === userId) {
+                return true;
+            }
+        }
+        return false;
     }
 }

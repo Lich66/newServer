@@ -1,6 +1,5 @@
-import { Application, ChannelService, RemoterClass, BackendSession } from 'pinus';
+import { Application, RemoterClass, BackendSession } from 'pinus';
 import { RoomManager } from '../../../controller/RoomManager';
-import { MPQZRoom } from '../../../gameModels/mpqzRoom';
 
 export default function (app: Application) {
     return new RoomRemote(app);
@@ -27,5 +26,10 @@ export class RoomRemote {
         return { code: 200, data: { roomId: room.roomId } }
     }
 
+    public async joinRoom(userId: string, roomId: string) {
+        // let session = this.app.get('sessionService').getByUid(userId);
+        // console.log('remote中的session = ' + session);
+        let result = await this.roomManager.joinRoom(userId, roomId);
 
+    }
 }
