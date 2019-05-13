@@ -1,7 +1,7 @@
 import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull } from 'sequelize-typescript';
 
 @Table
-export class tbl_teahouse extends Model<tbl_teahouse> {
+export class tbl_club extends Model<tbl_club> {
 
     @AutoIncrement
     @PrimaryKey
