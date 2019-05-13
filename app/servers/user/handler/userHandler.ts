@@ -1,4 +1,4 @@
-import { Application, FrontendSession } from 'pinus';
+import { Application, BackendSession } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Login } from '../../../controller/account/login';
 import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/handler/userInterface';
@@ -28,20 +28,20 @@ export class Handler {
             json.xlopenid = userinfo.xlopenid;
         }
         let result = await Login.login(json);
-        if(result){
+        if (result) {
             return {
                 code: 200,
                 data: result,
                 // msg: `${result[1]}`
             };
-        }else{
+        } else {
             return {
                 code: 500,
                 // data: result,
                 msg: `服务错了`
             };
         }
-       
+
     }
 
     /**
