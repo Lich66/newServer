@@ -20,6 +20,8 @@ export class Handler {
      */
     async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        console.log(JSON.stringify(userinfo))
+        
         let user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
         let sessionService = this.app.get('sessionService');
         if (!!sessionService.getByUid(user.userid.toString())) {
