@@ -1,13 +1,20 @@
-import { Application, BackendSession } from 'pinus';
-// import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
+import { Application, RemoterClass, FrontendSession } from 'pinus';
+// // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/Remote/userInterface';
 import { Login } from '../../../controller/account/login';
-import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/remote/userInterface';
+import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
 
 export default function (app: Application) {
-    return new Handler(app);
+    return new Remote(app);
+}
+declare global {
+    interface UserRpc {
+        user: {
+            userRemote: RemoterClass<FrontendSession, Remote>;
+        };
+    }
 }
 
-export class Handler {
+export class Remote {
     constructor(private app: Application) {
 
     }
@@ -18,12 +25,7 @@ export class Handler {
      * @param  {Object}   userinfo     request message
      * @return {object}
      */
-    async auth(userinfo: IUserinfoRequest): Promise<IAuthReturn> {
-        console.log('userHandler BackendSession*****************');
-        const sessionService = this.app.get('sessionService');
-        console.log(sessionService);
-        let a = sessionService.getByUid('dsa');
-        console.log(a);
+    async auth(userinfo: IUserinfoRequest): Promise<IUserResponse> {
         let json: IUserinfoRequest = {};
         if (userinfo.token) {
             json.token = userinfo.token;
@@ -32,21 +34,8 @@ export class Handler {
         } else if (userinfo.xlopenid) {
             json.xlopenid = userinfo.xlopenid;
         }
-        let result = await Login.login(json);
-        if (result) {
-            return {
-                code: 200,
-                data: result,
-                // msg: `${result[1]}`
-            };
-        } else {
-            return {
-                code: 500,
-                // data: result,
-                msg: `服务错了`
-            };
-        }
-
+        return await Login.login(json);
+       
     }
 
     /**
@@ -58,13 +47,13 @@ export class Handler {
     async accountLogin(userinfo: IAccountInfoRequest): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         let result = await Login.accountLogin(userinfo);
-        if (result) {
+        if(result){
             return {
                 code: 200,
                 data: result,
                 // msg: `${result[1]}`
             };
-        } else {
+        }else{
             return {
                 code: 500,
                 // data: result,

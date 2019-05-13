@@ -5,7 +5,7 @@ import { tbl_account } from '../../models/tbl_account';
 import { User } from '../user/user';
 import { sequelize } from '../../sequelize/sequelize';
 import { tbl_user } from '../../models/tbl_user';
-import { IUserResponse, IUserinfoRequest, IAccountInfoRequest, ITokenInfoRequest } from '../../interface/user/handler/userInterface';
+import { IUserResponse, IUserinfoRequest, IAccountInfoRequest, ITokenInfoRequest } from '../../interface/user/remote/userInterface';
 import { ITbl_user, IUser } from '../../interface/models/tbl_user';
 import { defaultUser } from '../../gameConfig/defaultUser';
 function assign<T>(json1: { [key: string]: any }, json2: { [key: string]: any }): T {

@@ -4,7 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 export const sequelize = new Sequelize({
     operatorsAliases: true,
     host: '192.168.1.21',
-    port: 3357,
+    port: 3356,
     database: 'chessdb',
     dialect: 'mysql',
     username: 'root',

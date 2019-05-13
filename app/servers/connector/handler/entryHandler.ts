@@ -1,4 +1,5 @@
 import { Application, FrontendSession } from 'pinus';
+import { IUserinfoRequest, IAuthReturn } from '../../../interface/user/remote/userInterface';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -17,9 +18,22 @@ export class Handler {
      * @param  {Function} next    next step callback
      * @return {Void}
      */
-    async entry(msg: any, session: FrontendSession) {
-        console.log(msg);
-        return { code: 200, msg: 'game server is ok.' };
+    async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        let user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
+        let sessionService = this.app.get('sessionService');
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 500,
+                msg: '用户已登录'
+            };
+        }
+        await session.abind(user.userid.toString());
+        return {
+            code: 200,
+            data: user,
+            msg: 'game server is ok.'
+        };
     }
 
     /**

@@ -1,5 +1,5 @@
 import { tbl_user } from "../../models/tbl_user";
-import { IUserRequest } from "../../interface/user/handler/userInterface";
+import { IUserRequest } from "../../interface/user/remote/userInterface";
 import { ITbl_user } from "../../interface/models/tbl_user";
 
 export class User {
