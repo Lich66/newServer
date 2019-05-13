@@ -18,11 +18,11 @@ __decorate([
     __metadata("design:type", Number)
 ], tbl_user.prototype, "userid", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_user.prototype, "usernick", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(512) }),
     __metadata("design:type", String)
 ], tbl_user.prototype, "image", void 0);
 __decorate([
@@ -34,11 +34,11 @@ __decorate([
     __metadata("design:type", Number)
 ], tbl_user.prototype, "diamond", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(32) }),
     __metadata("design:type", String)
 ], tbl_user.prototype, "region", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(32) }),
     __metadata("design:type", String)
 ], tbl_user.prototype, "ip", void 0);
 __decorate([
@@ -46,7 +46,7 @@ __decorate([
     __metadata("design:type", Number)
 ], tbl_user.prototype, "sex", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(32) }),
     __metadata("design:type", String)
 ], tbl_user.prototype, "invite_code", void 0);
 __decorate([
@@ -61,4 +61,4 @@ tbl_user = __decorate([
     sequelize_typescript_1.Table
 ], tbl_user);
 exports.tbl_user = tbl_user;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX3VzZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF91c2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQXdFO0FBR3hFLElBQWEsUUFBUSxHQUFyQixjQUFzQixTQUFRLDRCQUFlO0NBa0M1QyxDQUFBO0FBL0JDO0lBRkMsaUNBQVU7SUFDViw2QkFBTTs7d0NBQ2U7QUFHdEI7SUFEQyw2QkFBTTs7MENBQ2lCO0FBR3hCO0lBREMsNkJBQU07O3VDQUNjO0FBR3JCO0lBREMsNkJBQU07OEJBQ1MsSUFBSTt5Q0FBQztBQUdyQjtJQURDLDZCQUFNOzt5Q0FDZ0I7QUFHdkI7SUFEQyw2QkFBTTs7d0NBQ2U7QUFHdEI7SUFEQyw2QkFBTTs7b0NBQ1c7QUFHbEI7SUFEQyw2QkFBTTs7cUNBQ1k7QUFHbkI7SUFEQyw2QkFBTTs7NkNBQ29CO0FBRzNCO0lBREMsNkJBQU07O3lDQUNnQjtBQUd2QjtJQURDLDZCQUFNOzhCQUNXLElBQUk7MkNBQUM7QUFqQ1osUUFBUTtJQURwQiw0QkFBSztHQUNPLFFBQVEsQ0FrQ3BCO0FBbENZLDRCQUFRIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX3VzZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF91c2VyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQTBGO0FBRzFGLElBQWEsUUFBUSxHQUFyQixjQUFzQixTQUFRLDRCQUFlO0NBa0M1QyxDQUFBO0FBL0JDO0lBRkMsaUNBQVU7SUFDViw2QkFBTTs7d0NBQ2U7QUFHdEI7SUFEQyw2QkFBTSxDQUFDLEVBQUUsSUFBSSxFQUFDLCtCQUFRLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUM7OzBDQUNiO0FBR3hCO0lBREMsNkJBQU0sQ0FBQyxFQUFFLElBQUksRUFBQywrQkFBUSxDQUFDLE1BQU0sQ0FBQyxHQUFHLENBQUMsRUFBRSxDQUFDOzt1Q0FDakI7QUFHckI7SUFEQyw2QkFBTTs4QkFDUyxJQUFJO3lDQUFDO0FBR3JCO0lBREMsNkJBQU07O3lDQUNnQjtBQUd2QjtJQURDLDZCQUFNLENBQUMsRUFBRSxJQUFJLEVBQUMsK0JBQVEsQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQzs7d0NBQ2Y7QUFHdEI7SUFEQyw2QkFBTSxDQUFDLEVBQUUsSUFBSSxFQUFDLCtCQUFRLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUM7O29DQUNuQjtBQUdsQjtJQURDLDZCQUFNOztxQ0FDWTtBQUduQjtJQURDLDZCQUFNLENBQUMsRUFBRSxJQUFJLEVBQUMsK0JBQVEsQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQzs7NkNBQ1Y7QUFHM0I7SUFEQyw2QkFBTTs7eUNBQ2dCO0FBR3ZCO0lBREMsNkJBQU07OEJBQ1csSUFBSTsyQ0FBQztBQWpDWixRQUFRO0lBRHBCLDRCQUFLO0dBQ08sUUFBUSxDQWtDcEI7QUFsQ1ksNEJBQVEifQ==

@@ -13,15 +13,15 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 let tbl_account = class tbl_account extends sequelize_typescript_1.Model {
 };
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_account.prototype, "token", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_account.prototype, "wxopenid", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_account.prototype, "xlopenid", void 0);
 __decorate([
@@ -31,15 +31,15 @@ __decorate([
     __metadata("design:type", Number)
 ], tbl_account.prototype, "uid", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_account.prototype, "account", void 0);
 __decorate([
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({ type: sequelize_typescript_1.DataType.STRING(64) }),
     __metadata("design:type", String)
 ], tbl_account.prototype, "password", void 0);
 tbl_account = __decorate([
     sequelize_typescript_1.Table
 ], tbl_account);
 exports.tbl_account = tbl_account;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX2FjY291bnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF9hY2NvdW50LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQXFGO0FBR3JGLElBQWEsV0FBVyxHQUF4QixpQkFBeUIsU0FBUSw0QkFBa0I7Q0FzQmxELENBQUE7QUFuQkM7SUFEQyw2QkFBTTs7MENBQ2M7QUFHckI7SUFEQyw2QkFBTTs7NkNBQ2lCO0FBR3hCO0lBREMsNkJBQU07OzZDQUNpQjtBQUt4QjtJQUhDLG9DQUFhO0lBQ2IsaUNBQVU7SUFDViw2QkFBTTs7d0NBQ1k7QUFHbkI7SUFEQyw2QkFBTTs7NENBQ2dCO0FBR3ZCO0lBREMsNkJBQU07OzZDQUNpQjtBQXBCYixXQUFXO0lBRHZCLDRCQUFLO0dBQ08sV0FBVyxDQXNCdkI7QUF0Qlksa0NBQVcifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGJsX2FjY291bnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9hcHAvbW9kZWxzL3RibF9hY2NvdW50LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEsK0RBQWlHO0FBR2pHLElBQWEsV0FBVyxHQUF4QixpQkFBeUIsU0FBUSw0QkFBa0I7Q0FzQmxELENBQUE7QUFuQkM7SUFEQyw2QkFBTSxDQUFDLEVBQUUsSUFBSSxFQUFFLCtCQUFRLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUM7OzBDQUNqQjtBQUdyQjtJQURDLDZCQUFNLENBQUMsRUFBRSxJQUFJLEVBQUUsK0JBQVEsQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQzs7NkNBQ2Q7QUFHeEI7SUFEQyw2QkFBTSxDQUFDLEVBQUUsSUFBSSxFQUFFLCtCQUFRLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUM7OzZDQUNkO0FBS3hCO0lBSEMsb0NBQWE7SUFDYixpQ0FBVTtJQUNWLDZCQUFNOzt3Q0FDWTtBQUduQjtJQURDLDZCQUFNLENBQUMsRUFBRSxJQUFJLEVBQUUsK0JBQVEsQ0FBQyxNQUFNLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQzs7NENBQ2Y7QUFHdkI7SUFEQyw2QkFBTSxDQUFDLEVBQUUsSUFBSSxFQUFFLCtCQUFRLENBQUMsTUFBTSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUM7OzZDQUNkO0FBcEJiLFdBQVc7SUFEdkIsNEJBQUs7R0FDTyxXQUFXLENBc0J2QjtBQXRCWSxrQ0FBVyJ9

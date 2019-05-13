@@ -1,4 +1,4 @@
-import { Table, Column, Model, PrimaryKey } from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, DataType, Length } from 'sequelize-typescript';
 
 @Table
 export class tbl_user extends Model<tbl_user> {
@@ -6,10 +6,10 @@ export class tbl_user extends Model<tbl_user> {
   @Column
   public userid: number;
 
-  @Column
+  @Column({ type:DataType.STRING(64) })
   public usernick: string;
 
-  @Column
+  @Column({ type:DataType.STRING(512) })
   public image: string;
 
   @Column
@@ -18,16 +18,16 @@ export class tbl_user extends Model<tbl_user> {
   @Column
   public diamond: number;
 
-  @Column
+  @Column({ type:DataType.STRING(32) })
   public region: string;
 
-  @Column
+  @Column({ type:DataType.STRING(32) })
   public ip: string;
 
   @Column
   public sex: number;
 
-  @Column
+  @Column({ type:DataType.STRING(32) })
   public invite_code: string;
 
   @Column

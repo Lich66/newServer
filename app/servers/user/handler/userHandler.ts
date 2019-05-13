@@ -53,10 +53,19 @@ export class Handler {
     async accountLogin(userinfo: IAccountInfoRequest): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         let result = await Login.accountLogin(userinfo);
-        return {
-            code: 0,
-            data: result,
-        };
+        if(result){
+            return {
+                code: 200,
+                data: result,
+                // msg: `${result[1]}`
+            };
+        }else{
+            return {
+                code: 500,
+                // data: result,
+                msg: `账号密码不符合`
+            };
+        }
     }
 
     /**
@@ -68,15 +77,15 @@ export class Handler {
     async tokenLogin(userinfo: ITokenInfoRequest): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         let result = await Login.tokenLogin(userinfo);
-        if (result.token) {
+        if (result) {
             return {
-                code: 0,
+                code: 200,
                 data: result,
                 msg: `登陆成功`
             };
         } else {
             return {
-                code: 0,
+                code: 500,
                 msg: '用户不存在'
             };
         }

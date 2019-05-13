@@ -1,26 +1,26 @@
-import {Table, Column, Model, PrimaryKey, AutoIncrement} from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType } from 'sequelize-typescript';
 
 @Table
 export class tbl_account extends Model<tbl_account> {
 
-  @Column
+  @Column({ type: DataType.STRING(64) })
   public token: string;
 
-  @Column
+  @Column({ type: DataType.STRING(64) })
   public wxopenid: string;
 
-  @Column
+  @Column({ type: DataType.STRING(64) })
   public xlopenid: string;
-  
+
   @AutoIncrement
   @PrimaryKey
   @Column
   public uid: number;
 
-  @Column
+  @Column({ type: DataType.STRING(64) })
   public account: string;
 
-  @Column
+  @Column({ type: DataType.STRING(64) })
   public password: string;
 
 }

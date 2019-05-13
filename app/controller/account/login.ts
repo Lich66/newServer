@@ -42,7 +42,7 @@ export class Login {
                         sex: parseInt(num),
                     }
                     const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token:token });
+                    return assign<IUserResponse>(userModel.toJSON(), { token: token });
                 });
             } catch (error) {
                 return null
@@ -51,31 +51,27 @@ export class Login {
     }
 
     public static async accountLogin(json: IAccountInfoRequest): Promise<IUserResponse> {
-        // 功能没写完 是假的
 
-        const userAccount: ITbl_account = await tbl_account.findOne({ where: json });
-        if (userAccount) {
+        const userAccount: ITbl_account = await tbl_account.findOne({ where: { account: json.account } });
+        if (userAccount && userAccount.password !== json.password) {
+            // 存在   但是账号密码不符  
+            return null;
+        } else if (userAccount && userAccount.password === json.password) {
+            // 存在 账号密码相符
             let userModel = await User.getUser({ userid: userAccount.uid });
-            return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
+            return assign<IUserResponse>(userModel.toJSON(), { token: '' });
         } else {
-            try {
-                return sequelize.transaction(async (t) => {
-                    // 这里还要生成一个token 注册时候是没有token的
-                    let token = json.account
-                    let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
-                    // 这里面从第三方获取
-                    const num = (Math.random() * 1000).toFixed(0)
-                    const sdk = {
-                        usernick: `test${num}`,
-                        image: `img${num}`,
-                        sex: parseInt(num),
-                    }
-                    const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token: token });
-                });
-            } catch (error) {
-                return null
+            // 不存在 创建一个
+            let newIndex = 0;
+            for (let index = 0; index < 500; index++) {
+                const element = await tbl_account.findOne({ where: { uid: index } });
+                if (!element.password && !element.account) {
+                    newIndex = index
+                }
             }
+            const account =  await tbl_account.update(json, { where: { uid: newIndex } });
+            const userModel = await tbl_user.findOne({ where: { userid: account[1][0].uid } });
+            return assign<IUserResponse>(userModel.toJSON(), { token: '' });;
         }
     }
 
@@ -87,24 +83,7 @@ export class Login {
             const userModel = await User.getUser({ userid: userAccount.uid });
             return assign<IUserResponse>(userModel.toJSON(), { token: userAccount.token });
         } else {
-            try {
-                return sequelize.transaction(async (t) => {
-                    // 这里还要生成一个token 注册时候是没有token的
-                    let token = json.token
-                    let account = await tbl_account.create<ITbl_account>({ ...json, token }, { transaction: t });
-                    // 这里面从第三方获取
-                    const num = (Math.random() * 1000).toFixed(0)
-                    const sdk = {
-                        usernick: `test${num}`,
-                        image: `img${num}`,
-                        sex: parseInt(num),
-                    }
-                    const userModel = await tbl_user.create<ITbl_user>({ ...sdk, userid: account.uid, ...defaultUser }, { transaction: t })
-                    return assign<IUserResponse>(userModel.toJSON(), { token: token });
-                });
-            } catch (error) {
-                return null
-            }
+            return null;
         }
     }
 }
