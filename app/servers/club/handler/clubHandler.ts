@@ -1,7 +1,10 @@
 import { Application, BackendSession } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Login } from '../../../controller/account/login';
-import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/remote/userInterface';
+import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
+import { Club } from '../../../controller/club/club';
+import { room_1_1 } from '../../../gameConfig/room';
+
 
 export default function (app: Application) {
     return new Handler(app);
@@ -13,26 +16,21 @@ export class Handler {
     }
 
     /**
-     * user login
+     * club  create
      *
-     * @param  {Object}   userinfo     request message
+     * @param  {Object}   clubinfo     request message
      * @return {object}
      */
-    async auth(userinfo: IUserinfoRequest): Promise<IAuthReturn> {
-        console.log('userHandler BackendSession*****************');
-        const sessionService = this.app.get('sessionService');
-        console.log(sessionService);
-        let a = sessionService.getByUid('dsa');
-        console.log(a);
-        let json: IUserinfoRequest = {};
-        if (userinfo.token) {
-            json.token = userinfo.token;
-        } else if (userinfo.wxopenid) {
-            json.wxopenid = userinfo.wxopenid;
-        } else if (userinfo.xlopenid) {
-            json.xlopenid = userinfo.xlopenid;
+    async createClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
+        // 这里以后添加很多判断
+        if (!clubinfo.type) {
+            return {
+                code: 400,
+                msg: '参数错误'
+            }
         }
-        let result = await Login.login(json);
+        let play_setting = JSON.stringify(room_1_1(clubinfo.clubConfig));
+        let result = await Club.createClub({ ...clubinfo, play_setting, uid: session.uid });
         if (result) {
             return {
                 code: 200,
@@ -46,18 +44,10 @@ export class Handler {
                 msg: `服务错了`
             };
         }
-
     }
+    async deleteClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
-    /**
-     * test login
-     *
-     * @param  {Object}   userinfo     request message
-     * @return {object}
-     */
-    async accountLogin(userinfo: IAccountInfoRequest): Promise<IAuthReturn> {
-        // console.log(JSON.stringify(userinfo));
-        let result = await Login.accountLogin(userinfo);
+        let result = await Club.deleteClub({ houseid: clubinfo.houseid, uid: session.uid });
         if (result) {
             return {
                 code: 200,
@@ -68,33 +58,53 @@ export class Handler {
             return {
                 code: 500,
                 // data: result,
-                msg: `账号密码不符合`
+                msg: `服务错了`
             };
         }
     }
 
-    /**
-     * token login
-     *
-     * @param  {Object}   userinfo     request message
-     * @return {object}
-     */
-    async tokenLogin(userinfo: ITokenInfoRequest): Promise<IAuthReturn> {
-        // console.log(JSON.stringify(userinfo));
-        let result = await Login.tokenLogin(userinfo);
+    async updateClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
+
+        let result = await Club.updateClub({ ...clubinfo, uid: session.uid }, { uid: session.uid, houseid: clubinfo.houseid });
         if (result) {
             return {
                 code: 200,
                 data: result,
-                msg: `登陆成功`
+                // msg: `${result[1]}`
             };
         } else {
             return {
                 code: 500,
-                msg: '用户不存在'
+                // data: result,
+                msg: `服务错了`
             };
         }
-
     }
+
+
+    /**
+     * club  create
+     *
+     * @param  {Object}   clubinfo     request message
+     * @return {object}
+     */
+    async getClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
+
+        let result = await Club.getClub({ uid: session.uid });
+        if (result) {
+            return {
+                code: 200,
+                data: result,
+                // msg: `${result[1]}`
+            };
+        } else {
+            return {
+                code: 500,
+                // data: result,
+                msg: `服务错了`
+            };
+        }
+    }
+
 
 }

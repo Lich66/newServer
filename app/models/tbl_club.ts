@@ -1,4 +1,4 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType, AllowNull } from 'sequelize-typescript';
+import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType,Default, BeforeCreate } from 'sequelize-typescript';
 
 @Table
 export class tbl_club extends Model<tbl_club> {
@@ -27,7 +27,7 @@ export class tbl_club extends Model<tbl_club> {
         type: DataType.STRING(2048),
         comment: '茶楼公告'
     })
-    public notice: number;
+    public notice: string;
 
     @Column({
         type: DataType.STRING(512),
@@ -44,7 +44,13 @@ export class tbl_club extends Model<tbl_club> {
         comment: '茶楼创建时间'
     })
     public create_time: Date;
-
+    @BeforeCreate
+    static makeUpperCase(instance: tbl_club) {
+        // this will be called when an instance is created or updated
+        instance.create_time = new Date();
+    }
+    
+    @Default(false)
     @Column({
         comment: '打烊标志'
     })
@@ -55,6 +61,7 @@ export class tbl_club extends Model<tbl_club> {
     })
     public pay_flag: boolean;
 
+    @Default(false)
     @Column({
         comment: '审核开关'
     })
@@ -65,6 +72,7 @@ export class tbl_club extends Model<tbl_club> {
     })
     public integral_flag: boolean;
 
+    @Default(false)
     @Column({
         comment: '隐私标志'
     })

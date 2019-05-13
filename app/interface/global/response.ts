@@ -1,5 +1,5 @@
 export interface IResponse{
     code:number;
-    data?:object;
+    data?:any;
     msg?:string;
 }
