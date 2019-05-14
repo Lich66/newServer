@@ -1,4 +1,4 @@
-import '../sequelize/sequelize';
+import '../db/sequelize';
 import { Login } from '../controller/account/login';
 
 setTimeout(()=>{

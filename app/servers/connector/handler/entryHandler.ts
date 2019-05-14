@@ -40,6 +40,10 @@ export class Handler {
             };
         }
         await session.abind(user.userid.toString());
+        session.set('usernick',user.usernick);
+        session.push('usernick',()=>{
+            
+        })
         return {
             code: 200,
             data: user,

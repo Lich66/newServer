@@ -1,5 +1,5 @@
 
-import { sequelize } from '../sequelize/sequelize'
+import { sequelize } from '../db/sequelize'
 import { tbl_user } from '../models/tbl_user';
 import { ITbl_account } from '../interface/models/tbl_account';
 import { tbl_account } from '../models/tbl_account';

@@ -3,7 +3,7 @@ import { ITbl_account } from '../../interface/models/tbl_account';
 import { tbl_account } from '../../models/tbl_account';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IUserModel } from '../../interface/user/handler/userInterface';
 import { User } from '../user/user';
-import { sequelize } from '../../sequelize/sequelize';
+import { sequelize } from '../../db/sequelize';
 import { tbl_user } from '../../models/tbl_user';
 import { IUserResponse, IUserinfoRequest, IAccountInfoRequest, ITokenInfoRequest } from '../../interface/user/remote/userInterface';
 import { ITbl_user, IUser } from '../../interface/models/tbl_user';

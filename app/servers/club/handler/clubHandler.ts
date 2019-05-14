@@ -30,7 +30,7 @@ export class Handler {
             }
         }
         let play_setting = JSON.stringify(room_1_1(clubinfo.clubConfig));
-        let result = await Club.createClub({ ...clubinfo, play_setting, uid: Number.parseInt(session.uid) });
+        let result = await Club.createClub({ ...clubinfo, play_setting, uid: Number.parseInt(session.uid) },session.get('usernick'));
         if (result) {
             return {
                 code: 200,
@@ -65,7 +65,12 @@ export class Handler {
 
     async updateClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
-        let result = await Club.updateClub({ ...clubinfo, uid: Number.parseInt(session.uid) }, { uid: Number.parseInt(session.uid), clubid: clubinfo.clubid });
+        let njson = {...clubinfo};
+        delete njson.clubid
+        delete njson.create_time
+        delete njson.uid
+
+        let result = await Club.updateClub({ clubid:clubinfo.clubid, uid: Number.parseInt(session.uid) }, njson);
         if (result) {
             return {
                 code: 200,
@@ -90,7 +95,7 @@ export class Handler {
      */
     async getClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
-        let result = await Club.getClub({ uid: Number.parseInt(session.uid) });
+        let result = await Club.getClub({clubid:clubinfo.clubid, uid: Number.parseInt(session.uid) });
         if (result) {
             return {
                 code: 200,

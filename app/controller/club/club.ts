@@ -1,23 +1,74 @@
 import { tbl_club } from "../../models/tbl_club";
 import { IClubRequest } from "../../interface/club/handler/clubInterface";
-import { ITbl_club } from "../../interface/models/tbl_club";
 import { defaultClubName } from "../../gameConfig/defaultClubName";
+import { tbl_room } from "../../models/tbl_room";
+import { sequelize } from "../../db/sequelize";
 
 export class Club {
-    // 实际上没这个方法 创建用户永远是和account里面一起创建的
-    public static async createClub(json: IClubRequest): Promise<tbl_club> {
+    public static async createClub(json: IClubRequest, usernick: string): Promise<tbl_club> {
         let result = await tbl_club.findAndCountAll({ where: { uid: json.uid, type: json.type } })
         if ((json.type == 0 && result.count > 10) || (json.type == 1 && result.count > 30)) {
             return null;
         }
-
         json.name = defaultClubName[json.type];
-        return await tbl_club.create(json);
+        try {
+            return sequelize.transaction(async (t) => {
+                let club = await tbl_club.create(json, { transaction: t });
+
+                let arr: tbl_room[]
+                if (club) {
+                    arr = await tbl_room.bulkCreate([{
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    }, {
+                        clubid: club.clubid,
+                        owner: usernick
+                    },], { validate: true, transaction: t })
+                }
+                if (arr.length == 0) {
+                    return null;
+                }
+                return club
+            })
+        } catch (error) {
+            return null
+        }
     }
     public static async deleteClub(json: IClubRequest): Promise<number> {
-        return await tbl_club.destroy({ where: { ...json } });
+        try {
+            return sequelize.transaction(async (t) => {
+                await tbl_room.destroy({ where: { clubid: json.clubid }, transaction: t });
+                return await tbl_club.destroy({ where: { clubid: json.clubid }, transaction: t });
+            })
+        } catch (error) {
+            return null
+        }
     }
-    public static async updateClub(njson: IClubRequest, ojson: IClubRequest): Promise<tbl_club> {
+    public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club> {
         let result = await tbl_club.update(njson, { where: { ...ojson } });
         // let club = ;
         return result[1][0]

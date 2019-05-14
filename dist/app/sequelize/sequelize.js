@@ -5,7 +5,7 @@ const sequelize_typescript_1 = require("sequelize-typescript");
 exports.sequelize = new sequelize_typescript_1.Sequelize({
     operatorsAliases: true,
     host: '192.168.1.21',
-    port: 3357,
+    port: 3356,
     database: 'chessdb',
     dialect: 'mysql',
     username: 'root',

@@ -1,7 +1,7 @@
 import { pinus } from 'pinus';
 import { preload } from './preload';
 
-import { sequelize } from './app/sequelize/sequelize'
+import { sequelize } from './app/db/sequelize'
 
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步
 // sequelize.sync({ force: true });
@@ -29,20 +29,20 @@ app.set('name', 'magnate-server');
 
 // app configuration
 app.configure('production|development', 'connector', function () {
-    app.set('connectorConfig',
-        {
-            connector: pinus.connectors.hybridconnector,
-            heartbeat: 3,
-            // useDict: true,
-            // useProtobuf: true
-        });
+  app.set('connectorConfig',
+    {
+      connector: pinus.connectors.hybridconnector,
+      heartbeat: 3,
+      // useDict: true,
+      // useProtobuf: true
+    });
 });
 app.configure('production|development', 'gate', function () {
-    app.set('connectorConfig',
-        {
-            connector: pinus.connectors.hybridconnector,
-            // useProtobuf: true
-        });
+  app.set('connectorConfig',
+    {
+      connector: pinus.connectors.hybridconnector,
+      // useProtobuf: true
+    });
 });
 
 // start app

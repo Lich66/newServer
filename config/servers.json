@@ -34,11 +34,17 @@
       "port": 3180,
       "args": " --inspect=10009"
     }],
-    "room": [{
-      "id": "room-server-1",
+    "clubRoom": [{
+      "id": "clubRoom-server-1",
       "host": "127.0.0.1",
       "port": 3190,
       "args": " --inspect=10011"
+    }],
+    "room": [{
+      "id": "room-server-1",
+      "host": "127.0.0.1",
+      "port": 3200,
+      "args": " --inspect=10013"
     }]
   },
   "production": {
@@ -76,11 +82,17 @@
       "port": 3180,
       "args": " --inspect=10010"
     }],
-    "room": [{
-      "id": "room-server-1",
+    "clubRoom": [{
+      "id": "clubRoom-server-1",
       "host": "127.0.0.1",
       "port": 3190,
       "args": " --inspect=10012"
+    }],
+    "room": [{
+      "id": "room-server-1",
+      "host": "127.0.0.1",
+      "port": 3200,
+      "args": " --inspect=10014"
     }]
   }
 }
