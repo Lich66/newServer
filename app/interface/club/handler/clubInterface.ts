@@ -1,7 +1,8 @@
 import { IResponse } from "../../global/response";
+import { IClub } from "../../models/tbl_club";
 export interface IClubRequest {
-    houseid?: number,
-    uid?: string,
+    clubid?: number,
+    uid?: number,
     name?: string,
     notice?: string,
     play_setting?: string,
@@ -24,5 +25,5 @@ export interface IClubRequest {
 }
 
 export interface IClubReturn extends IResponse {
-    data?: IClubRequest | IClubRequest[] | number|[number,IClubRequest[]];
+    data?: IClub | IClub[] | number|[number,IClub[]];
 }

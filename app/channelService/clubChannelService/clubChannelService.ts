@@ -1,5 +1,5 @@
 import { ChannelService } from 'pinus';
-export class HouseChannelService {
+export class ClubChannelService {
     private channelService: ChannelService;
     private parms: { [key: string]: any };
     constructor(channelService: ChannelService) {

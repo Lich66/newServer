@@ -1,7 +1,7 @@
 import { Model } from 'sequelize-typescript';
 export interface IClub {
-    houseid: number,
-    uid: string,
+    clubid: number,
+    uid: number,
     name: string,
     notice: string,
     play_setting: string,

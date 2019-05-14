@@ -9,13 +9,13 @@ export class tbl_club extends Model<tbl_club> {
         type: DataType.BIGINT(20),
         comment: '茶楼id'
     })
-    public houseid: number;
+    public clubid: number;
 
     @Column({
         type: DataType.STRING(64),
         comment: '所属玩家'
     })
-    public uid: string;
+    public uid: number;
 
     @Column({
         type: DataType.STRING(32),
@@ -41,6 +41,7 @@ export class tbl_club extends Model<tbl_club> {
     public type: number;
 
     @Column({
+        type:'TIMESTAMP',
         comment: '茶楼创建时间'
     })
     public create_time: Date;
