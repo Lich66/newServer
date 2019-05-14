@@ -4,8 +4,8 @@ import { IRoomConfig } from "../interface/room/roomInterfaces";
 export class MPQZRoom {
     private channel: Channel;
     createTime: string;
-    roomId: string;
-    creatorId: string;
+    roomId: number;
+    creatorId: number;
     roomConfig: number[][];
     gameType: string;
     playType: string;
@@ -29,7 +29,7 @@ export class MPQZRoom {
         this.channel = channel;
     }
 
-    initRoom(roomId: string, userId: string, config: number[][], roomConfig: IRoomConfig, createTime: string) {
+    initRoom(roomId: number, userId: number, config: number[][], roomConfig: IRoomConfig, createTime: string) {
         this.createTime = createTime;
         this.roomId = roomId;
         this.creatorId = userId;

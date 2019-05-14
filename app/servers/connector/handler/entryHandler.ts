@@ -1,5 +1,6 @@
 import { Application, FrontendSession } from 'pinus';
 import { IUserinfoRequest, IAuthReturn } from '../../../interface/user/remote/userInterface';
+import { userManager } from '../../../../app';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -21,7 +22,7 @@ export class Handler {
     async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaa')
         console.log(JSON.stringify(userinfo))
-        
+
         let user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
         let sessionService = this.app.get('sessionService');
         if (!!sessionService.getByUid(user.userid.toString())) {
@@ -31,6 +32,8 @@ export class Handler {
             };
         }
         await session.abind(user.userid.toString());
+        this.app.get('redisClient').set(user.userid, user);
+        console.log('玩家登录时保存玩家信息:' + JSON.stringify( this.app.get('redisClient').get(user.userid)));
         return {
             code: 200,
             data: user,

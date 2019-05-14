@@ -5,5 +5,5 @@ export interface ICreateRoomRequest {
 
 export interface IJoinRoomRequest {
     uid: string,
-    roomId: string
+    roomid: number
 }
