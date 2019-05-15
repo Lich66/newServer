@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-require("../db/sequelize");
-const login_1 = require("../controller/account/login");
-setTimeout(() => {
-    login_1.Login.login({ token: 'test' }).then((r) => { console.log(r); });
-}, 3000);
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdExvZ2luLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vYXBwL3Rlc3QvdGVzdExvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsMkJBQXlCO0FBQ3pCLHVEQUFvRDtBQUVwRCxVQUFVLENBQUMsR0FBRSxFQUFFO0lBQ1gsYUFBSyxDQUFDLEtBQUssQ0FBQyxFQUFDLEtBQUssRUFBQyxNQUFNLEVBQUMsQ0FBQyxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsRUFBQyxFQUFFLEdBQUMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDLENBQUMsQ0FBQSxDQUFBLENBQUMsQ0FBQyxDQUFBO0FBQzNELENBQUMsRUFBQyxJQUFJLENBQUMsQ0FBQyJ9
+// import '../db/sequelize';
+// import { Login } from '../controller/account/login';
+// setTimeout(()=>{
+//     Login.login({token:'test'}).then((r)=>{console.log(r)})
+// },3000);
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdExvZ2luLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vYXBwL3Rlc3QvdGVzdExvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLDRCQUE0QjtBQUM1Qix1REFBdUQ7QUFFdkQsbUJBQW1CO0FBQ25CLDhEQUE4RDtBQUM5RCxXQUFXIn0=

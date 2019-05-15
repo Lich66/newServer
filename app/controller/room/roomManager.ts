@@ -45,28 +45,28 @@ export class RoomManager {
 
     public async createRoom(userId: number, config: number[][]) {
         let user = await redisClient.getAsync(`'user:'${userId}`);
-        console.log('1创建房间时获取到的玩家信息:' + JSON.stringify(user));
-        console.log('2创建房间时获取到的玩家信息:' + JSON.stringify(user.userid));
-        if (user.roomlist.length === 10) {
-            return { code: 501, msg: "You already have 10 rooms and can't create any more" };
-        }
-        // todo 之后要改成从数据库生成的房间配置表获取
-        let needDaimond = parseInt(PayType[config[1][3]], 0);
-        if (user.diamond < needDaimond) {
-            return { code: 502, msg: 'You are short of diamonds' };
-        }
-        let roomId: number;
-        {
-            roomId = this.generateRoomId();
-        } while (this.roomList[roomId]);
-        let createTime = this.getLocalDateStr();
-        let channel = this.channelService.createChannel(roomId.toString());
-        console.log('房间管理器中房间通道为：' + channel.name);
-        let roomConfig: IRoomConfig = room_1_1(config);
-        let room = new MPQZRoom(channel);
-        this.roomList[roomId] = room;
-        room.initRoom(roomId, userId, config, roomConfig, createTime);
-        return { code: 200, roomid: room.roomId };
+        // console.log('1创建房间时获取到的玩家信息:' + JSON.stringify(user));
+        // console.log('2创建房间时获取到的玩家信息:' + JSON.stringify(user.userid));
+        // if (user.roomlist.length === 10) {
+        //     return { code: 501, msg: "You already have 10 rooms and can't create any more" };
+        // }
+        // // todo 之后要改成从数据库生成的房间配置表获取
+        // let needDaimond = parseInt(PayType[config[1][3]], 0);
+        // if (user.diamond < needDaimond) {
+        //     return { code: 502, msg: 'You are short of diamonds' };
+        // }
+        // let roomId: number;
+        // {
+        //     roomId = this.generateRoomId();
+        // } while (this.roomList[roomId]);
+        // let createTime = this.getLocalDateStr();
+        // let channel = this.channelService.createChannel(roomId.toString());
+        // console.log('房间管理器中房间通道为：' + channel.name);
+        // let roomConfig: IRoomConfig = room_1_1(config);
+        // let room = new MPQZRoom(channel);
+        // this.roomList[roomId] = room;
+        // room.initRoom(roomId, userId, config, roomConfig, createTime);
+        return { code: 200};
     }
 
     public async joinRoom(userId: number, roomId: number) {
