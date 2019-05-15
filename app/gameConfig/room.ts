@@ -1,3 +1,8 @@
+const round20 = 20;
+const round30 = 30;
+
+const PushWager15 = 15;
+const PushWager20 = 20;
 // 游戏类型
 export enum GameType { '明牌抢庄', '明牌通比' }
 // 玩法类型
@@ -9,13 +14,13 @@ export enum BaseScore { '1/2', '2/4', '3/6', '4/8', '5/10', '10/20', '1/2/4', '2
 // 底分：通比专用
 export const BaseScore2: Array<number> = [1, 2, 3, 4, 5];
 // 局数
-export const RoundCount: Array<number> = [10, 20, 30];
+export const RoundCount: Array<number> = [10, round20, round30];
 // 支付方式
 export enum PayType { '房主支付3', '房主支付4', '房主支付5', '房主支付6', '房主支付8', '房主支付9', '房主支付10', '房主支付12', '房主支付15', 'AA支付1', 'AA支付2', 'AA支付3' }
 // 游戏开始
 export enum StartType { '首位开始', '准备开始', '房主开始', '满4人开始', '满5人开始', '满6人开始' }
 // 推注选项
-export const PushWager: Array<number> = [0, 5, 10, 15, 20];
+export const PushWager: Array<number> = [0, 5, 10, PushWager15, PushWager20];
 // 最大抢庄    
 export const MaxRobBanker: Array<number> = [1, 2, 3, 4];
 // 通比玩法     
@@ -76,8 +81,8 @@ export function room_1_1(config: number[][]) {
         maxRobBanker: MaxRobBanker[config[1][6]],
         compareAllType: '',
         doubleRule: DoubleRule[config[1][7]],
-        specialCardType: specialCardType,
-        advancedOptions: advancedOptions,
+        specialCardType,
+        advancedOptions,
         lazarilloDeTormes: LazarilloDeTormes[config[1][10]]
     };
 

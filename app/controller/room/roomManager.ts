@@ -1,8 +1,8 @@
 
 import { Application, ChannelService } from 'pinus';
+import { MPQZRoom } from '../../channelService/roomChannelService/roomChannelService';
 import { redisClient } from '../../db/redis';
 import { PayType, room_1_1 } from '../../gameConfig/room';
-import { MPQZRoom } from '../../gameModels/mpqzRoom';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 
 

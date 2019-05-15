@@ -1,5 +1,5 @@
 import { Channel } from 'pinus';
-import { IRoomConfig } from '../interface/room/roomInterfaces';
+import { IRoomConfig } from '../../interface/room/roomInterfaces';
 
 export class MPQZRoom {
     private channel: Channel;
