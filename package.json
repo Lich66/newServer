@@ -11,6 +11,9 @@
         "build": "node_modules/.bin/tsc && node copy.js",
         "tslint": "tslint -c tslint.json 'app/**/*.ts'"
     },
+    "pre-commit": [
+        "tslint"
+    ],
     "dependencies": {
         "@types/bluebird": "^3.5.19",
         "@types/node": "^8.5.2",
@@ -28,6 +31,7 @@
         "@types/crc": "^3.4.0",
         "@types/redis": "^2.8.12",
         "copy-dir": "^1.0.0",
+        "pre-commit": "^1.2.2",
         "tslint": "^5.9.1",
         "tslint-config-alloy": "^0.2.1",
         "tslint-eslint-rules": "^5.4.0",
