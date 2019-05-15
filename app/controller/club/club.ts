@@ -52,10 +52,10 @@ export class Club {
                 if (arr.length == 0) {
                     return null;
                 }
-                return club
+                return club;
             })
         } catch (error) {
-            return null
+            return null;
         }
     }
     public static async deleteClub(json: IClubRequest): Promise<number> {
