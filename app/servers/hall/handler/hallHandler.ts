@@ -5,7 +5,7 @@ export default function (app: Application) {
 }
 
 export class HallHandler {
-    constructor(private app: Application) {
+    public constructor(private app: Application) {
     }
 
 }

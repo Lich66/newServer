@@ -1,35 +1,35 @@
-import { Channel } from "pinus";
-import { IRoomConfig } from "../interface/room/roomInterfaces";
+import { Channel } from 'pinus';
+import { IRoomConfig } from '../interface/room/roomInterfaces';
 
 export class MPQZRoom {
     private channel: Channel;
-    createTime: string;
-    roomId: number;
-    creatorId: number;
-    roomConfig: number[][];
-    gameType: string;
-    playType: string;
-    deskType: number;
-    baseScore: string;
-    roundCount: number;
-    payType: string;
-    startType: string;
-    pushWager: number;
-    maxRobBanker: number;
-    compareAllType: string;
-    doubleRule: string;
-    specialCardType: string[];
-    advancedOptions: string[];
-    lazarilloDeTormes: string;
+    public createTime: string;
+    public roomId: number;
+    public creatorId: number;
+    public roomConfig: number[][];
+    public gameType: string;
+    public playType: string;
+    public deskType: number;
+    public baseScore: string;
+    public roundCount: number;
+    public payType: string;
+    public startType: string;
+    public pushWager: number;
+    public maxRobBanker: number;
+    public compareAllType: string;
+    public doubleRule: string;
+    public specialCardType: string[];
+    public advancedOptions: string[];
+    public lazarilloDeTormes: string;
 
-    userList: string[];
-    onlookerList: string[];
+    public userList: string[];
+    public onlookerList: string[];
 
-    constructor(channel: Channel) {
+    public constructor(channel: Channel) {
         this.channel = channel;
     }
 
-    initRoom(roomId: number, userId: number, config: number[][], roomConfig: IRoomConfig, createTime: string) {
+    public initRoom(roomId: number, userId: number, config: number[][], roomConfig: IRoomConfig, createTime: string) {
         this.createTime = createTime;
         this.roomId = roomId;
         this.creatorId = userId;
@@ -50,13 +50,13 @@ export class MPQZRoom {
         this.lazarilloDeTormes = roomConfig.lazarilloDeTormes;
     }
 
-    getChannel(): Channel {
+    public getChannel(): Channel {
         return this.channel;
     }
 
-    hasUser(userId: string) {
-        for (let i = 0; i < this.userList.length; i++) {
-            if (this.userList[i] === userId) {
+    public hasUser(userId: string) {
+        for (let item  of this.userList) {
+            if (item  === userId) {
                 return true;
             }
         }

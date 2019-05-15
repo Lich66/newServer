@@ -1,21 +1,32 @@
-import { IUserRequest } from "../interface/user/remote/userInterface";
-import { Data } from "ws";
+import { IUserRequest } from '../interface/user/remote/userInterface';
 
 export class UserMemory {
-    userid: number;      //ID
-    usernick: string;    //昵称
-    image: string;       //头像地址
-    regtime: Date;       //注册时间
-    diamond: number;     //钻石数
-    region: string;      //地区
-    ip: string;          //登录IP
-    sex: number;         //性别
-    invite_code: string; //邀请码
-    inviter: number;     //邀请者
-    logintime: Date;     //最后登录时间
-    roomlist: number[] = [];  //玩家创建的房间id列表
+    // ID
+    public userid: number;
+    // 昵称      
+    public usernick: string;
+    // 头像地址   
+    public image: string;
+    // 注册时间     
+    public regtime: Date;
+    // 钻石数     
+    public diamond: number;
+    // 地区   
+    public region: string;
+    // 登录IP 
+    public ip: string;
+    // 性别        
+    public sex: number;
+    // 邀请码         
+    public invite_code: string;
+    // 邀请者 
+    public inviter: number;
+    // 最后登录时间   
+    public logintime: Date;
+    // 玩家创建的房间id列表
+    public roomlist: number[] = [];
 
-    constructor(userInfo: IUserRequest) {
+    public constructor(userInfo: IUserRequest) {
         this.userid = userInfo.userid;
         this.usernick = userInfo.usernick;
         this.image = userInfo.image;

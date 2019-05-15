@@ -1,1 +1,1 @@
-export const defaultClubName = ['大亨茶楼','大亨茶楼-比赛']
+export const defaultClubName = ['大亨茶楼','大亨茶楼-比赛'] 
