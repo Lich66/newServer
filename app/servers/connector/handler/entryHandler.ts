@@ -1,6 +1,7 @@
 import { Application, FrontendSession } from 'pinus';
 import { IUserinfoRequest, IAuthReturn } from '../../../interface/user/remote/userInterface';
 import { userManager } from '../../../../app';
+import { redisClient } from '../../../sequelize/redis';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -32,8 +33,11 @@ export class Handler {
             };
         }
         await session.abind(user.userid.toString());
-        this.app.get('redisClient').set(user.userid, user);
-        console.log('玩家登录时保存玩家信息:' + JSON.stringify( this.app.get('redisClient').get(user.userid)));
+        await redisClient.set(`'user:'${user.userid}`, JSON.stringify(user));
+        let xx = JSON.parse(await redisClient.getAsync(`'user:'${user.userid}`));
+        console.log('=== xx === ' + typeof xx);
+        console.log('=== xx === ' + JSON.stringify(xx));
+        console.log('=== xx === ' + JSON.stringify(xx.userid));
         return {
             code: 200,
             data: user,

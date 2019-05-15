@@ -3,6 +3,7 @@ import { MPQZRoom } from "../../gameModels/mpqzRoom";
 import { room_1_1, PayType } from "../../gameConfig/room";
 import { IRoomConfig } from "../../interface/room/roomInterfaces";
 import { userManager } from "../../../app";
+import { redisClient } from "../../sequelize/redis";
 
 export class RoomManager {
 
@@ -51,10 +52,10 @@ export class RoomManager {
     }
 
     public async createRoom(userId: number, config: number[][]) {
-        console.log('创建房间时获取到的所有玩家信息' + JSON.stringify(this.app.get('redisClient').get(userId)));
-        let user = userManager.getUser(userId);
-        console.log('创建房间时获取到的玩家信息:' + JSON.stringify(user));
-
+        let user = await redisClient.getAsync(`'user:'${userId}`);
+        // let user = userManager.getUser(userId);
+        console.log('1创建房间时获取到的玩家信息:' + JSON.stringify(user));
+        console.log('2创建房间时获取到的玩家信息:' + JSON.stringify(user.userid));
         if (user.roomlist.length === 10) {
             return { code: 501, msg: "You already have 10 rooms and can't create any more" };
         }

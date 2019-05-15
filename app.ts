@@ -46,10 +46,10 @@ app.configure('production|development', 'gate', function () {
     });
 });
 
-app.configure('production|development', "hall|user|connector|room|club|gate", function () {
-  var redisClient = require("redis").createClient(6379, "192.168.1.21");
-  app.set("redisClient", redisClient);
-})
+// app.configure('production|development', "hall|user|connector|room|club|gate", function () {
+//   var redisClient = require("redis").createClient(6379, "192.168.1.21");
+//   app.set("redisClient", redisClient);
+// })
 
 // start app
 app.start();
