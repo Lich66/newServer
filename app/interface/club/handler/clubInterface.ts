@@ -1,5 +1,5 @@
-import { IResponse } from "../../global/response";
-import { IClub } from "../../models/tbl_club";
+import { IResponse } from '../../global/response';
+import { IClub } from '../../models/tbl_club';
 export interface IClubRequest {
     clubid?: number,
     uid?: number,

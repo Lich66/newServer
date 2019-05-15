@@ -1,16 +1,17 @@
-import { ChannelService, Application } from "pinus";
-import { MPQZRoom } from "../../gameModels/mpqzRoom";
-import { room_1_1, PayType } from "../../gameConfig/room";
-import { IRoomConfig } from "../../interface/room/roomInterfaces";
 
-import { redisClient } from "../../db/redis";
+import { Application, ChannelService } from 'pinus';
+import { redisClient } from '../../db/redis';
+import { PayType, room_1_1 } from '../../gameConfig/room';
+import { MPQZRoom } from '../../gameModels/mpqzRoom';
+import { IRoomConfig } from '../../interface/room/roomInterfaces';
+
 
 export class RoomManager {
 
-    roomList = {};
+    public roomList = {};
     private channelService: ChannelService;
-    private app;
-    constructor(channelService: ChannelService, app: Application) {
+    private app: Application;
+    public constructor(channelService: ChannelService, app: Application) {
         this.channelService = channelService;
         this.app = app;
     }
@@ -18,19 +19,19 @@ export class RoomManager {
     /**
      * 获取7位的房间ID
      */
-    generateRoomId(): number {
-        var roomId = "";
-        for (var i = 0; i < 7; ++i) {
+    public generateRoomId(): number {
+        let roomId = '';
+        for (let i = 0; i < 7; ++i) {
             roomId += Math.floor(Math.random() * 10);
         }
-        return parseInt(roomId);
+        return parseInt(roomId, 0);
     }
 
     /**
      * 获取本地时间
-     * @returns {string}    xxxx.xx.xx xx:xx:xx
+     * @returns string    xxxx.xx.xx xx:xx:xx
      */
-    getLocalDateStr(): string {
+    public getLocalDateStr(): string {
         let date = new Date();
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
@@ -40,31 +41,21 @@ export class RoomManager {
         let seconds = date.getSeconds();
         let dateStr = year + '.' + month + '.' + day + '  ' + hours + ':' + minutes + ':' + seconds;
         return dateStr;
-    };
-
-    getRoomsByCreatorId(creatorId: string) {
-
-        for (let i in this.roomList) {
-            if (this.roomList[i].creatorId === creatorId) {
-
-            }
-        }
     }
 
     public async createRoom(userId: number, config: number[][]) {
         let user = await redisClient.getAsync(`'user:'${userId}`);
-        // let user = userManager.getUser(userId);
         console.log('1创建房间时获取到的玩家信息:' + JSON.stringify(user));
         console.log('2创建房间时获取到的玩家信息:' + JSON.stringify(user.userid));
         if (user.roomlist.length === 10) {
             return { code: 501, msg: "You already have 10 rooms and can't create any more" };
         }
-        //todo 之后要改成从数据库生成的房间配置表获取
-        let needDaimond = parseInt(PayType[config[1][3]]);
+        // todo 之后要改成从数据库生成的房间配置表获取
+        let needDaimond = parseInt(PayType[config[1][3]], 0);
         if (user.diamond < needDaimond) {
-            return { code: 502, msg: "You are short of diamonds" };
+            return { code: 502, msg: 'You are short of diamonds' };
         }
-        let roomId: number = undefined;
+        let roomId: number;
         {
             roomId = this.generateRoomId();
         } while (this.roomList[roomId]);
