@@ -27,6 +27,8 @@ export class Remote {
      */
     async auth(userinfo: IUserinfoRequest): Promise<IUserResponse> {
         let json: IUserinfoRequest = {};
+        console.log('authauthauthauthauthauthauthauthauthauthauthauthauthauth')
+        console.log(JSON.stringify(json))
         if (userinfo.token) {
             json.token = userinfo.token;
         } else if (userinfo.wxopenid) {
@@ -34,6 +36,7 @@ export class Remote {
         } else if (userinfo.xlopenid) {
             json.xlopenid = userinfo.xlopenid;
         }
+        console.log(JSON.stringify(json))
         return await Login.login(json);
        
     }

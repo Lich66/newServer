@@ -1,5 +1,6 @@
 import { Application, FrontendSession } from 'pinus';
 import { IUserinfoRequest, IAuthReturn, IAccountInfoRequest, ITokenInfoRequest } from '../../../interface/user/remote/userInterface';
+import { redisClient } from '../../../db/redis';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -19,20 +20,22 @@ export class Handler {
      * @return {Void}
      */
     async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
-        if(!userinfo.token&&!userinfo.wxopenid&&!userinfo.xlopenid){
-            return{
-                code:400,
-                msg:'参数错误'
+
+        if (!userinfo.token && !userinfo.wxopenid && !userinfo.xlopenid) {
+            return {
+                code: 400,
+                msg: '参数错误'
             }
         }
         const user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
-        if(!user){
+        if (!user) {
             return {
                 code: 500,
                 msg: '服务出错'
             };
         }
         const sessionService = this.app.get('sessionService');
+
         if (!!sessionService.getByUid(user.userid.toString())) {
             return {
                 code: 500,
@@ -40,31 +43,36 @@ export class Handler {
             };
         }
         await session.abind(user.userid.toString());
-        session.set('usernick',user.usernick);
-        session.push('usernick',()=>{
-            
+        session.set('usernick', user.usernick);
+        session.push('usernick', () => {
+
         })
+        await redisClient.set(`'user:'${user.userid}`, JSON.stringify(user));
+        let xx = JSON.parse(await redisClient.getAsync(`'user:'${user.userid}`));
+        console.log('=== xx === ' + typeof xx);
+        console.log('=== xx === ' + JSON.stringify(xx));
+        console.log('=== xx === ' + JSON.stringify(xx.userid));
         return {
             code: 200,
             data: user,
             msg: 'game server is ok.'
         };
     }
-     /**
-     * test login
-     *
-     * @param  {Object}   userinfo     request message
-     * @return {object}
-     */
+    /**
+    * test login
+    *
+    * @param  {Object}   userinfo     request message
+    * @return {object}
+    */
     async accountLogin(userinfo: IAccountInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo)
-        if(user){
+        if (user) {
             return {
                 code: 200,
                 data: user,
                 // msg: `${result[1]}`
             };
-        }else{
+        } else {
             return {
                 code: 500,
                 // data: result,

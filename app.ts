@@ -1,7 +1,7 @@
 import { pinus } from 'pinus';
 import { preload } from './preload';
 
-import { sequelize } from './app/db/sequelize'
+import { sequelize } from './app/db/sequelize';
 
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步
 // sequelize.sync({ force: true });
@@ -45,6 +45,10 @@ app.configure('production|development', 'gate', function () {
     });
 });
 
+// app.configure('production|development', "hall|user|connector|room|club|gate", function () {
+//   var redisClient = require("redis").createClient(6379, "192.168.1.21");
+//   app.set("redisClient", redisClient);
+// })
+
 // start app
 app.start();
-
