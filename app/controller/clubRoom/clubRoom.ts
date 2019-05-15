@@ -1,7 +1,7 @@
 
-import { IClubRoomRequest } from "../../interface/clubRoom/handler/clubRoomInterfaces";
-import { ITbl_room } from "../../interface/models/tbl_room";
-import { tbl_room } from "../../models/tbl_room";
+import { IClubRoomRequest } from '../../interface/clubRoom/handler/clubRoomInterfaces';
+import { ITbl_room } from '../../interface/models/tbl_room';
+import { tbl_room } from '../../models/tbl_room';
 
 export class ClubRoom {
     // 实际上没这个方法 创建房间永远是和创建茶楼里面一起创建的

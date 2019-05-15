@@ -1,13 +1,14 @@
-import { tbl_club } from "../../models/tbl_club";
-import { IClubRequest } from "../../interface/club/handler/clubInterface";
-import { defaultClubName } from "../../gameConfig/defaultClubName";
-import { tbl_room } from "../../models/tbl_room";
-import { sequelize } from "../../db/sequelize";
-
+import { sequelize } from '../../db/sequelize';
+import { defaultClubName } from '../../gameConfig/defaultClubName';
+import { IClubRequest } from '../../interface/club/handler/clubInterface';
+import { tbl_club } from '../../models/tbl_club';
+import { tbl_room } from '../../models/tbl_room';
+const MAXCLUB = 10;
+const MAXCOMPETITIONCLUB = 30;
 export class Club {
     public static async createClub(json: IClubRequest, usernick: string): Promise<tbl_club> {
-        let result = await tbl_club.findAndCountAll({ where: { uid: json.uid, type: json.type } })
-        if ((json.type == 0 && result.count > 10) || (json.type == 1 && result.count > 30)) {
+        let result = await tbl_club.findAndCountAll({ where: { uid: json.uid, type: json.type } });
+        if ((json.type == 0 && result.count > MAXCLUB) || (json.type == 1 && result.count > MAXCOMPETITIONCLUB)) {
             return null;
         }
         json.name = defaultClubName[json.type];
@@ -15,7 +16,7 @@ export class Club {
             return sequelize.transaction(async (t) => {
                 let club = await tbl_club.create(json, { transaction: t });
 
-                let arr: tbl_room[]
+                let arr: tbl_room[];
                 if (club) {
                     arr = await tbl_room.bulkCreate([{
                         clubid: club.clubid,
@@ -47,13 +48,13 @@ export class Club {
                     }, {
                         clubid: club.clubid,
                         owner: usernick
-                    },], { validate: true, transaction: t })
+                    }], { validate: true, transaction: t });
                 }
                 if (arr.length == 0) {
                     return null;
                 }
                 return club;
-            })
+            });
         } catch (error) {
             return null;
         }
@@ -63,17 +64,17 @@ export class Club {
             return sequelize.transaction(async (t) => {
                 await tbl_room.destroy({ where: { clubid: json.clubid }, transaction: t });
                 return await tbl_club.destroy({ where: { clubid: json.clubid }, transaction: t });
-            })
+            });
         } catch (error) {
-            return null
+            return null;
         }
     }
     public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club> {
         let result = await tbl_club.update(njson, { where: { ...ojson } });
         // let club = ;
-        return result[1][0]
+        return result[1][0];
     }
     public static async getClub(json: IClubRequest): Promise<tbl_club[]> {
-        return await tbl_club.findAll({ where: json })
+        return await tbl_club.findAll({ where: json });
     }
 }

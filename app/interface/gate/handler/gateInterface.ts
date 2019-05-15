@@ -1,9 +1,9 @@
-import { IResponse } from "../../global/response";
+import { IResponse } from '../../global/response';
 
 export interface IRequest {
-    clientVer:string;
-    platform:string;
-    deviceId:string;
+    clientVer: string;
+    platform: string;
+    deviceId: string;
 }
 
 export interface IData {

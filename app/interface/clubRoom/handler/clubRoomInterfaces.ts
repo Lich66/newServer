@@ -1,7 +1,7 @@
-import { IResponse } from "../../global/response";
-import { IRoom } from "../../models/tbl_room";
+import { IResponse } from '../../global/response';
+import { IRoom } from '../../models/tbl_room';
 export interface IClubRoomRequest {
- 
+
     roomid?: number;
     clubid?: number;
     create_time?: Date;
@@ -27,6 +27,6 @@ export interface IClubRoomRequest {
     laizi_type?: number;
 }
 
-export interface IClubRoomReturn extends IResponse{
-    data?: IRoom | IRoom[] | number|[number,IRoom[]];
+export interface IClubRoomReturn extends IResponse {
+    data?: IRoom | IRoom[] | number | [number, IRoom[]];
 }

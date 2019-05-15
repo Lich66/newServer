@@ -14,5 +14,6 @@ export interface IClubuser {
 }
 
 
+// tslint:disable-next-line: class-name
 export interface ITbl_clubuser extends Model<ITbl_clubuser>, IClubuser {
 }

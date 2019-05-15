@@ -14,6 +14,7 @@ export interface IUser {
     logintime: Date;
 }
 
-export interface ITbl_user extends Model<ITbl_user>,IUser {
-    
+// tslint:disable-next-line: class-name
+export interface ITbl_user extends Model<ITbl_user>, IUser {
+
 }

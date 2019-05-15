@@ -1,4 +1,4 @@
-import { Application, RemoterClass, BackendSession } from 'pinus';
+import { Application, BackendSession, RemoterClass } from 'pinus';
 import { RoomManager } from '../../../controller/room/roomManager';
 
 export default function (app: Application) {
@@ -16,7 +16,7 @@ declare global {
 export class RoomRemote {
     private app: Application;
     private roomManager: RoomManager;
-    constructor(app: Application) {
+    public constructor(app: Application) {
         this.app = app;
         this.roomManager = new RoomManager(app.get('channelService'), this.app);
     }

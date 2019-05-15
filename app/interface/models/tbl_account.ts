@@ -9,5 +9,6 @@ export interface IAccount {
 }
 
 
+// tslint:disable-next-line: class-name
 export interface ITbl_account extends Model<ITbl_account>, IAccount {
 }

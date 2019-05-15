@@ -1,12 +1,18 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType,Default, BeforeCreate } from 'sequelize-typescript';
+import { AutoIncrement, BeforeCreate, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
+const BIGINT20 = 20;
+const STRING64 = 64;
+const STRING32 = 32;
+const STRING2048 = 2048;
+const STRING512 = 512;
 @Table
+// tslint:disable-next-line: class-name
 export class tbl_room extends Model<tbl_room> {
 
     @AutoIncrement
     @PrimaryKey
     @Column({
-        type: DataType.BIGINT(20),
+        type: DataType.BIGINT(BIGINT20),
         comment: 'roomid'
     })
     public roomid: number;
@@ -17,18 +23,18 @@ export class tbl_room extends Model<tbl_room> {
     public clubid: number;
 
     @Column({
-        type:'TIMESTAMP',
+        type: 'TIMESTAMP',
         comment: '房间创建时间'
     })
     public create_time: Date;
     @BeforeCreate
-    static makeUpperCase(instance: tbl_room) {
+    public static makeUpperCase(instance: tbl_room) {
         // this will be called when an instance is created or updated
         instance.create_time = new Date();
     }
 
     @Column({
-        type: DataType.STRING(64),
+        type: DataType.STRING(STRING64),
         comment: '拥有者'
     })
     public owner: string;

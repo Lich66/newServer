@@ -1,15 +1,21 @@
-import { Table, Column, Model, PrimaryKey, DataType, Length } from 'sequelize-typescript';
+import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+
+const STRING64 = 64;
+const STRING32 = 32;
+const STRING512 = 512;
+
 
 @Table
+// tslint:disable-next-line: class-name
 export class tbl_user extends Model<tbl_user> {
   @PrimaryKey
   @Column
   public userid: number;
 
-  @Column({ type:DataType.STRING(64) })
+  @Column({ type: DataType.STRING(STRING64) })
   public usernick: string;
 
-  @Column({ type:DataType.STRING(512) })
+  @Column({ type: DataType.STRING(STRING512) })
   public image: string;
 
   @Column
@@ -18,16 +24,16 @@ export class tbl_user extends Model<tbl_user> {
   @Column
   public diamond: number;
 
-  @Column({ type:DataType.STRING(32) })
+  @Column({ type: DataType.STRING(STRING32) })
   public region: string;
 
-  @Column({ type:DataType.STRING(32) })
+  @Column({ type: DataType.STRING(STRING32) })
   public ip: string;
 
   @Column
   public sex: number;
 
-  @Column({ type:DataType.STRING(32) })
+  @Column({ type: DataType.STRING(STRING32) })
   public invite_code: string;
 
   @Column

@@ -1,5 +1,5 @@
-import { IResponse } from "../../global/response";
-import { IUser } from "../../models/tbl_user";
+import { IResponse } from '../../global/response';
+import { IUser } from '../../models/tbl_user';
 
 export interface IUserRequest {
     userid?: number;

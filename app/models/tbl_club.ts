@@ -1,36 +1,42 @@
-import { Table, Column, Model, PrimaryKey, AutoIncrement, DataType,Default, BeforeCreate } from 'sequelize-typescript';
+import { AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
+const BIGINT20 = 20;
+const STRING64 = 64;
+const STRING32 = 32;
+const STRING2048 = 2048;
+const STRING512 = 512;
 @Table
+// tslint:disable-next-line: class-name
 export class tbl_club extends Model<tbl_club> {
 
     @AutoIncrement
     @PrimaryKey
     @Column({
-        type: DataType.BIGINT(20),
+        type: DataType.BIGINT(BIGINT20),
         comment: '茶楼id'
     })
     public clubid: number;
 
     @Column({
-        type: DataType.STRING(64),
+        type: DataType.STRING(STRING64),
         comment: '所属玩家'
     })
     public uid: number;
 
     @Column({
-        type: DataType.STRING(32),
+        type: DataType.STRING(STRING32),
         comment: '茶楼名字'
     })
     public name: string;
 
     @Column({
-        type: DataType.STRING(2048),
+        type: DataType.STRING(STRING2048),
         comment: '茶楼公告'
     })
     public notice: string;
 
     @Column({
-        type: DataType.STRING(512),
+        type: DataType.STRING(STRING512),
         comment: '茶楼默认玩法设置'
     })
     public play_setting: string;
@@ -41,16 +47,16 @@ export class tbl_club extends Model<tbl_club> {
     public type: number;
 
     @Column({
-        type:'TIMESTAMP',
+        type: 'TIMESTAMP',
         comment: '茶楼创建时间'
     })
     public create_time: Date;
     @BeforeCreate
-    static makeUpperCase(instance: tbl_club) {
+    public static makeUpperCase(instance: tbl_club) {
         // this will be called when an instance is created or updated
         instance.create_time = new Date();
     }
-    
+
     @Default(false)
     @Column({
         comment: '打烊标志'

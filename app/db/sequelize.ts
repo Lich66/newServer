@@ -21,9 +21,9 @@ export const sequelize = new Sequelize({
         max: 10,
         min: 0,
         acquire: 30000,
-        idle: 10000,
+        idle: 10000
     },
     timezone: '+08:00', // 更改为北京时区
-    modelPaths: [path.resolve(__dirname, '..', 'models')],
+    modelPaths: [path.resolve(__dirname, '..', 'models')]
 });
 

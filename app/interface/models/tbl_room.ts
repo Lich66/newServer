@@ -26,5 +26,6 @@ export interface IRoom {
 }
 
 
+// tslint:disable-next-line: class-name
 export interface ITbl_room extends Model<ITbl_room>, IRoom {
 }

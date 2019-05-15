@@ -7,19 +7,13 @@ export default function (app: Application) {
 }
 
 export class Handler {
-    private app: Application
-    constructor(app: Application) {
+    private app: Application;
+    public constructor(app: Application) {
         this.app = app;
     }
 
-    /**
-     * New client entry.
-     *
-     * @param  {Object}   userinfo     request message
-     * @return {Object}   entryReturn  response message
-     */
-    async queryEntry(request:IRequest): Promise<IEntryReturn> {
-        
+    public async queryEntry(request: IRequest): Promise<IEntryReturn> {
+
         let connectors = this.app.getServersByType('connector');
         if (!connectors || connectors.length === 0) {
             return {
@@ -40,15 +34,7 @@ export class Handler {
         };
     }
 
-    /**
-     * Publish route for mqtt connector.
-     *
-     * @param  {Object}   msg     request message
-     * @param  {Object}   session current session object
-     * @param  {Function} next    next step callback
-     * @return {Void}
-     */
-    async publish(msg: any, session: FrontendSession) {
+    public async publish(msg: any, session: FrontendSession) {
         let result = {
             topic: 'publish',
             payload: JSON.stringify({ code: 200, msg: 'publish message is ok.' })
@@ -56,20 +42,11 @@ export class Handler {
         return result;
     }
 
-    /**
-     * Subscribe route for mqtt connector.
-     *
-     * @param  {Object}   msg     request message
-     * @param  {Object}   session current session object
-     * @param  {Function} next    next step callback
-     * @return {Void}
-     */
-    async subscribe(msg: any, session: FrontendSession) {
+    public async subscribe(msg: any, session: FrontendSession) {
         let result = {
             topic: 'subscribe',
             payload: JSON.stringify({ code: 200, msg: 'subscribe message is ok.' })
         };
         return result;
     }
-
 }
