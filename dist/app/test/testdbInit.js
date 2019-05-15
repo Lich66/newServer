@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("../db/sequelize");
-const tbl_user_1 = require("../models/tbl_user");
 const tbl_account_1 = require("../models/tbl_account");
+const tbl_user_1 = require("../models/tbl_user");
+const testAccount = 500;
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
         yield sequelize_1.sequelize.sync({ force: true });
-        for (let index = 0; index < 500; index++) {
+        for (let index = 0; index < testAccount; index++) {
             sequelize_1.sequelize.transaction((t) => __awaiter(this, void 0, void 0, function* () {
                 const account = yield tbl_account_1.tbl_account.create({}, { transaction: t });
                 const userModel = yield tbl_user_1.tbl_user.create({ userid: account.uid }, { transaction: t });
@@ -23,4 +24,4 @@ function start() {
     });
 }
 start();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdGRiSW5pdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2FwcC90ZXN0L3Rlc3RkYkluaXQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUNBLCtDQUEyQztBQUMzQyxpREFBOEM7QUFFOUMsdURBQW9EO0FBR3BEOztRQUNJLE1BQU0scUJBQVMsQ0FBQyxJQUFJLENBQUMsRUFBRSxLQUFLLEVBQUUsSUFBSSxFQUFFLENBQUMsQ0FBQztRQUV0QyxLQUFLLElBQUksS0FBSyxHQUFHLENBQUMsRUFBRSxLQUFLLEdBQUcsR0FBRyxFQUFFLEtBQUssRUFBRSxFQUFFO1lBQ3RDLHFCQUFTLENBQUMsV0FBVyxDQUFDLENBQU8sQ0FBQyxFQUFFLEVBQUU7Z0JBQzlCLE1BQU0sT0FBTyxHQUFHLE1BQU0seUJBQVcsQ0FBQyxNQUFNLENBQWUsRUFBRSxFQUFFLEVBQUUsV0FBVyxFQUFFLENBQUMsRUFBRSxDQUFDLENBQUM7Z0JBQy9FLE1BQU0sU0FBUyxHQUFHLE1BQU0sbUJBQVEsQ0FBQyxNQUFNLENBQVksRUFBQyxNQUFNLEVBQUUsT0FBTyxDQUFDLEdBQUcsRUFBQyxFQUFFLEVBQUUsV0FBVyxFQUFFLENBQUMsRUFBRSxDQUFDLENBQUE7WUFDakcsQ0FBQyxDQUFBLENBQUMsQ0FBQTtTQUVMO0lBQ0wsQ0FBQztDQUFBO0FBQ0QsS0FBSyxFQUFFLENBQUMifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidGVzdGRiSW5pdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2FwcC90ZXN0L3Rlc3RkYkluaXQudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUNBLCtDQUE0QztBQUc1Qyx1REFBb0Q7QUFDcEQsaURBQThDO0FBRTlDLE1BQU0sV0FBVyxHQUFHLEdBQUcsQ0FBQztBQUN4Qjs7UUFDSSxNQUFNLHFCQUFTLENBQUMsSUFBSSxDQUFDLEVBQUUsS0FBSyxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7UUFFdEMsS0FBSyxJQUFJLEtBQUssR0FBRyxDQUFDLEVBQUUsS0FBSyxHQUFHLFdBQVcsRUFBRSxLQUFLLEVBQUUsRUFBRTtZQUM5QyxxQkFBUyxDQUFDLFdBQVcsQ0FBQyxDQUFPLENBQUMsRUFBRSxFQUFFO2dCQUM5QixNQUFNLE9BQU8sR0FBRyxNQUFNLHlCQUFXLENBQUMsTUFBTSxDQUFlLEVBQUUsRUFBRSxFQUFFLFdBQVcsRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDO2dCQUMvRSxNQUFNLFNBQVMsR0FBRyxNQUFNLG1CQUFRLENBQUMsTUFBTSxDQUFZLEVBQUMsTUFBTSxFQUFFLE9BQU8sQ0FBQyxHQUFHLEVBQUMsRUFBRSxFQUFFLFdBQVcsRUFBRSxDQUFDLEVBQUUsQ0FBQyxDQUFDO1lBQ2xHLENBQUMsQ0FBQSxDQUFDLENBQUM7U0FFTjtJQUNMLENBQUM7Q0FBQTtBQUNELEtBQUssRUFBRSxDQUFDIn0=

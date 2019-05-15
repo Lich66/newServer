@@ -1,7 +1,7 @@
 import { Channel } from 'pinus';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 
-export class MPQZRoom {
+export class RoomChannelService {
     private channel: Channel;
     public createTime: string;
     public roomId: number;

@@ -1,6 +1,6 @@
 
 import { Application, ChannelService } from 'pinus';
-import { MPQZRoom } from '../../channelService/roomChannelService/roomChannelService';
+import { RoomChannelService } from '../../channelService/roomChannelService/roomChannelService';
 import { redisClient } from '../../db/redis';
 import { PayType, room_1_1 } from '../../gameConfig/room';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
@@ -63,7 +63,7 @@ export class RoomManager {
         let channel = this.channelService.createChannel(roomId.toString());
         console.log('房间管理器中房间通道为：' + channel.name);
         let roomConfig: IRoomConfig = room_1_1(config);
-        let room = new MPQZRoom(channel);
+        let room = new RoomChannelService(channel);
         this.roomList[roomId] = room;
         room.initRoom(roomId, userId, config, roomConfig, createTime);
         return { code: 200, roomid: room.roomId };

@@ -11,7 +11,7 @@ sequelize
   .then(() => {
     console.log('Connection has been established successfully.');
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Unable to connect to the database:', err);
   });
 /**
@@ -32,7 +32,7 @@ app.configure('production|development', 'connector', function () {
   app.set('connectorConfig',
     {
       connector: pinus.connectors.hybridconnector,
-      heartbeat: 3,
+      heartbeat: 3
       // useDict: true,
       // useProtobuf: true
     });
@@ -40,7 +40,7 @@ app.configure('production|development', 'connector', function () {
 app.configure('production|development', 'gate', function () {
   app.set('connectorConfig',
     {
-      connector: pinus.connectors.hybridconnector,
+      connector: pinus.connectors.hybridconnector
       // useProtobuf: true
     });
 });

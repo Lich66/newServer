@@ -1,5 +1,6 @@
 import { Application, FrontendSession } from 'pinus';
 import { redisClient } from '../../../db/redis';
+import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/remote/userInterface';
 
 
@@ -36,11 +37,12 @@ export class Handler {
         session.push('usernick', () => {
 
         });
-        await redisClient.set(`'user:'${user.userid}`, JSON.stringify(user));
-        let xx = JSON.parse(await redisClient.getAsync(`'user:'${user.userid}`));
-        console.log('=== xx === ' + typeof xx);
-        console.log('=== xx === ' + JSON.stringify(xx));
-        console.log('=== xx === ' + JSON.stringify(xx.userid));
+        for (let key in user) {
+            if (user.hasOwnProperty(key)) {
+                await redisClient.hsetAsync(`${redisKeyPrefix.user}${user.userid}`, key, user[key]);
+            }
+        }
+
         return {
             code: 200,
             data: user,
