@@ -9,8 +9,11 @@ export class User {
     public static async deleteUser() {
 
     }
-    public static async updateUser() {
-
+    public static async updateUser(ojson: IUserRequest, njson: IUserRequest): Promise<number> {
+        // {uid:x},{diamond:9}
+        let result = await tbl_user.update(njson, { where: { ...ojson } });
+        return result[0];
+        // let result = await tbl_club.update(njson, { where: { ...ojson } });
     }
     public static async getUser(json: IUserRequest): Promise<ITbl_user> {
         return await tbl_user.findOne({ where: json });

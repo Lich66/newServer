@@ -1,72 +1,47 @@
 
 import { Application, ChannelService } from 'pinus';
-import { MPQZRoom } from '../../channelService/roomChannelService/roomChannelService';
+import { RoomChannelService } from '../../channelService/roomChannelService/roomChannelService';
 import { redisClient } from '../../db/redis';
+import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
 import { PayType, room_1_1 } from '../../gameConfig/room';
-import { IRoomConfig } from '../../interface/room/roomInterfaces';
+import { GameUitl } from '../../util/gameUitl';
+import { User } from '../user/user';
+
 
 
 export class RoomManager {
 
-    public roomList = {};
-    private channelService: ChannelService;
-    private app: Application;
-    public constructor(channelService: ChannelService, app: Application) {
-        this.channelService = channelService;
-        this.app = app;
-    }
-
-    /**
-     * 获取7位的房间ID
-     */
-    public generateRoomId(): number {
-        let roomId = '';
-        for (let i = 0; i < 7; ++i) {
-            roomId += Math.floor(Math.random() * 10);
+    public static async createRoom(userId: number, config: number[][]) {
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        if (user.roomlist && user.roomlist.length === 10) {
+            return { code: 501, msg: "You already have 10 rooms and can't create any more" };
         }
-        return parseInt(roomId, 0);
-    }
+        // todo 之后要改成从数据库生成的房间配置表获取
+        let needDaimond = parseInt(PayType[config[1][3]].substr(4), 0);
+        if (Number.parseInt(user.diamond, 0) < needDaimond) {
+            return { code: 502, msg: 'You are short of diamonds' };
+        }
 
-    /**
-     * 获取本地时间
-     * @returns string    xxxx.xx.xx xx:xx:xx
-     */
-    public getLocalDateStr(): string {
-        let date = new Date();
-        let year = date.getFullYear();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
-        let hours = date.getHours();
-        let minutes = date.getMinutes();
-        let seconds = date.getSeconds();
-        let dateStr = year + '.' + month + '.' + day + '  ' + hours + ':' + minutes + ':' + seconds;
-        return dateStr;
-    }
+        let roomId: number;
+        do {
+            roomId = GameUitl.generateRoomId();
+        } while (await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`));
+        let createTime = GameUitl.getLocalDateStr();
+        console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
+        let nowDiamond = Number.parseInt(user.diamond, 0)  - needDaimond;
+        let result = await User.updateUser({ userid: Number.parseInt(user.userid, 0)  }, { diamond: nowDiamond });
+        if (result === 0) {
+            return { code: 503, msg: 'Buckling failure' };
+        }
 
-    public async createRoom(userId: number, config: number[][]) {
-        let user = await redisClient.getAsync(`'user:'${userId}`);
-        // console.log('1创建房间时获取到的玩家信息:' + JSON.stringify(user));
-        // console.log('2创建房间时获取到的玩家信息:' + JSON.stringify(user.userid));
-        // if (user.roomlist.length === 10) {
-        //     return { code: 501, msg: "You already have 10 rooms and can't create any more" };
-        // }
-        // // todo 之后要改成从数据库生成的房间配置表获取
-        // let needDaimond = parseInt(PayType[config[1][3]], 0);
-        // if (user.diamond < needDaimond) {
-        //     return { code: 502, msg: 'You are short of diamonds' };
-        // }
-        // let roomId: number;
-        // {
-        //     roomId = this.generateRoomId();
-        // } while (this.roomList[roomId]);
-        // let createTime = this.getLocalDateStr();
+        return { code: 500 };
         // let channel = this.channelService.createChannel(roomId.toString());
         // console.log('房间管理器中房间通道为：' + channel.name);
         // let roomConfig: IRoomConfig = room_1_1(config);
-        // let room = new MPQZRoom(channel);
+        // let room = new RoomChannelService(channel);
         // this.roomList[roomId] = room;
         // room.initRoom(roomId, userId, config, roomConfig, createTime);
-        return { code: 200};
+        // return { code: 200, roomid: room.roomId };
     }
 
     public async joinRoom(userId: number, roomId: number) {
@@ -76,7 +51,7 @@ export class RoomManager {
         //     let user = userManager.getUser(userId);
         //     if (user.diamond < needDaimond) {
         //         return {
-        //             code: 503,
+        //             code: 511,
         //             msg: 'You are short of diamonds'
         //         }
         //     }
