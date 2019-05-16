@@ -4,7 +4,7 @@ import { Bullfight_BaseDB } from '../models/Bullfight_BaseDB';
 import { memory } from './memoryConfig';
 const Op = Sequelize.Op;
 export async function baseInit() {
-    const data = Bullfight_BaseDB.findAll({
+    const data = await Bullfight_BaseDB.findAll({
         where: {
             index: {
                 [Op.regexp]: '\.'

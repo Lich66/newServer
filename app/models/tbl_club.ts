@@ -1,4 +1,4 @@
-import { AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AllowNull, AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const BIGINT20 = 20;
 const STRING64 = 64;
@@ -11,6 +11,7 @@ export class tbl_club extends Model<tbl_club> {
 
     @AutoIncrement
     @PrimaryKey
+    @AllowNull
     @Column({
         type: DataType.BIGINT(BIGINT20),
         comment: '茶楼id'
@@ -18,7 +19,6 @@ export class tbl_club extends Model<tbl_club> {
     public clubid: number;
 
     @Column({
-        type: DataType.STRING(STRING64),
         comment: '所属玩家'
     })
     public uid: number;

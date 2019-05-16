@@ -1,9 +1,9 @@
 import { pinus } from 'pinus';
 import { Sequelize } from 'sequelize-typescript';
 import { sequelize } from './app/db/sequelize';
-import { Bullfight_BaseDB } from './app/models/Bullfight_BaseDB';
-import { preload } from './preload';
 import { baseInit } from './app/util/memoryInit';
+import { preload } from './preload';
+
 
 const Op = Sequelize.Op;
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步

@@ -1,8 +1,10 @@
 import { Application, FrontendSession } from 'pinus';
 import { redisClient } from '../../../db/redis';
+import { IClubRequest } from '../../../interface/club/handler/clubInterface';
+import { IClubRoomRequest } from '../../../interface/clubRoom/handler/clubRoomInterfaces';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/remote/userInterface';
-
-
+import { tbl_club } from '../../../models/tbl_club';
+import { tbl_room } from '../../../models/tbl_room';
 export default function (app: Application) {
     return new Handler(app);
 }
@@ -91,5 +93,13 @@ export class Handler {
         };
         return result;
     }
+    public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
+        return club;
+    }
 
+    public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<tbl_room> {
+        let club = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), msg.roomid.toString(), true);
+        return club;
+    }
 }

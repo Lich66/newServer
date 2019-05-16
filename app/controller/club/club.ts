@@ -1,8 +1,10 @@
+import { Sequelize } from 'sequelize-typescript';
 import { sequelize } from '../../db/sequelize';
 import { defaultClubName } from '../../gameConfig/defaultClubName';
 import { IClubRequest } from '../../interface/club/handler/clubInterface';
 import { tbl_club } from '../../models/tbl_club';
 import { tbl_room } from '../../models/tbl_room';
+const Op = Sequelize.Op;
 const MAXCLUB = 10;
 const MAXCOMPETITIONCLUB = 30;
 export class Club {
@@ -74,7 +76,11 @@ export class Club {
         // let club = ;
         return result[1][0];
     }
-    public static async getClub(json: IClubRequest): Promise<tbl_club[]> {
-        return await tbl_club.findAll({ where: json });
+    public static async getAllClub(json: IClubRequest): Promise<tbl_club[]> {
+        return await tbl_club.findAll({ where: { uid: json.uid, clubid: { [Op.regexp]: '\.' } } });
+    }
+
+    public static async getClub(json: IClubRequest): Promise<tbl_club> {
+        return await tbl_club.findOne({ where: { clubid: json.clubid } });
     }
 }

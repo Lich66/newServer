@@ -12,12 +12,16 @@ export class ClubRoom {
     public static async deleteClubRoom() {
 
     }
+    // 好像房间也不能改
     public static async updateClubRoom(ojson: IClubRoomRequest, njson: IClubRoomRequest): Promise<tbl_room> {
         let result = await tbl_room.update(njson, { where: { ...ojson } });
         // let club = ;
         return result[1][0];
     }
-    public static async getClubRoom(json: IClubRoomRequest): Promise<ITbl_room[]> {
+    public static async getAllClubRoom(json: IClubRoomRequest): Promise<ITbl_room[]> {
         return await tbl_room.findAll({ where: json });
+    }
+    public static async getClubRoom(json: IClubRoomRequest): Promise<ITbl_room> {
+        return await tbl_room.findOne({ where: json });
     }
 }
