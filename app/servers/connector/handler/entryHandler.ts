@@ -1,6 +1,8 @@
 import { Application, FrontendSession } from 'pinus';
+import { RoomManager } from '../../../controller/room/roomManager';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/handler/hallInterfaces';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/remote/userInterface';
 
 
@@ -13,7 +15,6 @@ export class Handler {
 
     }
     public async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
-
         if (!userinfo.token && !userinfo.wxopenid && !userinfo.xlopenid) {
             return {
                 code: 400
@@ -76,6 +77,24 @@ export class Handler {
             };
         }
 
+    }
+
+    // ---------------------------------------------------------------------
+    // ------------------------------ 野生房间 ------------------------------    
+    // ---------------------------------------------------------------------
+    public async createRoom(msg: ICreateRoomRequest, session: FrontendSession) {
+        console.log('大厅服务器收到创建房间消息:' + JSON.stringify(msg));
+        let userid: number = parseInt(session.uid, 0);
+        let result = await RoomManager.createRoom(userid, msg.roomConfig);
+        return result;
+    }
+
+    public async joinRoom(msg: IJoinRoomRequest, session: FrontendSession) {
+        // console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
+        // let userid: number = parseInt(session.uid);
+        // let result = await roomManager.joinRoom(userid, msg.roomid);
+        // return result;
+        return null;
     }
 
     public async publish(msg: any, session: FrontendSession) {

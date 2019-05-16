@@ -1,4 +1,4 @@
-import { Application, BackendSession, RemoterClass } from 'pinus';
+import { Application, FrontendSession, RemoterClass } from 'pinus';
 
 export default function (app: Application) {
     return new RoomRemote(app);
@@ -7,7 +7,7 @@ export default function (app: Application) {
 declare global {
     interface UserRpc {
         room: {
-            roomRemote: RemoterClass<BackendSession, RoomRemote>;
+            roomRemote: RemoterClass<FrontendSession, RoomRemote>;
         };
     }
 }

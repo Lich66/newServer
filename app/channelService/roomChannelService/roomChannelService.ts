@@ -1,8 +1,8 @@
-import { Channel } from 'pinus';
+import { Channel, ChannelService } from 'pinus';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 
 export class RoomChannelService {
-    private channel: Channel;
+    private channelService: ChannelService;
     public createTime: string;
     public roomId: number;
     public creatorId: number;
@@ -25,8 +25,8 @@ export class RoomChannelService {
     public userList: string[];
     public onlookerList: string[];
 
-    public constructor(channel: Channel) {
-        this.channel = channel;
+    public constructor(channelService: ChannelService) {
+        this.channelService = channelService;
     }
 
     public initRoom(roomId: number, userId: number, config: number[][], roomConfig: IRoomConfig, createTime: string) {
@@ -51,15 +51,17 @@ export class RoomChannelService {
     }
 
     public getChannel(): Channel {
-        return this.channel;
+        return this.channelService.getChannel(this.roomId.toString(), false);
     }
 
     public hasUser(userId: string) {
-        for (let item  of this.userList) {
-            if (item  === userId) {
+        for (let item of this.userList) {
+            if (item === userId) {
                 return true;
             }
         }
         return false;
     }
+
+    
 }

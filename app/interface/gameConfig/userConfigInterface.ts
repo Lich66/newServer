@@ -1,5 +1,5 @@
 import { IUser } from '../models/tbl_user';
 
 export interface IUserConfig extends IUser {
-    roomList: [];
+    roomList: number[];
 }
