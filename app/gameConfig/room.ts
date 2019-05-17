@@ -50,41 +50,24 @@ function hex_to_bin(str: string) {
  * 明牌抢庄经典玩法
  * @param config 二位数组的参数
  */
-export function room_1_1(config: number[][]) {
-    let specialCardType = [];
-    let binstr1 = hex_to_bin(config[1][8].toString());
-    for (let i = binstr1.length - 1; i >= 0; i--) {
-        let num = parseInt(binstr1.substr(i, 1), 0);
-        if (num === 1) {
-            specialCardType.push(SpecialCardType[i]);
-        }
-    }
-    console.log(JSON.stringify(specialCardType));
-    let advancedOptions = [];
-    let binstr2 = hex_to_bin(config[1][9].toString());
-    for (let i = binstr2.length - 1; i >= 0; i--) {
-        let num = parseInt(binstr2.substr(i, 1), 0);
-        if (num === 1) {
-            specialCardType.push(AdvancedOptions[i]);
-        }
-    }
-    console.log(JSON.stringify(advancedOptions));
+export function room_0_0(config: number[][]) {
+    let specialCardType = hex_to_bin(config[1][8].toString());
+    let advancedOptions = hex_to_bin(config[1][9].toString());
+    console.log('特殊牌型: ' + specialCardType + ' ; 高级选项: ' + advancedOptions);
     let roomConfig = {
-        gameType: GameType[config[0][0]],
-        playType: PlayType[config[0][1]],
-        deskType: DeskType[config[1][0]],
-        baseScore: BaseScore[config[1][1]],
-        roundCount: RoundCount[config[1][2]],
-        payType: PayType[config[1][3]],
-        startType: StartType[config[1][4]],
-        pushWager: PushWager[config[1][5]],
-        maxRobBanker: MaxRobBanker[config[1][6]],
-        compareAllType: '',
-        doubleRule: DoubleRule[config[1][7]],
+        gameType: config[0][0],
+        playType: config[0][1],
+        deskType: config[1][0],
+        baseScore: config[1][1],
+        roundCount: config[1][2],
+        payType: config[1][3],
+        startType: config[1][4],
+        pushWager: config[1][5],
+        maxRobBanker: config[1][6],
+        doubleRule: config[1][7],
         specialCardType,
         advancedOptions,
-        lazarilloDeTormes: LazarilloDeTormes[config[1][10]]
+        lazarilloDeTormes: config[1][10]
     };
-
     return roomConfig;
 }

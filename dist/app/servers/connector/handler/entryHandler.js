@@ -95,15 +95,27 @@ class Handler {
             console.log('大厅服务器收到创建房间消息:' + JSON.stringify(msg));
             let userid = parseInt(session.uid, 0);
             let result = yield roomManager_1.RoomManager.createRoom(userid, msg.roomConfig);
-            return result;
+            if (!result.flag) {
+                return {
+                    code: result.code,
+                    msg: result.msg
+                };
+            }
+            yield this.app.rpc.room.roomRemote.createRoom.route(session)(result.roomId);
+            return { code: 200, roomid: result.roomId };
         });
     }
     joinRoom(msg, session) {
         return __awaiter(this, void 0, void 0, function* () {
-            // console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
-            // let userid: number = parseInt(session.uid);
-            // let result = await roomManager.joinRoom(userid, msg.roomid);
-            // return result;
+            console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
+            let userId = parseInt(session.uid, 0);
+            let result = yield roomManager_1.RoomManager.joinRoom(userId, msg.roomId);
+            if (!result.flag) {
+                return {
+                    code: result.code,
+                    msg: result.msg
+                };
+            }
             return null;
         });
     }

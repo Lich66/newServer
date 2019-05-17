@@ -3,8 +3,9 @@ import { Application, ChannelService } from 'pinus';
 import { RoomChannelService } from '../../channelService/roomChannelService/roomChannelService';
 import { redisClient } from '../../db/redis';
 import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
-import { PayType, room_1_1 } from '../../gameConfig/room';
+import { PayType, room_0_0 } from '../../gameConfig/room';
 import { GameUitl } from '../../util/gameUitl';
+import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
 
 
@@ -14,12 +15,12 @@ export class RoomManager {
     public static async createRoom(userId: number, config: number[][]) {
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
         if (user.roomlist && user.roomlist.length === 10) {
-            return { code: 501, msg: "You already have 10 rooms and can't create any more" };
+            return { flag: false, code: 501, msg: "You already have 10 rooms and can't create any more" };
         }
         // todo 之后要改成从数据库生成的房间配置表获取
         let needDaimond = parseInt(PayType[config[1][3]].substr(4), 0);
         if (Number.parseInt(user.diamond, 0) < needDaimond) {
-            return { code: 502, msg: 'You are short of diamonds' };
+            return { flag: false, code: 502, msg: 'You are short of diamonds' };
         }
 
         let roomId: number;
@@ -28,55 +29,54 @@ export class RoomManager {
         } while (await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`));
         let createTime = GameUitl.getLocalDateStr();
         console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
-        let nowDiamond = Number.parseInt(user.diamond, 0)  - needDaimond;
-        let result = await User.updateUser({ userid: Number.parseInt(user.userid, 0)  }, { diamond: nowDiamond });
+        let nowDiamond = Number.parseInt(user.diamond, 0) - needDaimond;
+        let result = await User.updateUser({ userid: Number.parseInt(user.userid, 0) }, { diamond: nowDiamond });
         if (result === 0) {
-            return { code: 503, msg: 'Buckling failure' };
+            return { flag: false, code: 503, msg: 'database deduction failed' };
         }
-
-        return { code: 500 };
-        // let channel = this.channelService.createChannel(roomId.toString());
-        // console.log('房间管理器中房间通道为：' + channel.name);
-        // let roomConfig: IRoomConfig = room_1_1(config);
-        // let room = new RoomChannelService(channel);
-        // this.roomList[roomId] = room;
-        // room.initRoom(roomId, userId, config, roomConfig, createTime);
-        // return { code: 200, roomid: room.roomId };
+        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
+        console.log('改变后redis的钻石数' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
+        let json1 = room_0_0(config);
+        console.log('转义后的房间配置信息: ' + json1);
+        let json2 = {
+            roomId,
+            creatorId: userId,
+            createTime,
+            roomConfig: config
+        };
+        let roomConfig = SelfUtils.assign(json1, json2);
+        console.log('合并后的房间配置: ' + JSON.stringify(roomConfig));
+        for (let key in roomConfig) {
+            if (roomConfig.hasOwnProperty(key)) {
+                await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);
+            }
+        }
+        console.log('从redis捞出来的roomConfig = ' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`)));
+        return { flag: true, roomId };
     }
 
-    public async joinRoom(userId: number, roomId: number) {
-        // let room = this.roomList[roomId];
-        // if (!!room) {
-        //     let needDaimond: number = parseInt(room.PayType.substr(4, room.PayType.length - 4));
-        //     let user = userManager.getUser(userId);
-        //     if (user.diamond < needDaimond) {
-        //         return {
-        //             code: 511,
-        //             msg: 'You are short of diamonds'
-        //         }
-        //     }
-        //     let userInfo = {
-        //         userid: user.userid,
-        //         usernick: user.usernick,
-        //         image: user.image
-        //     };
-        //     let channel = room.getChannel();
-        //     channel.pushMessage('onJoinRoom', userInfo);
-        //     channel.add(userId);
-        //     return {
-        //         code: 200,
-        //         data: {
-        //             userlist: room.userList,
-        //             onlookerlist: room.onlookerList,
-        //             roomconfig: room.roomConfig
-        //         }
-        //     }
-        // } else {
-        //     return {
-        //         code: 401,
-        //         msg: "The room does't exist!"
-        //     };
-        // }
+    public static async joinRoom(userId: number, roomId: number) {
+        let roomConfig = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 如果是房间是AA类型,则需要判断玩家的房卡是否足够
+        if (PayType[parseInt(roomConfig.playType, 0)].substr(0, 2) === 'AA') {
+            let needDaimond = parseInt(PayType[parseInt(roomConfig.playType, 0)].substr(4), 0);
+            if (parseInt(user.diamond, 0) < needDaimond) {
+                return { flag: false, code: 511, msg: 'You are short of diamonds' };
+            }
+        }
+        let num: number[][] = [[], []];
+        let numstr: string[] = roomConfig.roomConfig.split(',');
+        console.log('..................拆分出来的' + JSON.stringify(numstr));
+        numstr.forEach((value, i) => {
+            if (i < 2) {
+                num[0][i] = parseInt(value, 0);
+            } else {
+                num[1][i] = parseInt(value, 0);
+            }
+        });
+        console.log('..................解析出来的' + JSON.stringify(num));
+
         return null;
     }
 }
