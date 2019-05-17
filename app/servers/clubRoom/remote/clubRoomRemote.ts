@@ -30,7 +30,7 @@ export class ClubRoomRemote {
         // return { code: 200, data: { clubId: clubRoom.clubId } }
     }
 
-    public async joinClubRoom(uid: string, sid: string, roomid: string, flag: boolean): Promise<tbl_room> {
+    public async joinClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
         const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0) });
         if (!clubRoom) {
             return null;
@@ -42,6 +42,26 @@ export class ClubRoomRemote {
         }
         const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
         channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
+        channel.pushMessage(`onEntryClub${clubid}Room`, { user });
+        return clubRoom;
+
+    }
+
+    public async leaveClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
+        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0) });
+        if (!clubRoom) {
+            return null;
+        }
+        const channel = this.channelService.getChannel(roomid, flag);
+        const channelUser = channel.getMember(uid);
+        if (channelUser) {
+            channel.leave(uid, sid);
+        } else {
+            return null;
+        }
+        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
+        channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
+        channel.pushMessage(`onEntryClub${clubid}Room`, { user });
         return clubRoom;
 
     }

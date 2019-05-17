@@ -16,7 +16,6 @@
     ],
     "dependencies": {
         "@types/bluebird": "^3.5.19",
-        "@types/node": "^8.5.2",
         "bluebird": "^3.5.1",
         "crc": "^3.8.0",
         "mysql2": "^1.6.5",
@@ -29,6 +28,7 @@
     },
     "devDependencies": {
         "@types/crc": "^3.4.0",
+        "@types/node": "^8.10.48",
         "@types/redis": "^2.8.12",
         "copy-dir": "^1.0.0",
         "pre-commit": "^1.2.2",

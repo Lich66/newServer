@@ -115,12 +115,43 @@ export class Handler {
         return result;
     }
     public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+        session.set('clubid', msg.clubid);
+        session.push('clubid', () => {
+
+        });
+        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
+        return club;
+    }
+
+    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+        session.set('roomid', null);
+        session.push('roomid', () => {
+
+        });
+        session.set('clubid', null);
+        session.push('clubid', () => {
+
+        });
         let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
         return club;
     }
 
     public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<tbl_room> {
-        let club = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), msg.roomid.toString(), true);
+        session.set('roomid', msg.roomid);
+        session.push('roomid', () => {
+
+        });
+        const clubid = session.get('clubid');
+        let club = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), clubid, msg.roomid.toString(), true);
+        return club;
+    }
+
+    public async leaveClubRoom(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+        session.set('roomid', null);
+        session.push('roomid', () => {
+
+        });
+        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
         return club;
     }
 }

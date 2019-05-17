@@ -2,6 +2,7 @@ import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinu
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
 import { tbl_club } from '../../../models/tbl_club';
+// import { redisClient } from '../../../db/redis';
 
 
 export default function (app: Application) {
@@ -39,9 +40,29 @@ export class ClubRemote {
         if (!channelUser) {
             channel.add(uid, sid);
         }
+        // redisClient.getAsync
         const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
         channel.pushMessage(`onEntryClub:${clubid}`, { user });
         return club;
 
     }
+
+
+    public async leaveClub(uid: string, sid: string, clubid: string, flag: boolean): Promise<tbl_club> {
+        const club = await Club.getClub({ clubid: Number.parseInt(clubid, 0) });
+        if (!club) {
+            return null;
+        }
+        const channel = this.channelService.getChannel(clubid, flag);
+        const channelUser = channel.getMember(uid);
+        if (channelUser) {
+            channel.leave(uid, sid);
+        } else {
+            return null;
+        }
+        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
+        channel.pushMessage(`onEntryClub:${clubid}`, { user });
+        return club;
+    }
+
 }
