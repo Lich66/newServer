@@ -2,12 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class GameUitl {
     /**
-     * 获取7位的房间ID
+     * 获取6位的房间ID
      * @return number
      */
     static generateRoomId() {
         let roomId = '';
-        for (let i = 0; i < 7; ++i) {
+        for (let i = 0; i < 6; ++i) {
             roomId += Math.floor(Math.random() * 10);
         }
         return parseInt(roomId, 0);

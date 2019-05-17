@@ -7,9 +7,9 @@ const reidsHost = '192.168.1.21';
 
 
 type ISetAsync1 = (key: string, value: string) => Promise<'OK'>;
-type ISetAsync2 = (key: string, value: string, flag: string) => Promise<'OK'>;
-type ISetAsync3 = (key: string, value: string, mode: string, duration: number) => Promise<'OK' | undefined>;
-type ISetAsync4 = (key: string, value: string, mode: string, duration: number, flag: string) => Promise<'OK' | undefined>;
+type ISetAsync2 = (key: string, value: string, flag?: string) => Promise<'OK'>;
+type ISetAsync3 = (key: string, value: string, mode?: string, duration?: number) => Promise<'OK' | undefined>;
+type ISetAsync4 = (key: string, value: string, mode?: string, duration?: number, flag?: string) => Promise<'OK' | undefined>;
 
 type IGetAsync = (key: string) => Promise<string>;
 

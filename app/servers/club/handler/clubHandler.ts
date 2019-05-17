@@ -1,7 +1,6 @@
 import { Application, BackendSession } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
-import { room_1_1 } from '../../../gameConfig/room';
 import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
 
 
@@ -22,7 +21,7 @@ export class Handler {
                 msg: '参数错误'
             };
         }
-        let play_setting = JSON.stringify(room_1_1(clubinfo.clubConfig));
+        let play_setting = 'JSON.stringify(room_1_1(clubinfo.clubConfig))';
         let result = await Club.createClub({ ...clubinfo, play_setting, uid: Number.parseInt(session.uid, 0) }, session.get('usernick'));
         if (result) {
             return {
