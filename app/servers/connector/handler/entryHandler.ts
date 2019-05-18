@@ -107,7 +107,12 @@ export class Handler {
                 msg: result.msg
             };
         }
-        return null;
+        return {
+            code: result.code,
+            roomConfig: result.roomConfig,
+            userList: result.userList,
+            onlookerList: result.onlookerList
+        };
     }
 
     public async publish(msg: any, session: FrontendSession) {

@@ -72,11 +72,11 @@ export class RoomManager {
             if (i < 2) {
                 num[0][i] = parseInt(value, 0);
             } else {
-                num[1][i] = parseInt(value, 0);
+                num[1][i - 2] = parseInt(value, 0);
             }
         });
         console.log('..................解析出来的' + JSON.stringify(num));
-
-        return null;
+        // todo 从redis上拉取房间里的玩家列表和观战玩家列表 
+        return { flag: true, roomConfig: num, userList: [], onlookerList: [] };
     }
 }
