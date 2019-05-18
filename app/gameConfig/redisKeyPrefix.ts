@@ -1,6 +1,6 @@
 export const redisKeyPrefix = {
-    user: 'user:',
-    room: 'room:',
-    club: 'club:',
-    clubRoom: 'clubRoom:'
+    user: 'user_',
+    room: 'room_',
+    club: 'club_',
+    clubRoom: 'clubRoom_'
 };

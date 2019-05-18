@@ -40,9 +40,11 @@ export class Handler {
         session.push('usernick', () => {
 
         });
+        console.log(JSON.stringify(user));
         for (let key in user) {
             if (user.hasOwnProperty(key)) {
-                await redisClient.hsetAsync(`${redisKeyPrefix.user}${user.userid}`, key, user[key]);
+                console.log(`${redisKeyPrefix.user}${user.userid}`, key, user[key]);
+                await redisClient.hsetAsync(`${redisKeyPrefix.user}${user.userid}`, key, `${user[key]}`);
             }
         }
         return {
