@@ -5,7 +5,7 @@ const STRING64 = 64;
 const STRING32 = 32;
 const STRING2048 = 2048;
 const STRING512 = 512;
-@Table
+@Table({ timestamps: false })
 // tslint:disable-next-line: class-name
 export class tbl_room extends Model<tbl_room> {
 

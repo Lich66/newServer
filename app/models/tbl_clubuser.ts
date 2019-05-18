@@ -2,7 +2,7 @@ import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'seque
 
 const BIGINT20 = '20';
 const STRING64 = 64;
-@Table
+@Table({ timestamps: false })
 // tslint:disable-next-line: class-name
 export class tbl_clubuser extends Model<tbl_clubuser> {
 

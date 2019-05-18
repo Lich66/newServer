@@ -1,6 +1,6 @@
 import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
-@Table
+@Table({ timestamps: false })
 // tslint:disable-next-line: class-name
 export class Bullfight_MingPaiTongBi extends Model<Bullfight_MingPaiTongBi> {
   

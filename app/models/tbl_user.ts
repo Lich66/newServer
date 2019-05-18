@@ -5,7 +5,7 @@ const STRING32 = 32;
 const STRING512 = 512;
 
 
-@Table
+@Table({ timestamps: false })
 // tslint:disable-next-line: class-name
 export class tbl_user extends Model<tbl_user> {
   @PrimaryKey

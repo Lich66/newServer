@@ -8,7 +8,7 @@
     "main": "./dist/app",
     "scripts": {
         "start": "npm run build && node copy.js && node dist/app",
-        "build": "node_modules/.bin/tsc && node copy.js",
+        "build": "node deldir.js && node_modules\\.bin\\tsc && node copy.js",
         "tslint": "tslint -c tslint.json 'app/**/*.ts'"
     },
     "pre-commit": [
