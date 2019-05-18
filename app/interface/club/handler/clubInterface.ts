@@ -22,10 +22,10 @@ export interface IClubRequest {
     present_times?: number;
     present_points?: number;
     clubConfig?: number[][];
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 export interface IClubReturn extends IResponse {
     data?: IClub | IClub[] | number | [number, IClub[]];
-    [key: string]: any;
+    // [key: string]: any;
 }

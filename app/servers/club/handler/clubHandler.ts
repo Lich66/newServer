@@ -84,4 +84,19 @@ export class Handler {
             };
         }
     }
+
+    public async getAllClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
+
+        let result = await Club.getAllClub({ uid: Number.parseInt(session.uid, 0) });
+        if (result) {
+            return {
+                code: 200,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
 }

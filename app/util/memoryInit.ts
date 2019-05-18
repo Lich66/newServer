@@ -13,11 +13,10 @@ export async function baseInit() {
             }
         }
     });
-    const base: { index: string; PlayerStartGemsNum: string; RoomStartID: string; ClubStartID: string } = data[0];
-    for (const key in base) {
-        if (base.hasOwnProperty(key)) {
-            redisClient.hsetAsync(memory.base, key, base[key]);
-        }
+    const basearr: { Index: string; Key: string; Text: string; Value: string }[] = data;
+
+    for (const iterator of basearr) {
+       await redisClient.hsetAsync(memory.base, iterator.Key, iterator.Value);
     }
 }
 

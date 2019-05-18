@@ -13,12 +13,12 @@ export interface IUserRequest {
     invite_code?: string;
     inviter?: number;
     logintime?: Date;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 export interface IUserResponse extends IUser {
     token: string;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 // export interface IUserinfoRequest {

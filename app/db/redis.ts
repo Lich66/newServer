@@ -4,6 +4,7 @@ import * as redis from 'redis';
 
 const port = 6379;
 const reidsHost = '192.168.1.21';
+type IDelAsync = (key: string | string[]) => Promise<number>;
 
 type ISetAsync = (key: string, value: string, mode?: string, duration?: number, flag?: string) => Promise<'OK' | undefined>;
 
@@ -18,7 +19,7 @@ type IHgetallAsync = (key: string) => Promise<{ [key: string]: string }>;
 interface OverloadedKeyCommand<T, U> {
     (key: string, arg1: T, arg2?: T, arg3?: T, arg4?: T, arg5?: T, arg6?: T): Promise<U>;
     (key: string, arg1: T | T[]): Promise<U>;
-    // (key: string, ...args: Array<T>): Promise<U>;
+    (key: string, ...args: Array<T>): Promise<U>;
     // (...args: Array<string | T>): Promise<U>;
 }
 type IHexistsAsync = (key: string, field: string) => Promise<number>;
@@ -58,7 +59,7 @@ type ILpopAsync = (key: string) => Promise<string>;
 
 type ILpushxAsync = (key: string, value: string) => Promise<number>;
 
-type ILrangeAsync = (key: string, start: number, stop: number) => Promise<string>;
+type ILrangeAsync = (key: string, start: number, stop: number) => Promise<string[]>;
 
 type ILremAsync = (key: string, count: number, value: string) => Promise<number>;
 
@@ -74,7 +75,13 @@ type IRpushxAsync = (key: string, value: string) => Promise<number>;
 
 type IBpopAsync = (key: string, timeout: number) => Promise<string[]>;
 
+type IDumpAsync = (key: string) => Promise<string>;
+
+type IKeysAsync = (pattern: string) => Promise<string[]>;
 interface IBlueRedisClient extends redis.RedisClient {
+    dumpAsync?: IDumpAsync;
+    keysAsync?: IKeysAsync;
+    delAsync?: IDelAsync;
     /**
      * key-value set
      */
@@ -89,12 +96,12 @@ interface IBlueRedisClient extends redis.RedisClient {
      * hash set (object)
      */
     hsetAsync?: IHsetAsync;
-    
+
     /**
      * hash get (object)
      */
     hgetAsync?: IHgetAsync;
-    
+
     /**
      * hash get all (object)
      */

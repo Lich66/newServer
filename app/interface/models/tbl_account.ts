@@ -6,11 +6,11 @@ export interface IAccount {
     uid: number;
     account: string;
     password: string;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 
 // tslint:disable-next-line: class-name
 export interface ITbl_account extends Model<ITbl_account>, IAccount {
-    [key: string]: any;
+    // [key: string]: any;
 }

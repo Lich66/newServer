@@ -31,7 +31,7 @@ export class ClubRoomRemote {
     }
 
     public async joinClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
-        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0) });
+        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
         if (!clubRoom) {
             return null;
         }
@@ -48,7 +48,7 @@ export class ClubRoomRemote {
     }
 
     public async leaveClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
-        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0) });
+        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
         if (!clubRoom) {
             return null;
         }

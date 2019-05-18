@@ -11,14 +11,14 @@ redisClient.hgetallAsync('base').then((e) => {
 // });
 // // 插入
 
-redisClient.hsetAsync('user_502', 'userid', '502');
+// redisClient.hsetAsync('user_502', 'userid', '502');
 
 // redisClient.hsetAsync('zhjtest', 'float', '1.5');
 
 // // 获取
-redisClient.hgetAsync('zhjtest', 'parm1').then((r) => {
-    console.log(r);
-});
+// redisClient.hgetAsync('user_502', 'userid').then((r) => {
+//     console.log(r);
+// });
 // // 获取全部
 // redisClient.hgetallAsync('zhjtest').then((r) => {
 //     console.log(r);
@@ -28,7 +28,12 @@ redisClient.hgetAsync('zhjtest', 'parm1').then((r) => {
 //     console.log(r);
 // });
 // //  删除
-// redisClient.hdelAsync('zhjtest', 'parm3');
+// redisClient.delAsync('user_502');
+
+// // // 获取
+// redisClient.hgetAsync('user_502', 'userid').then((r) => {
+//     console.log(r);
+// });
 
 // redisClient.hgetallAsync('zhjtest').then((r) => {
 //     console.log(r);
@@ -104,9 +109,14 @@ redisClient.hgetAsync('zhjtest', 'parm1').then((r) => {
 // redisClient.lpushxAsync('zhjtestlist', 'x').then((r) => {
 //     console.log(r);
 // })
-// redisClient.lrangeAsync('zhjtestlist', 0, 100).then((r) => {
-//     console.log(r)
-// });
+redisClient.keysAsync('*').then((r) => {
+    console.log(r);
+    for (const iterator of r) {
+        redisClient.delAsync(iterator).then((s) => {
+            console.log(s);
+        });
+    }
+});
 // redisClient.blpopAsync('zhjtestlist', 100).then((r) => {
 //     console.log(r)
 // })

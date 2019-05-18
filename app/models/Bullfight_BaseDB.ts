@@ -6,15 +6,15 @@ export class Bullfight_BaseDB extends Model<Bullfight_BaseDB> {
   
   @PrimaryKey
   @Column
-  public index: string;
+  public Index: string;
 
   @Column
-  public PlayerStartGemsNum: string;
+  public Key: string;
 
   @Column
-  public RoomStartID: string;
+  public Text: string;
 
   @Column
-  public ClubStartID: string;
+  public Value: string;
 
 }

@@ -1,5 +1,5 @@
 
-import { IClubRoomRequest } from '../../interface/clubRoom/handler/clubRoomInterfaces';
+import { IClubRoomCRUD, IClubRoomRequest } from '../../interface/clubRoom/handler/clubRoomInterfaces';
 import { ITbl_room } from '../../interface/models/tbl_room';
 import { tbl_room } from '../../models/tbl_room';
 
@@ -13,15 +13,16 @@ export class ClubRoom {
 
     }
     // 好像房间也不能改
-    public static async updateClubRoom(ojson: IClubRoomRequest, njson: IClubRoomRequest): Promise<tbl_room> {
-        let result = await tbl_room.update(njson, { where: { ...ojson } });
+    public static async updateClubRoom(ojson: IClubRoomCRUD, njson: IClubRoomRequest): Promise<tbl_room> {
+        let result = await tbl_room.update<ITbl_room>(njson, { where: { roomid: ojson.roomid, clubid: ojson.clubid } });
         // let club = ;
         return result[1][0];
     }
-    public static async getAllClubRoom(json: IClubRoomRequest): Promise<ITbl_room[]> {
-        return await tbl_room.findAll({ where: json });
+    public static async getAllClubRoom(json: IClubRoomCRUD): Promise<ITbl_room[]> {
+        return await tbl_room.findAll({ where: {clubid: json.clubid } });
     }
-    public static async getClubRoom(json: IClubRoomRequest): Promise<ITbl_room> {
-        return await tbl_room.findOne({ where: json });
+    public static async getClubRoom(json: IClubRoomCRUD): Promise<ITbl_room> {
+        return await tbl_room.findOne({ where: { roomid: json.roomid } });
     }
+
 }

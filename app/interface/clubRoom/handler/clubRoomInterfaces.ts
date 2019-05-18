@@ -1,7 +1,9 @@
 import { IResponse } from '../../global/response';
 import { IRoom } from '../../models/tbl_room';
+/**
+ * 客户端传入的参数 基本只用到roomid
+ */
 export interface IClubRoomRequest {
-
     roomid?: number;
     clubid?: number;
     create_time?: Date;
@@ -25,10 +27,16 @@ export interface IClubRoomRequest {
     grab_flag?: boolean;
     double_flag?: boolean;
     laizi_type?: number;
-    [key: string]: any;
+    // [key: string]: any;
+}
+/**
+ * crud 用到的 参数  必须加入到uid  用不用道再说
+ */
+export interface IClubRoomCRUD extends IClubRoomRequest {
+    uid: string;
 }
 
 export interface IClubRoomReturn extends IResponse {
     data?: IRoom | IRoom[] | number | [number, IRoom[]];
-    [key: string]: any;
+    // [key: string]: any;
 }

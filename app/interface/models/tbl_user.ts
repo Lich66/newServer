@@ -12,10 +12,10 @@ export interface IUser {
     invite_code: string;
     inviter: number;
     logintime: Date;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 // tslint:disable-next-line: class-name
 export interface ITbl_user extends Model<ITbl_user>, IUser {
-    [key: string]: any;
+    // [key: string]: any;
 }

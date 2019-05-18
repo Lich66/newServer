@@ -5,11 +5,11 @@ export interface IClub_requser {
     clubid: number;
     userid: number;
     req_time: Date;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 
 // tslint:disable-next-line: class-name
 export interface ITbl_club_requser extends Model<ITbl_club_requser>, IClub_requser {
-    [key: string]: any;
+    // [key: string]: any;
 }

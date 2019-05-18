@@ -30,7 +30,7 @@ export class Handler {
         delete njson.clubid;
         delete njson.owner;
 
-        let result = await ClubRoom.updateClubRoom({ roomid: ClubRoominfo.roomid, clubid: ClubRoominfo.roomid }, njson);
+        let result = await ClubRoom.updateClubRoom({ roomid: ClubRoominfo.roomid, clubid: ClubRoominfo.roomid, uid: session.uid }, njson);
         if (result) {
             return {
                 code: 200,
@@ -45,7 +45,22 @@ export class Handler {
 
     public async getClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
 
-        let result = await ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid });
+        let result = await ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid, uid: session.uid });
+        if (result) {
+            return {
+                code: 200,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
+
+    public async getAllClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
+
+        let result = await ClubRoom.getAllClubRoom({ clubid: ClubRoominfo.clubid, uid: session.uid });
         if (result) {
             return {
                 code: 200,

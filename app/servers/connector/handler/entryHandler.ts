@@ -2,12 +2,10 @@ import { Application, FrontendSession } from 'pinus';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRequest } from '../../../interface/club/handler/clubInterface';
-import { IClubRoomRequest } from '../../../interface/clubRoom/handler/clubRoomInterfaces';
+import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
+import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/handler/clubRoomInterfaces';
 import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/handler/hallInterfaces';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/remote/userInterface';
-import { tbl_club } from '../../../models/tbl_club';
-import { tbl_room } from '../../../models/tbl_room';
 export default function (app: Application) {
     return new Handler(app);
 }
@@ -132,16 +130,26 @@ export class Handler {
         return result;
     }
 
-    public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+    public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
         session.set('clubid', msg.clubid);
         session.push('clubid', () => {
 
         });
+        // session.uid, this.app.getServerId(), msg.clubid.toString(), true
         let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
-        return club;
+        if (club) {
+            return {
+                code: 200,
+                data: club
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
     }
 
-    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
         session.set('roomid', null);
         session.push('roomid', () => {
 
@@ -151,25 +159,52 @@ export class Handler {
 
         });
         let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
-        return club;
+        if (club) {
+            return {
+                code: 200,
+                data: club
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
     }
 
-    public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<tbl_room> {
+    public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
         session.set('roomid', msg.roomid);
         session.push('roomid', () => {
 
         });
         const clubid = session.get('clubid');
-        let club = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), clubid, msg.roomid.toString(), true);
-        return club;
+        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), clubid, msg.roomid.toString(), true);
+        if (clubRoom) {
+            return {
+                code: 200,
+                data: clubRoom
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
     }
 
-    public async leaveClubRoom(msg: IClubRequest, session: FrontendSession): Promise<tbl_club> {
+    public async leaveClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
         session.set('roomid', null);
         session.push('roomid', () => {
 
         });
-        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
-        return club;
+        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.leaveClubRoom.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), msg.roomid.toString(), true);
+        if (clubRoom) {
+            return {
+                code: 200,
+                data: clubRoom
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
     }
 }
