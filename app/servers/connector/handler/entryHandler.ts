@@ -25,14 +25,14 @@ export class Handler {
         const user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
         if (!user) {
             return {
-                code: 500
+                code: 501
             };
         }
         const sessionService = this.app.get('sessionService');
 
         if (!!sessionService.getByUid(user.userid.toString())) {
             return {
-                code: 500
+                code: 502
             };
         }
         await session.abind(user.userid.toString());
