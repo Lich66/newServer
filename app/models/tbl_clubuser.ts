@@ -1,6 +1,6 @@
 import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
-const BIGINT20 = 20;
+const BIGINT20 = '20';
 const STRING64 = 64;
 @Table
 // tslint:disable-next-line: class-name

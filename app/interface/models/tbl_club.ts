@@ -20,9 +20,11 @@ export interface IClub {
     present_target: number;
     present_times: number;
     present_points: number;
+    [key: string]: any;
 }
 
 
 // tslint:disable-next-line: class-name
 export interface ITbl_club extends Model<ITbl_club>, IClub {
+    [key: string]: any;
 }

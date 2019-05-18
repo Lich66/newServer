@@ -5,7 +5,6 @@ import { baseInit } from './app/util/memoryInit';
 import { preload } from './preload';
 
 
-const Op = Sequelize.Op;
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步
 // sequelize.sync({ force: true });
 

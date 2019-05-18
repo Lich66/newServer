@@ -1,5 +1,5 @@
 import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
-const BIGINT20 = 20;
+const BIGINT20 = '20';
 @Table
 // tslint:disable-next-line: class-name
 export class tbl_club_requser extends Model<tbl_club_requser> {

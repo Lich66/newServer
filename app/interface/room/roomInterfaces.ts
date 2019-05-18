@@ -13,4 +13,5 @@ export interface IRoomConfig {
     specialCardType: string[];
     advancedOptions: string[];
     lazarilloDeTormes: string;
+    [key: string]: any;
 }

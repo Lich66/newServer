@@ -1,7 +1,9 @@
-import { Sequelize } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
+
 import { redisClient } from '../db/redis';
 import { Bullfight_BaseDB } from '../models/Bullfight_BaseDB';
 import { memory } from './memoryConfig';
+// const Op = Sequelize.Op;
 const Op = Sequelize.Op;
 export async function baseInit() {
     const data = await Bullfight_BaseDB.findAll({
@@ -11,7 +13,7 @@ export async function baseInit() {
             }
         }
     });
-    const base: { index: string; PlayerStartGemsNum: string; RoomStartID: string; ClubStartID: string } = data[0].toJSON();
+    const base: { index: string; PlayerStartGemsNum: string; RoomStartID: string; ClubStartID: string } = data[0];
     for (const key in base) {
         if (base.hasOwnProperty(key)) {
             redisClient.hsetAsync(memory.base, key, base[key]);

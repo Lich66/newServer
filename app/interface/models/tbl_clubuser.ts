@@ -11,9 +11,11 @@ export interface IClubuser {
     freeze_flag: boolean;
     assist_flag: boolean;
     pay_flag: boolean;
+    [key: string]: any;
 }
 
 
 // tslint:disable-next-line: class-name
 export interface ITbl_clubuser extends Model<ITbl_clubuser>, IClubuser {
+    [key: string]: any;
 }

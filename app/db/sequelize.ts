@@ -2,13 +2,14 @@ import * as path from 'path';
 import { Sequelize } from 'sequelize-typescript';
 
 export const sequelize = new Sequelize({
-    operatorsAliases: true,
+    // operatorsAliases: true,
     host: '192.168.1.21',
-    port: 3356,
+    port: 3357,
     database: 'chessdb',
     dialect: 'mysql',
     username: 'root',
     password: '123456',
+    
     // storage: ':memory:',
     // define: {
     //     // timestamps: true, // 开启时间戳 create_at delete_at update_at
@@ -24,6 +25,5 @@ export const sequelize = new Sequelize({
         idle: 10000
     },
     timezone: '+08:00', // 更改为北京时区
-    modelPaths: [path.resolve(__dirname, '..', 'models')]
+    models: [path.resolve(__dirname, '..', 'models')]
 });
-

@@ -23,9 +23,11 @@ export interface IRoom {
     grab_flag: boolean;
     double_flag: boolean;
     laizi_type: number;
+    [key: string]: any;
 }
 
 
 // tslint:disable-next-line: class-name
 export interface ITbl_room extends Model<ITbl_room>, IRoom {
+    [key: string]: any;
 }

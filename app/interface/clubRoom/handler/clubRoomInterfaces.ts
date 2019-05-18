@@ -25,8 +25,10 @@ export interface IClubRoomRequest {
     grab_flag?: boolean;
     double_flag?: boolean;
     laizi_type?: number;
+    [key: string]: any;
 }
 
 export interface IClubRoomReturn extends IResponse {
     data?: IRoom | IRoom[] | number | [number, IRoom[]];
+    [key: string]: any;
 }

@@ -1,4 +1,4 @@
-import { Sequelize } from 'sequelize-typescript';
+import * as Sequelize from 'sequelize';
 import { sequelize } from '../../db/sequelize';
 import { defaultClubName } from '../../gameConfig/defaultClubName';
 import { IClubRequest } from '../../interface/club/handler/clubInterface';
@@ -72,7 +72,7 @@ export class Club {
         }
     }
     public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club> {
-        let result = await tbl_club.update(njson, { where: { ...ojson } });
+        let result = await tbl_club.update(njson, { where: ojson });
         // let club = ;
         return result[1][0];
     }

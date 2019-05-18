@@ -1,6 +1,6 @@
 import { AllowNull, AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
-const BIGINT20 = 20;
+const BIGINT20 = '20';
 const STRING64 = 64;
 const STRING32 = 32;
 const STRING2048 = 2048;

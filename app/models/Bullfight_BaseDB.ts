@@ -15,6 +15,6 @@ export class Bullfight_BaseDB extends Model<Bullfight_BaseDB> {
   public RoomStartID: string;
 
   @Column
-  public ClubStartID: number;
+  public ClubStartID: string;
 
 }
