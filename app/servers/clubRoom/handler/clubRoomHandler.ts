@@ -45,7 +45,7 @@ export class Handler {
 
     public async getClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
 
-        let result = await ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid, uid: session.uid });
+        let result = await ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid });
         if (result) {
             return {
                 code: 200,
@@ -60,7 +60,7 @@ export class Handler {
 
     public async getAllClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
 
-        let result = await ClubRoom.getAllClubRoom({ clubid: ClubRoominfo.clubid, uid: session.uid });
+        let result = await ClubRoom.getAllClubRoom({ clubid: ClubRoominfo.clubid });
         if (result) {
             return {
                 code: 200,

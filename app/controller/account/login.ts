@@ -1,4 +1,5 @@
 
+import * as Sequelize from 'sequelize';
 import { sequelize } from '../../db/sequelize';
 import { defaultUser } from '../../gameConfig/defaultUser';
 import { ITbl_account } from '../../interface/models/tbl_account';
@@ -8,6 +9,7 @@ import { tbl_account } from '../../models/tbl_account';
 import { tbl_user } from '../../models/tbl_user';
 import { User } from '../user/user';
 
+const Op = Sequelize.Op;
 const testAccount = 500;
 function assign<T>(json1: { [key: string]: any }, json2: { [key: string]: any }): T {
     const json = {};
@@ -25,9 +27,23 @@ function assign<T>(json1: { [key: string]: any }, json2: { [key: string]: any })
 }
 export class Login {
     public static async login(json: IUserinfoRequest): Promise<IUserResponse> {
-        const userAccount: ITbl_account = await tbl_account.findOne({
-            where: json
-        });
+        let userAccount: ITbl_account;
+        if (json.token) {
+            userAccount = await tbl_account.findOne({
+                where: { token: json.token }
+            });
+        } else if (json.wxopenid) {
+            userAccount = await tbl_account.findOne({
+                where: { wxopenid: json.wxopenid, token: { [Op.regexp]: '\.' } }
+            });
+        } else if (json.xlopenid) {
+            userAccount = await tbl_account.findOne({
+                where: { xlopenid: json.xlopenid, token: { [Op.regexp]: '\.' } }
+            });
+        }
+        // const userAccount: ITbl_account = await tbl_account.findOne({
+        //     where: { ...parms, to }
+        // });
         if (userAccount) {
             const userModel = await User.getUser({
                 userid: userAccount.uid
@@ -121,7 +137,7 @@ export class Login {
         // 功能没写完 是假的
 
         const userAccount: ITbl_account = await tbl_account.findOne({
-            where: json
+            where: { token: json.token }
         });
         if (userAccount) {
             const userModel = await User.getUser({

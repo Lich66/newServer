@@ -3,7 +3,7 @@ import * as redis from 'redis';
 
 
 const port = 6379;
-const reidsHost = '192.168.1.21';
+const reidsHost = '192.168.0.150';
 type IDelAsync = (key: string | string[]) => Promise<number>;
 
 type ISetAsync = (key: string, value: string, mode?: string, duration?: number, flag?: string) => Promise<'OK' | undefined>;

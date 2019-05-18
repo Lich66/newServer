@@ -1,7 +1,10 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
+import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { IClubRpc } from '../../../interface/club/remote/clubInterface';
 import { tbl_club } from '../../../models/tbl_club';
+import { tbl_user } from '../../../models/tbl_user';
 // import { redisClient } from '../../../db/redis';
 
 
@@ -30,39 +33,34 @@ export class ClubRemote {
         // return { code: 200, data: { clubId: club.clubId } }
     }
 
-    public async joinClub(uid: string, sid: string, clubid: string, flag: boolean): Promise<tbl_club> {
-        const club = await Club.getClub({ clubid: Number.parseInt(clubid, 0) });
+    public async joinClub(clubrpc: IClubRpc): Promise<tbl_club> {
+        const club = await Club.getClub({ clubid: clubrpc.clubid, uid: clubrpc.uid });
         if (!club) {
             return null;
         }
-        const channel = this.channelService.getChannel(clubid, flag);
-        const channelUser = channel.getMember(uid);
+        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubrpc.clubid}`, clubrpc.flag);
+        const channelUser = channel.getMember(`${clubrpc.uid}`);
         if (!channelUser) {
-            channel.add(uid, sid);
+            channel.add(`${clubrpc.uid}`, clubrpc.sid);
         }
         // redisClient.getAsync
-        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
-        channel.pushMessage(`onEntryClub:${clubid}`, { user });
+        const user = await User.getUser({ userid: clubrpc.uid });
+        channel.pushMessage(`${redisKeyPrefix.club}${clubrpc.clubid}`, { user, action: 1 });
         return club;
 
     }
 
 
-    public async leaveClub(uid: string, sid: string, clubid: string, flag: boolean): Promise<tbl_club> {
-        const club = await Club.getClub({ clubid: Number.parseInt(clubid, 0) });
-        if (!club) {
-            return null;
-        }
-        const channel = this.channelService.getChannel(clubid, flag);
-        const channelUser = channel.getMember(uid);
+    public async leaveClub(clubrpc: IClubRpc): Promise<tbl_user> {
+        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubrpc.clubid}`, clubrpc.flag);
+        const channelUser = channel.getMember(`${clubrpc.uid}`);
         if (channelUser) {
-            channel.leave(uid, sid);
-        } else {
-            return null;
+            channel.leave(`${clubrpc.uid}`, clubrpc.sid);
         }
-        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
-        channel.pushMessage(`onEntryClub:${clubid}`, { user });
-        return club;
+        // redisClient.getAsync
+        const user = await User.getUser({ userid: clubrpc.uid });
+        channel.pushMessage(`${redisKeyPrefix.club}${clubrpc.clubid}`, { user, action: 0 });
+        return user;
     }
 
 }

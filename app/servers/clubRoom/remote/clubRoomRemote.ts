@@ -1,9 +1,10 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
-import { tbl_club } from '../../../models/tbl_club';
+import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { IClubRoomRpc } from '../../../interface/clubRoom/remote/clubRoomInterface';
 import { tbl_room } from '../../../models/tbl_room';
-
+import { tbl_user } from '../../../models/tbl_user';
 
 export default function (app: Application) {
     return new ClubRoomRemote(app);
@@ -30,39 +31,39 @@ export class ClubRoomRemote {
         // return { code: 200, data: { clubId: clubRoom.clubId } }
     }
 
-    public async joinClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
-        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
+    public async joinClubRoom(clubroomrpc: IClubRoomRpc): Promise<tbl_room> {
+        const clubRoom = await ClubRoom.getClubRoom({ roomid: clubroomrpc.roomid });
         if (!clubRoom) {
             return null;
         }
-        const channel = this.channelService.getChannel(roomid, flag);
-        const channelUser = channel.getMember(uid);
-        if (!channelUser) {
-            channel.add(uid, sid);
+        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
+        const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
+        if (!roomChannelUser) {
+            roomChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
         }
-        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
-        channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
-        channel.pushMessage(`onEntryClub${clubid}Room`, { user });
+        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
+        const clubChannelUser = clubChannel.getMember(`${clubroomrpc.uid}`);
+        if (!clubChannelUser) {
+            clubChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
+        }
+        const user = await User.getUser({ userid: clubroomrpc.uid });
+        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
+        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
         return clubRoom;
 
     }
 
-    public async leaveClubRoom(uid: string, sid: string, roomid: string, clubid: string, flag: boolean): Promise<tbl_room> {
-        const clubRoom = await ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
-        if (!clubRoom) {
-            return null;
+    public async leaveClubRoom(clubroomrpc: IClubRoomRpc): Promise<tbl_user> {
+        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
+        const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
+        if (roomChannelUser) {
+            roomChannel.leave(`${clubroomrpc.uid}`, clubroomrpc.sid);
         }
-        const channel = this.channelService.getChannel(roomid, flag);
-        const channelUser = channel.getMember(uid);
-        if (channelUser) {
-            channel.leave(uid, sid);
-        } else {
-            return null;
-        }
-        const user = await User.getUser({ userid: Number.parseInt(uid, 0) });
-        channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
-        channel.pushMessage(`onEntryClub${clubid}Room`, { user });
-        return clubRoom;
+        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
+        const user = await User.getUser({ userid: clubroomrpc.uid });
+        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
+        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
+        return user;
 
     }
 }

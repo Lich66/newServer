@@ -18,10 +18,12 @@ export class ClubRoom {
         // let club = ;
         return result[1][0];
     }
-    public static async getAllClubRoom(json: IClubRoomCRUD): Promise<ITbl_room[]> {
+
+    // 查不一定需要uid判断
+    public static async getAllClubRoom(json: IClubRoomRequest): Promise<ITbl_room[]> {
         return await tbl_room.findAll({ where: {clubid: json.clubid } });
     }
-    public static async getClubRoom(json: IClubRoomCRUD): Promise<ITbl_room> {
+    public static async getClubRoom(json: IClubRoomRequest): Promise<ITbl_room> {
         return await tbl_room.findOne({ where: { roomid: json.roomid } });
     }
 

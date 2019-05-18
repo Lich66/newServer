@@ -4,8 +4,10 @@ import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
 import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
 import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/handler/clubRoomInterfaces';
+import { IUserReturn } from '../../../interface/connector/handler/connectorInterface';
 import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/handler/hallInterfaces';
-import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/remote/userInterface';
+import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
+
 export default function (app: Application) {
     return new Handler(app);
 }
@@ -135,8 +137,9 @@ export class Handler {
         session.push('clubid', () => {
 
         });
+        const sid = this.app.getServerId();
         // session.uid, this.app.getServerId(), msg.clubid.toString(), true
-        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
+        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
         if (club) {
             return {
                 code: 200,
@@ -149,17 +152,20 @@ export class Handler {
         }
     }
 
-    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
-        session.set('roomid', null);
-        session.push('roomid', () => {
+    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<IUserReturn> {
 
-        });
-        session.set('clubid', null);
-        session.push('clubid', () => {
-
-        });
-        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), true);
+        const sid = this.app.getServerId();
+        const clubid = session.get('clubid');
+        let club = await this.app.rpc.club.clubRemote.leaveClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, flag: false });
         if (club) {
+            session.set('roomid', null);
+            session.push('roomid', () => {
+
+            });
+            session.set('clubid', null);
+            session.push('clubid', () => {
+
+            });
             return {
                 code: 200,
                 data: club
@@ -177,7 +183,8 @@ export class Handler {
 
         });
         const clubid = session.get('clubid');
-        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)(session.uid, this.app.getServerId(), clubid, msg.roomid.toString(), true);
+        const sid = this.app.getServerId();
+        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
         if (clubRoom) {
             return {
                 code: 200,
@@ -190,13 +197,16 @@ export class Handler {
         }
     }
 
-    public async leaveClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
-        session.set('roomid', null);
-        session.push('roomid', () => {
-
-        });
-        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.leaveClubRoom.route(session)(session.uid, this.app.getServerId(), msg.clubid.toString(), msg.roomid.toString(), true);
+    public async leaveClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IUserReturn> {
+        const clubid = session.get('clubid');
+        const roomid = session.get('roomid');
+        const sid = this.app.getServerId();
+        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.leaveClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid, flag: false });
         if (clubRoom) {
+            session.set('roomid', null);
+            session.push('roomid', () => {
+
+            });
             return {
                 code: 200,
                 data: clubRoom

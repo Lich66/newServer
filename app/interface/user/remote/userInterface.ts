@@ -30,20 +30,20 @@ export interface IUserinfoRequest {
     token?: string;
     wxopenid?: string;
     xlopenid?: string;
-    [key: string]: string;
+    // [key: string]: string;
 }
 export interface IAccountInfoRequest {
     account: string;
     password: string;
-    [key: string]: any;
+    // [key: string]: any;
 }
 
 export interface ITokenInfoRequest {
     token: string;
-    [key: string]: string;
+    // [key: string]: string;
 }
 
 export interface IAuthReturn extends IResponse {
     data?: IUserResponse;
-    [key: string]: any;
+    // [key: string]: any;
 }

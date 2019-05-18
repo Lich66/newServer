@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const clubRoom_1 = require("../../../controller/clubRoom/clubRoom");
 const user_1 = require("../../../controller/user/user");
+const redisKeyPrefix_1 = require("../../../gameConfig/redisKeyPrefix");
 function default_1(app) {
     return new ClubRoomRemote(app);
 }
@@ -25,43 +26,42 @@ class ClubRoomRemote {
             // return { code: 200, data: { clubId: clubRoom.clubId } }
         });
     }
-    joinClubRoom(uid, sid, roomid, clubid, flag) {
+    joinClubRoom(clubroomrpc) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clubRoom = yield clubRoom_1.ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
+            const clubRoom = yield clubRoom_1.ClubRoom.getClubRoom({ roomid: clubroomrpc.roomid });
             if (!clubRoom) {
                 return null;
             }
-            const channel = this.channelService.getChannel(roomid, flag);
-            const channelUser = channel.getMember(uid);
-            if (!channelUser) {
-                channel.add(uid, sid);
+            const roomChannel = this.channelService.getChannel(`${redisKeyPrefix_1.redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
+            const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
+            if (!roomChannelUser) {
+                roomChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
             }
-            const user = yield user_1.User.getUser({ userid: Number.parseInt(uid, 0) });
-            channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
-            channel.pushMessage(`onEntryClub${clubid}Room`, { user });
+            const clubChannel = this.channelService.getChannel(`${redisKeyPrefix_1.redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
+            const clubChannelUser = clubChannel.getMember(`${clubroomrpc.uid}`);
+            if (!clubChannelUser) {
+                clubChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
+            }
+            const user = yield user_1.User.getUser({ userid: clubroomrpc.uid });
+            clubChannel.pushMessage(`${redisKeyPrefix_1.redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
+            roomChannel.pushMessage(`${redisKeyPrefix_1.redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
             return clubRoom;
         });
     }
-    leaveClubRoom(uid, sid, roomid, clubid, flag) {
+    leaveClubRoom(clubroomrpc) {
         return __awaiter(this, void 0, void 0, function* () {
-            const clubRoom = yield clubRoom_1.ClubRoom.getClubRoom({ roomid: Number.parseInt(roomid, 0), uid });
-            if (!clubRoom) {
-                return null;
+            const roomChannel = this.channelService.getChannel(`${redisKeyPrefix_1.redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
+            const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
+            if (roomChannelUser) {
+                roomChannel.leave(`${clubroomrpc.uid}`, clubroomrpc.sid);
             }
-            const channel = this.channelService.getChannel(roomid, flag);
-            const channelUser = channel.getMember(uid);
-            if (channelUser) {
-                channel.leave(uid, sid);
-            }
-            else {
-                return null;
-            }
-            const user = yield user_1.User.getUser({ userid: Number.parseInt(uid, 0) });
-            channel.pushMessage(`onEntryClubRoom:${roomid}`, { user });
-            channel.pushMessage(`onEntryClub${clubid}Room`, { user });
-            return clubRoom;
+            const clubChannel = this.channelService.getChannel(`${redisKeyPrefix_1.redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
+            const user = yield user_1.User.getUser({ userid: clubroomrpc.uid });
+            clubChannel.pushMessage(`${redisKeyPrefix_1.redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
+            roomChannel.pushMessage(`${redisKeyPrefix_1.redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
+            return user;
         });
     }
 }
 exports.ClubRoomRemote = ClubRoomRemote;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21SZW1vdGUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9hcHAvc2VydmVycy9jbHViUm9vbS9yZW1vdGUvY2x1YlJvb21SZW1vdGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUNBLG9FQUFpRTtBQUNqRSx3REFBcUQ7QUFLckQsbUJBQXlCLEdBQWdCO0lBQ3JDLE9BQU8sSUFBSSxjQUFjLENBQUMsR0FBRyxDQUFDLENBQUM7QUFDbkMsQ0FBQztBQUZELDRCQUVDO0FBVUQsTUFBYSxjQUFjO0lBR3ZCLFlBQW1CLEdBQWdCO1FBQy9CLElBQUksQ0FBQyxHQUFHLEdBQUcsR0FBRyxDQUFDO1FBQ2YsSUFBSSxDQUFDLGNBQWMsR0FBRyxHQUFHLENBQUMsR0FBRyxDQUFDLGdCQUFnQixDQUFDLENBQUM7SUFDcEQsQ0FBQztJQUVZLFVBQVUsQ0FBQyxNQUFjLEVBQUUsVUFBc0I7O1lBQzFELHdFQUF3RTtZQUN4RSwwREFBMEQ7UUFDOUQsQ0FBQztLQUFBO0lBRVksWUFBWSxDQUFDLEdBQVcsRUFBRSxHQUFXLEVBQUUsTUFBYyxFQUFFLE1BQWMsRUFBRSxJQUFhOztZQUM3RixNQUFNLFFBQVEsR0FBRyxNQUFNLG1CQUFRLENBQUMsV0FBVyxDQUFDLEVBQUUsTUFBTSxFQUFFLE1BQU0sQ0FBQyxRQUFRLENBQUMsTUFBTSxFQUFFLENBQUMsQ0FBQyxFQUFFLEdBQUcsRUFBRSxDQUFDLENBQUM7WUFDekYsSUFBSSxDQUFDLFFBQVEsRUFBRTtnQkFDWCxPQUFPLElBQUksQ0FBQzthQUNmO1lBQ0QsTUFBTSxPQUFPLEdBQUcsSUFBSSxDQUFDLGNBQWMsQ0FBQyxVQUFVLENBQUMsTUFBTSxFQUFFLElBQUksQ0FBQyxDQUFDO1lBQzdELE1BQU0sV0FBVyxHQUFHLE9BQU8sQ0FBQyxTQUFTLENBQUMsR0FBRyxDQUFDLENBQUM7WUFDM0MsSUFBSSxDQUFDLFdBQVcsRUFBRTtnQkFDZCxPQUFPLENBQUMsR0FBRyxDQUFDLEdBQUcsRUFBRSxHQUFHLENBQUMsQ0FBQzthQUN6QjtZQUNELE1BQU0sSUFBSSxHQUFHLE1BQU0sV0FBSSxDQUFDLE9BQU8sQ0FBQyxFQUFFLE1BQU0sRUFBRSxNQUFNLENBQUMsUUFBUSxDQUFDLEdBQUcsRUFBRSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUM7WUFDckUsT0FBTyxDQUFDLFdBQVcsQ0FBQyxtQkFBbUIsTUFBTSxFQUFFLEVBQUUsRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO1lBQzNELE9BQU8sQ0FBQyxXQUFXLENBQUMsY0FBYyxNQUFNLE1BQU0sRUFBRSxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7WUFDMUQsT0FBTyxRQUFRLENBQUM7UUFFcEIsQ0FBQztLQUFBO0lBRVksYUFBYSxDQUFDLEdBQVcsRUFBRSxHQUFXLEVBQUUsTUFBYyxFQUFFLE1BQWMsRUFBRSxJQUFhOztZQUM5RixNQUFNLFFBQVEsR0FBRyxNQUFNLG1CQUFRLENBQUMsV0FBVyxDQUFDLEVBQUUsTUFBTSxFQUFFLE1BQU0sQ0FBQyxRQUFRLENBQUMsTUFBTSxFQUFFLENBQUMsQ0FBQyxFQUFFLEdBQUcsRUFBRSxDQUFDLENBQUM7WUFDekYsSUFBSSxDQUFDLFFBQVEsRUFBRTtnQkFDWCxPQUFPLElBQUksQ0FBQzthQUNmO1lBQ0QsTUFBTSxPQUFPLEdBQUcsSUFBSSxDQUFDLGNBQWMsQ0FBQyxVQUFVLENBQUMsTUFBTSxFQUFFLElBQUksQ0FBQyxDQUFDO1lBQzdELE1BQU0sV0FBVyxHQUFHLE9BQU8sQ0FBQyxTQUFTLENBQUMsR0FBRyxDQUFDLENBQUM7WUFDM0MsSUFBSSxXQUFXLEVBQUU7Z0JBQ2IsT0FBTyxDQUFDLEtBQUssQ0FBQyxHQUFHLEVBQUUsR0FBRyxDQUFDLENBQUM7YUFDM0I7aUJBQU07Z0JBQ0gsT0FBTyxJQUFJLENBQUM7YUFDZjtZQUNELE1BQU0sSUFBSSxHQUFHLE1BQU0sV0FBSSxDQUFDLE9BQU8sQ0FBQyxFQUFFLE1BQU0sRUFBRSxNQUFNLENBQUMsUUFBUSxDQUFDLEdBQUcsRUFBRSxDQUFDLENBQUMsRUFBRSxDQUFDLENBQUM7WUFDckUsT0FBTyxDQUFDLFdBQVcsQ0FBQyxtQkFBbUIsTUFBTSxFQUFFLEVBQUUsRUFBRSxJQUFJLEVBQUUsQ0FBQyxDQUFDO1lBQzNELE9BQU8sQ0FBQyxXQUFXLENBQUMsY0FBYyxNQUFNLE1BQU0sRUFBRSxFQUFFLElBQUksRUFBRSxDQUFDLENBQUM7WUFDMUQsT0FBTyxRQUFRLENBQUM7UUFFcEIsQ0FBQztLQUFBO0NBQ0o7QUFoREQsd0NBZ0RDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21SZW1vdGUuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi8uLi9hcHAvc2VydmVycy9jbHViUm9vbS9yZW1vdGUvY2x1YlJvb21SZW1vdGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUNBLG9FQUFpRTtBQUNqRSx3REFBcUQ7QUFDckQsdUVBQW9FO0FBS3BFLG1CQUF5QixHQUFnQjtJQUNyQyxPQUFPLElBQUksY0FBYyxDQUFDLEdBQUcsQ0FBQyxDQUFDO0FBQ25DLENBQUM7QUFGRCw0QkFFQztBQVVELE1BQWEsY0FBYztJQUd2QixZQUFtQixHQUFnQjtRQUMvQixJQUFJLENBQUMsR0FBRyxHQUFHLEdBQUcsQ0FBQztRQUNmLElBQUksQ0FBQyxjQUFjLEdBQUcsR0FBRyxDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO0lBQ3BELENBQUM7SUFFWSxVQUFVLENBQUMsTUFBYyxFQUFFLFVBQXNCOztZQUMxRCx3RUFBd0U7WUFDeEUsMERBQTBEO1FBQzlELENBQUM7S0FBQTtJQUVZLFlBQVksQ0FBQyxXQUF5Qjs7WUFDL0MsTUFBTSxRQUFRLEdBQUcsTUFBTSxtQkFBUSxDQUFDLFdBQVcsQ0FBQyxFQUFFLE1BQU0sRUFBRSxXQUFXLENBQUMsTUFBTSxFQUFFLENBQUMsQ0FBQztZQUM1RSxJQUFJLENBQUMsUUFBUSxFQUFFO2dCQUNYLE9BQU8sSUFBSSxDQUFDO2FBQ2Y7WUFDRCxNQUFNLFdBQVcsR0FBRyxJQUFJLENBQUMsY0FBYyxDQUFDLFVBQVUsQ0FBQyxHQUFHLCtCQUFjLENBQUMsUUFBUSxHQUFHLFdBQVcsQ0FBQyxNQUFNLEVBQUUsRUFBRSxXQUFXLENBQUMsSUFBSSxDQUFDLENBQUM7WUFDeEgsTUFBTSxlQUFlLEdBQUcsV0FBVyxDQUFDLFNBQVMsQ0FBQyxHQUFHLFdBQVcsQ0FBQyxHQUFHLEVBQUUsQ0FBQyxDQUFDO1lBQ3BFLElBQUksQ0FBQyxlQUFlLEVBQUU7Z0JBQ2xC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

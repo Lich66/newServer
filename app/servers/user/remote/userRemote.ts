@@ -19,18 +19,7 @@ export class Remote {
     }
 
     public async auth(userinfo: IUserinfoRequest): Promise<IUserResponse> {
-        let json: IUserinfoRequest = {};
-        console.log('authauthauthauthauthauthauthauthauthauthauthauthauthauth');
-        console.log(JSON.stringify(json));
-        if (userinfo.token) {
-            json.token = userinfo.token;
-        } else if (userinfo.wxopenid) {
-            json.wxopenid = userinfo.wxopenid;
-        } else if (userinfo.xlopenid) {
-            json.xlopenid = userinfo.xlopenid;
-        }
-        console.log(JSON.stringify(json));
-        return await Login.login(json);
+        return await Login.login(userinfo);
 
     }
 
