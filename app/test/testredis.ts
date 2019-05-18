@@ -11,14 +11,14 @@ redisClient.hgetallAsync('base').then((e) => {
 // });
 // // 插入
 
-// redisClient.hsetAsync('zhjtest', 'int', '1');
+redisClient.hsetAsync('user_502', 'userid', '502');
 
 // redisClient.hsetAsync('zhjtest', 'float', '1.5');
 
 // // 获取
-// redisClient.hgetAsync('zhjtest', 'parm1').then((r) => {
-//     console.log(r);
-// });
+redisClient.hgetAsync('zhjtest', 'parm1').then((r) => {
+    console.log(r);
+});
 // // 获取全部
 // redisClient.hgetallAsync('zhjtest').then((r) => {
 //     console.log(r);
