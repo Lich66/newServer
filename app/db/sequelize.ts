@@ -1,15 +1,15 @@
 import * as path from 'path';
 import { Sequelize } from 'sequelize-typescript';
 
-export const sequelize = new Sequelize({
+export const sequelize: Sequelize = new Sequelize({
     // operatorsAliases: true,
     host: '192.168.1.21',
-    port: 3357,
+    port: 3356,
     database: 'chessdb',
     dialect: 'mysql',
     username: 'root',
     password: '123456',
-    
+
     // storage: ':memory:',
     // define: {
     //     // timestamps: true, // 开启时间戳 create_at delete_at update_at
