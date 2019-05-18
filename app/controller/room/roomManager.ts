@@ -77,6 +77,8 @@ export class RoomManager {
         });
         console.log('..................解析出来的' + JSON.stringify(num));
         // todo 从redis上拉取房间里的玩家列表和观战玩家列表 
-        return { flag: true, roomConfig: num, userList: [], onlookerList: [] };
+        const userList: string[] = [];
+        const onlookerList: string[] = [];
+        return { flag: true, roomConfig: num, userList, onlookerList };
     }
 }
