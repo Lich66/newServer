@@ -9,6 +9,9 @@ export interface IEntryReturn extends IResponse {
     data?: IData;
     // [key: string]: any;
 }
+export interface IUserWithClubId extends IUser {
+    clubid?: number;
+}
 export interface IUserReturn extends IResponse {
-    data?: IUser;
+    data?: IUserWithClubId;
 }

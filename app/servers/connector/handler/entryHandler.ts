@@ -209,7 +209,7 @@ export class Handler {
             });
             return {
                 code: 200,
-                data: clubRoom
+                data: { ...clubRoom, clubid }
             };
         } else {
             return {

@@ -88,7 +88,7 @@ export class Handler {
     public async getAllClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
         let result = await Club.getAllClub({ uid: Number.parseInt(session.uid, 0) });
-        if (result) {
+        if (result.length > 0) {
             return {
                 code: 200,
                 data: result

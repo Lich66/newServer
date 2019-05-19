@@ -47,7 +47,7 @@ export class ClubRoomRemote {
             clubChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
         }
         const user = await User.getUser({ userid: clubroomrpc.uid });
-        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
+        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
         roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
         return clubRoom;
 
@@ -59,10 +59,9 @@ export class ClubRoomRemote {
         if (roomChannelUser) {
             roomChannel.leave(`${clubroomrpc.uid}`, clubroomrpc.sid);
         }
-        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
         const user = await User.getUser({ userid: clubroomrpc.uid });
-        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
-        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
+        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
+        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 0 });
         return user;
 
     }
