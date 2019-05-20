@@ -12,6 +12,8 @@ import { User } from '../user/user';
 
 export class RoomManager {
 
+    public roomList = {};
+
     public static async createRoom(userId: number, config: number[][]) {
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
         if (user.roomlist && user.roomlist.length === 10) {
