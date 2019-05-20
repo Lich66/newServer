@@ -42,6 +42,61 @@ export class tbl_club extends Model<tbl_club> {
     public play_setting: string;
 
     @Column({
+        comment: '开桌'
+    })
+    public person_number: number;
+
+    @Column({
+        comment: '底分'
+    })
+    public end_points: number;
+
+    @Column({
+        comment: '总回合数'
+    })
+    public round_total: number;
+
+    @Column({
+        comment: '支付方式'
+    })
+    public pay_type: number;
+
+    @Column({
+        comment: '开始方式'
+    })
+    public start_type: number;
+
+    @Column({
+        comment: '推注方式'
+    })
+    public bolus_type: number;
+
+    @Column({
+        comment: '最大抢庄倍数'
+    })
+    public max_banker_bet: number;
+
+    @Column({
+        comment: '翻倍规则'
+    })
+    public double_rule: number;
+
+    @Column({
+        comment: '特殊牌型'
+    })
+    public special_card_type: string;
+
+    @Column({
+        comment: '高级选项'
+    })
+    public advanced_options: string;
+
+    @Column({
+        comment: '王癞玩法'
+    })
+    public laizi_type: number;
+
+    @Column({
         comment: '茶楼类型,普通还是比赛'
     })
     public type: number;
@@ -59,17 +114,6 @@ export class tbl_club extends Model<tbl_club> {
 
     @Default(false)
     @Column({
-        comment: '打烊标志'
-    })
-    public open_flag: boolean;
-
-    @Column({
-        comment: '非aa支付开关'
-    })
-    public pay_flag: boolean;
-
-    @Default(false)
-    @Column({
         comment: '审核开关'
     })
     public audit_flag: boolean;
@@ -81,19 +125,34 @@ export class tbl_club extends Model<tbl_club> {
 
     @Default(false)
     @Column({
+        comment: '打烊标志'
+    })
+    public open_flag: boolean;
+
+    @Default(false)
+    @Column({
         comment: '隐私标志'
     })
     public privacy_flag: boolean;
 
     @Column({
-        comment: '底分'
+        comment: '非aa支付开关'
     })
-    public end_points: number;
+    public pay_flag: boolean;
+
+    /**
+     * 下面的是比赛场的选项
+     */
 
     @Column({
         comment: '参加分数'
     })
     public join_points: number;
+
+    @Column({
+        comment: '参加抢庄分数'
+    })
+    public join_rob_banker: number;
 
     @Column({
         comment: '负分设置'

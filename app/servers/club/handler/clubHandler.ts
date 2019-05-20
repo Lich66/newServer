@@ -1,6 +1,9 @@
-import { Application, BackendSession } from 'pinus';
+import { Application, BackendSession, ChannelService } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
+import { User } from '../../../controller/user/user';
+import { defaultClubName } from '../../../gameConfig/defaultClubName';
+import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
 import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
 
 
@@ -9,8 +12,9 @@ export default function (app: Application) {
 }
 
 export class Handler {
+    private channelService: ChannelService;
     public constructor(private app: Application) {
-
+        this.channelService = app.get('channelService');
     }
 
     public async createClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
@@ -88,7 +92,7 @@ export class Handler {
     public async getAllClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
         let result = await Club.getAllClub({ uid: Number.parseInt(session.uid, 0) });
-        if (result.length > 0) {
+        if (result) {
             return {
                 code: 200,
                 data: result
@@ -98,5 +102,27 @@ export class Handler {
                 code: 500
             };
         }
+    }
+
+    public async leaveClub(obj: any, session: BackendSession): Promise<IClubReturn> {
+        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${session.get('clubid')}`, false);
+        const channelUser = channel.getMember(`${session.uid}`);
+        if (channelUser) {
+            channel.removeMember(`${session.uid}`);
+        }
+        // redisClient.getAsync
+        const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
+        channel.pushMessage(`${redisKeyPrefix.club}${session.get('clubid')}`, { user, action: 0 });
+        session.set('roomid', null);
+        session.push('roomid', () => {
+
+        });
+        session.set('clubid', null);
+        session.push('clubid', () => {
+
+        });
+        return {
+            code: 200
+        };
     }
 }

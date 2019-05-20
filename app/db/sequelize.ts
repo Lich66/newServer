@@ -3,8 +3,8 @@ import { Sequelize } from 'sequelize-typescript';
 
 export const sequelize: Sequelize = new Sequelize({
     // operatorsAliases: true,
-    host: '192.168.0.150',
-    port: 3306,
+    host: '192.168.1.21',
+    port: 3356,
     database: 'chessdb',
     dialect: 'mysql',
     username: 'root',

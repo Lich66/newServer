@@ -1,10 +1,10 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
+import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
 import { IClubRoomRpc } from '../../../interface/clubRoom/remote/clubRoomInterface';
 import { tbl_room } from '../../../models/tbl_room';
-import { tbl_user } from '../../../models/tbl_user';
 
 export default function (app: Application) {
     return new ClubRoomRemote(app);
@@ -46,23 +46,12 @@ export class ClubRoomRemote {
         if (!clubChannelUser) {
             clubChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
         }
+
         const user = await User.getUser({ userid: clubroomrpc.uid });
+        redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, `${user.userid}`, '-1');
         // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
         roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
         return clubRoom;
-
-    }
-
-    public async leaveClubRoom(clubroomrpc: IClubRoomRpc): Promise<tbl_user> {
-        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
-        const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
-        if (roomChannelUser) {
-            roomChannel.leave(`${clubroomrpc.uid}`, clubroomrpc.sid);
-        }
-        const user = await User.getUser({ userid: clubroomrpc.uid });
-        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
-        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 0 });
-        return user;
 
     }
 }

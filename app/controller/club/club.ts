@@ -15,6 +15,9 @@ import { RedisKeys } from '../redis/redisKeys/redisKeys';
 const Op = Sequelize.Op;
 const MAXCLUB = 10;
 const MAXCOMPETITIONCLUB = 30;
+
+// const CHAIRSTR = 'chair_';
+
 export class Club {
     public static async createClub(json: IClubRequest, usernick: string): Promise<tbl_club> {
         let result = await tbl_club.findAndCountAll({ where: { uid: json.uid, type: json.type } });
@@ -69,7 +72,7 @@ export class Club {
                         const chartnumber = 4;
                         let index = 0;
                         do {
-                            await ClubRoomState.setClubRoomState({ redisRoomId: `${redisKeyPrefix.clubRoom}${json.roomid}`, chairIndex: index, state: 0 });
+                            await ClubRoomState.setClubRoomState({ redisRoomId: `${redisKeyPrefix.clubRoom}${json.roomid}`, chairIndex: `${redisKeyPrefix.chair}${index}`, state: '-1' });
                             index++;
                         } while (index < chartnumber);
 

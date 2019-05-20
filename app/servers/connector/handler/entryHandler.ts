@@ -153,31 +153,6 @@ export class Handler {
         }
     }
 
-    public async leaveClub(msg: IClubRequest, session: FrontendSession): Promise<IUserReturn> {
-
-        const sid = this.app.getServerId();
-        const clubid = session.get('clubid');
-        let club = await this.app.rpc.club.clubRemote.leaveClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, flag: false });
-        if (club) {
-            session.set('roomid', null);
-            session.push('roomid', () => {
-
-            });
-            session.set('clubid', null);
-            session.push('clubid', () => {
-
-            });
-            return {
-                code: 200,
-                data: club
-            };
-        } else {
-            return {
-                code: 500
-            };
-        }
-    }
-
     public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
         session.set('roomid', msg.roomid);
         session.push('roomid', () => {
@@ -198,24 +173,4 @@ export class Handler {
         }
     }
 
-    public async leaveClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IUserReturn> {
-        const clubid = session.get('clubid');
-        const roomid = session.get('roomid');
-        const sid = this.app.getServerId();
-        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.leaveClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid, flag: false });
-        if (clubRoom) {
-            session.set('roomid', null);
-            session.push('roomid', () => {
-
-            });
-            return {
-                code: 200,
-                data: { ...clubRoom, clubid }
-            };
-        } else {
-            return {
-                code: 500
-            };
-        }
-    }
 }

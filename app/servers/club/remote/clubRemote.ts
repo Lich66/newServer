@@ -49,18 +49,4 @@ export class ClubRemote {
         return club;
 
     }
-
-
-    public async leaveClub(clubrpc: IClubRpc): Promise<tbl_user> {
-        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubrpc.clubid}`, clubrpc.flag);
-        const channelUser = channel.getMember(`${clubrpc.uid}`);
-        if (channelUser) {
-            channel.leave(`${clubrpc.uid}`, clubrpc.sid);
-        }
-        // redisClient.getAsync
-        const user = await User.getUser({ userid: clubrpc.uid });
-        channel.pushMessage(`${redisKeyPrefix.club}${clubrpc.clubid}`, { user, action: 0 });
-        return user;
-    }
-
 }
