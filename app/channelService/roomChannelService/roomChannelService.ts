@@ -25,8 +25,12 @@ export class RoomChannelService {
     public userList: string[];
     public onlookerList: string[];
 
-    public constructor(channelService: ChannelService) {
-        this.channelService = channelService;
+    // public constructor(channelService: ChannelService) {
+    //     this.channelService = channelService;
+    // }
+
+    public constructor() {
+
     }
 
     public initRoom(roomId: number, userId: number, config: number[][], roomConfig: IRoomConfig, createTime: string) {
@@ -63,5 +67,5 @@ export class RoomChannelService {
         return false;
     }
 
-    
+
 }
