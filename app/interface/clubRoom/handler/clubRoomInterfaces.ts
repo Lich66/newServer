@@ -7,7 +7,6 @@ export interface IClubRoomRequest {
     roomid?: number;
     clubid?: number;
     create_time?: Date;
-    owner?: string;
     play_type?: number;
     base_point?: number;
     player_num?: number;
@@ -17,15 +16,18 @@ export interface IClubRoomRequest {
     push_flag?: boolean;
     max_grab?: number;
     double_rule?: number;
-    special_card?: number;
-    fast_flag?: boolean;
-    half_way_add?: boolean;
-    rubbing_flag?: boolean;
-    item_use?: boolean;
-    buy_code?: boolean;
-    emotion?: boolean;
-    grab_flag?: boolean;
-    double_flag?: boolean;
+    special_card?: string;
+    all_contrast_play?: number;
+    take_turns_play?: number;
+    up_banker_play?: number;
+    fast_flag?: number;
+    half_way_add?: number;
+    rubbing_flag?: number;
+    item_use?: number;
+    buy_code?: number;
+    emotion?: number;
+    grab_flag?: number;
+    double_flag?: number;
     laizi_type?: number;
     // [key: string]: any;
 }

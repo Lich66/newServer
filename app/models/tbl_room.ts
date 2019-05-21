@@ -34,15 +34,14 @@ export class tbl_room extends Model<tbl_room> {
     }
 
     @Column({
-        type: DataType.STRING(STRING64),
-        comment: '拥有者'
-    })
-    public owner: string;
-
-    @Column({
-        comment: '玩法'
+        comment: '玩法类型'
     })
     public play_type: number;
+
+    @Column({
+        comment: '开桌'
+    })
+    public player_num: number;
 
     @Column({
         comment: '底分'
@@ -50,34 +49,29 @@ export class tbl_room extends Model<tbl_room> {
     public base_point: number;
 
     @Column({
-        comment: '桌子坐的人数'
-    })
-    public player_num: number;
-
-    @Column({
-        comment: '局数'
+        comment: '总回合数'
     })
     public round: number;
 
     @Column({
-        comment: '房费类型'
+        comment: '支付方式'
     })
-    public room_pay: number;
+    public pay_type: number;
 
     @Column({
-        comment: '开始选项'
+        comment: '开始方式'
     })
-    public start_option: number;
+    public start_type: number;
 
     @Column({
-        comment: '推注选项'
+        comment: '推注方式'
     })
-    public push_flag: boolean;
+    public bolus_type: number;
 
     @Column({
-        comment: '最大抢庄'
+        comment: '最大抢庄倍数'
     })
-    public max_grab: number;
+    public max_banker_bet: number;
 
     @Column({
         comment: '翻倍规则'
@@ -85,9 +79,24 @@ export class tbl_room extends Model<tbl_room> {
     public double_rule: number;
 
     @Column({
+        comment: '通比玩法'
+    })
+    public all_contrast_play: number;
+
+    @Column({
+        comment: '轮庄玩法'
+    })
+    public take_turns_play: number;
+
+    @Column({
+        comment: '上庄玩法'
+    })
+    public up_banker_play: number;
+
+    @Column({
         comment: '特殊牌型'
     })
-    public special_card: number;
+    public special_card: string;
 
     @Column({
         comment: '快速模式标志位'
@@ -130,7 +139,7 @@ export class tbl_room extends Model<tbl_room> {
     public double_flag: boolean;
 
     @Column({
-        comment: '王赖玩法'
+        comment: '王癞玩法'
     })
     public laizi_type: number;
 
