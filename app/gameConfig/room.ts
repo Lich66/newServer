@@ -1,3 +1,5 @@
+import { GameUitl } from '../util/gameUitl';
+
 const round20 = 20;
 const round30 = 30;
 
@@ -35,24 +37,12 @@ export enum AdvancedOptions { '中途禁入', '禁止搓牌', '禁用道具', '�
 export enum LazarilloDeTormes { '无', '经典王癞', '疯狂王癞' }
 
 /**
- * 十六进制转8位二进制
- * @param str 参数
- */
-function hex_to_bin(str: string) {
-    let binstr = parseInt(str, 16).toString(2);   // 16进制转成2进制
-    for (let i = binstr.length; i < 8; i++) {
-        binstr = `0${binstr}`;
-    }
-    return binstr;
-}
-
-/**
  * 明牌抢庄经典玩法
  * @param config 二位数组的参数
  */
 export function room_0_0(config: number[][]) {
-    let specialCardType = hex_to_bin(config[1][8].toString());
-    let advancedOptions = hex_to_bin(config[1][9].toString());
+    let specialCardType = GameUitl.hex_to_bin(config[1][8].toString());
+    let advancedOptions = GameUitl.hex_to_bin(config[1][9].toString());
     console.log('特殊牌型: ' + specialCardType + ' ; 高级选项: ' + advancedOptions);
     let roomConfig = {
         gameType: config[0][0],

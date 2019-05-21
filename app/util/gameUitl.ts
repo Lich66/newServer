@@ -78,7 +78,29 @@ export class GameUitl {
     }
 
     /**
-     * 解析创建房间的参数方法
+     * 
+     * @param str 十六进制转8位二进制
+     */
+    public static hex_to_bin(str: string) {
+        let binstr = parseInt(str, 16).toString(2);   // 16进制转成2进制
+        for (let i = binstr.length; i < 8; i++) {
+            binstr = `0${binstr}`;
+        }
+        return binstr;
+    }
+
+    /**
+     * 
+     * @param str 二进制转十六进制
+     */
+    public static bin_to_hex(str: string) {
+        const num = 16;
+        let hexstr = parseInt(str, 2).toString(num);   // 2进制转成16进制
+        return hexstr;
+    }
+
+    /**
+     * parsePlayConfig
      */
     public static async parsePlayConfig(config: any[]): Promise<ICreateReturn> {
         // 玩法类型

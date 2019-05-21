@@ -1,11 +1,10 @@
 
 import { Application, ChannelService } from 'pinus';
-import { RoomChannelService } from '../../channelService/roomChannelService/roomChannelService';
 import { redisClient } from '../../db/redis';
 import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
 import { PayType, room_0_0 } from '../../gameConfig/room';
+import { RoomConfig } from '../../gameConfig/roomConfig';
 import { GameUitl } from '../../util/gameUitl';
-import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
 
 
@@ -14,46 +13,54 @@ export class RoomManager {
 
     public roomList = {};
 
-    public static async createRoom(userId: number, config: number[][]) {
-        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
-        if (user.roomlist && user.roomlist.length === 10) {
-            return { flag: false, code: 501, msg: "You already have 10 rooms and can't create any more" };
+    public static async createRoom(userId: number, config: Array<number | string>) {
+        // 先判断玩家的房间数是否超过10个
+        let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
+        if (roomListLen && roomListLen === 10) {
+            return { flag: false, code: 12002 };
         }
-        // todo 之后要改成从数据库生成的房间配置表获取
-        let needDaimond = parseInt(PayType[config[1][3]].substr(4), 0);
-        if (Number.parseInt(user.diamond, 0) < needDaimond) {
-            return { flag: false, code: 502, msg: 'You are short of diamonds' };
+        let userData = await User.getUser({ userid: userId });
+        console.log('获取数据库的信息为:' + JSON.stringify(userData));
+        // 再判断玩家的钻石是否足够; config[4]代表房费, >2表示支付方式为房主支付
+        let needDaimond: number;
+        if (config[4] > 2) {
+            needDaimond = parseInt(RoomConfig.payType[config[4]], 0);
+            if (userData.diamond < needDaimond) {
+                return { flag: false, code: 12001 };
+            }
         }
-
+        // 生成房间号
         let roomId: number;
         do {
             roomId = GameUitl.generateRoomId();
         } while (await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`));
         let createTime = GameUitl.getLocalDateStr();
         console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
-        let nowDiamond = Number.parseInt(user.diamond, 0) - needDaimond;
-        let result = await User.updateUser({ userid: Number.parseInt(user.userid, 0) }, { diamond: nowDiamond });
+        // 更改数据库及redis玩家钻石数
+        let nowDiamond = userData.diamond - needDaimond;
+         let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
         if (result === 0) {
-            return { flag: false, code: 503, msg: 'database deduction failed' };
+            return { flag: false, code: 12003 };
         }
         await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
-        console.log('改变后redis的钻石数' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
-        let json1 = room_0_0(config);
-        console.log('转义后的房间配置信息: ' + json1);
-        let json2 = {
-            roomId,
-            creatorId: userId,
-            createTime,
-            roomConfig: config
-        };
-        let roomConfig = SelfUtils.assign(json1, json2);
-        console.log('合并后的房间配置: ' + JSON.stringify(roomConfig));
-        for (let key in roomConfig) {
-            if (roomConfig.hasOwnProperty(key)) {
-                await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);
-            }
-        }
-        console.log('从redis捞出来的roomConfig = ' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`)));
+        console.log('改变后redis的钻石数' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));        
+      
+        // let json1 = room_0_0(config);
+        // console.log('转义后的房间配置信息: ' + json1);
+        // let json2 = {
+        //     roomId,
+        //     creatorId: userId,
+        //     createTime,
+        //     roomConfig: config
+        // };
+        // let roomConfig = SelfUtils.assign(json1, json2);
+        // console.log('合并后的房间配置: ' + JSON.stringify(roomConfig));
+        // for (let key in roomConfig) {
+        //     if (roomConfig.hasOwnProperty(key)) {
+        //         await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);
+        //     }
+        // }
+        // console.log('从redis捞出来的roomConfig = ' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`)));
         return { flag: true, roomId };
     }
 

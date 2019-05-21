@@ -91,8 +91,7 @@ export class Handler {
         let result = await RoomManager.createRoom(userid, msg.roomConfig);
         if (!result.flag) {
             return {
-                code: result.code,
-                msg: result.msg
+                code: result.code
             };
         }
         await this.app.rpc.room.roomRemote.createRoom.route(session)(result.roomId);
