@@ -2,9 +2,9 @@ import { Application, BackendSession, ChannelService } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
-import { defaultClubName } from '../../../gameConfig/defaultClubName';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
+import { IClubCreateRequest, IClubRequest, IClubReturn, IClubUpdateRequest } from '../../../interface/club/clubInterface';
+import { GameUitl } from '../../../util/gameUitl';
 
 
 export default function (app: Application) {
@@ -17,16 +17,16 @@ export class Handler {
         this.channelService = app.get('channelService');
     }
 
-    public async createClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
-        // 这里以后添加很多判断
-        if (!clubinfo.type) {
-            return {
-                code: 400,
-                msg: '参数错误'
-            };
-        }
-        let play_setting = 'JSON.stringify(room_1_1(clubinfo.clubConfig))';
-        let result = await Club.createClub({ ...clubinfo, play_setting, uid: Number.parseInt(session.uid, 0) }, session.get('usernick'));
+    public async createClub(clubinfo: IClubCreateRequest, session: BackendSession): Promise<IClubReturn> {
+        // // 这里以后添加很多判断
+        // if (!clubinfo.type) {
+        //     return {
+        //         code: 400,
+        //         msg: '参数错误'
+        //     };
+        // }
+        const json: IClubRequest = await GameUitl.parsePlayConfig(clubinfo.config);
+        let result = await Club.createClub({ ...json, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
                 code: 200,
@@ -53,19 +53,24 @@ export class Handler {
         }
     }
 
-    public async updateClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
+    public async updateClub(clubinfo: IClubUpdateRequest, session: BackendSession): Promise<IClubReturn> {
 
-        let njson = { ...clubinfo };
-        delete njson.clubid;
-        delete njson.create_time;
-        delete njson.uid;
-
+        let njson = {};
+        switch (clubinfo.type) {
+            case 0:
+                njson = await GameUitl.parsePlayConfig(clubinfo.play_config);
+                break;
+            case 1:
+                njson = await GameUitl.parseInfoConfig(clubinfo.info_config);
+                break;
+            default:
+                return null;
+        }
         let result = await Club.updateClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) }, njson);
         if (result) {
             return {
                 code: 200,
                 data: result
-                // msg: `${result[1]}`
             };
         } else {
             return {

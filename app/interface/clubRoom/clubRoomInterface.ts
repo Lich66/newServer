@@ -1,5 +1,20 @@
-import { IResponse } from '../../global/response';
-import { IRoom } from '../../models/tbl_room';
+import { IResponse } from '../global/response';
+import { IClub } from '../models/tbl_club';
+import { IRoom } from '../models/tbl_room';
+
+export interface IClubRoomRpc {
+    uid?: number;
+    roomid?: number;
+    sid?: string;
+    clubid?: number;
+    flag?: boolean;
+}
+
+export interface IClubReturn extends IResponse {
+    data?: IClub | IClub[] | number | [number, IClub[]];
+    // [key: string]: any;
+}
+
 /**
  * 客户端传入的参数 基本只用到roomid
  */

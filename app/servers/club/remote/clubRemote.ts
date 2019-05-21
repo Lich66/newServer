@@ -2,7 +2,7 @@ import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinu
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRpc } from '../../../interface/club/remote/clubInterface';
+import { IClubRpc } from '../../../interface/club/clubInterface';
 import { tbl_club } from '../../../models/tbl_club';
 import { tbl_user } from '../../../models/tbl_user';
 // import { redisClient } from '../../../db/redis';

@@ -1,35 +1,52 @@
-import { defaultClubName } from '../gameConfig/defaultClubName';
-interface ICreate {
-    play_setting: string;
-    person_number: number;
-    end_points: number;
-    round_total: number;
+import { redisClient } from '../db/redis';
+import { memory } from './memoryConfig';
+
+const NUMBER11 = 11;
+const NUMBER12 = 12;
+const NUMBER13 = 13;
+const NUMBER14 = 14;
+const NUMBER15 = 15;
+const NUMBER16 = 16;
+const NUMBER17 = 17;
+const NUMBER18 = 18;
+const NUMBER19 = 19;
+const NUMBER20 = 20;
+const NUMBER21 = 21;
+const NUMBER22 = 22;
+interface ICreateReturn {
+    name: string;
+    play_type: number;
+    player_num: number;
+    base_point: number;
+    round: number;
     pay_type: number;
     start_type: number;
     bolus_type: number;
     max_banker_bet: number;
     double_rule: number;
-    special_card_type: number;
-    advanced_options: number;
+    all_contrast_play: number;
+    take_turns_play: number;
+    up_banker_play: number;
+    special_card: string;
+    fast_flag: boolean;
+    half_way_add: boolean;
+    rubbing_flag: boolean;
+    item_use: boolean;
+    buy_code: boolean;
+    bolus_limit: boolean;
+    grab_flag: boolean;
+    double_flag: boolean;
     laizi_type: number;
-    type: number;
-    name: string;
+    type?: number;
+
 }
-interface IChange extends ICreate {
+interface IChangeReturn {
     audit_flag: boolean;
     integral_flag: boolean;
     open_flag: boolean;
     privacy_flag: boolean;
-    pay_flag: boolean;
-    join_points: number;
-    join_rob_banker: number;
-    point_setflag: boolean;
-    point_adjustflag: boolean;
-    point_permission: number;
-    present_target: number;
-    present_times: number;
-    present_points: number;
-
+    name: string;
+    notice: string;
 }
 export class GameUitl {
     /**
@@ -61,127 +78,89 @@ export class GameUitl {
     }
 
     /**
-     * parsePlayConfig
+     * 解析创建房间的参数方法
      */
-    public static parseCreateConfigInRoom(config: ICreate) {
-        const NUMBER11 = 11;
-        const NUMBER12 = 12;
-        // [
-        //     0,   玩法
-        //     0,   人数
-        //     0,   底分
-        //     0,   局数
-        //     0,   房费
-        //     0,   游戏开始方式
-        //     0,   推注选项
-        //     0,   最大抢庄
-        //     0,   翻倍规则
-        //     0,   特殊牌型 十六进制
-        //     0,   高级选项  十六进制
-        //     0,   王赖玩法
-        //     0,   玩法类型
-        // ]
-        const type = config[NUMBER12];
-        const name = defaultClubName[type];
+    public static async parsePlayConfig(config: any[]): Promise<ICreateReturn> {
+        // 玩法类型
+        // 开桌
+        // 底分
+        // 总回合数
+        // 支付方式
+        // 开始方式
+        // 推注方式
+        // 最大抢庄倍数
+        // 翻倍规则
+        // 通比玩法
+        // 轮庄玩法
+        // 上庄玩法
+        // 特殊牌型
+        // 快速模式标志位
+        // 中途禁入标志
+        // 搓牌标志
+        // 道具禁用标志
+        // 闲家买码
+        // 表情禁用
+        // 暗抢庄家标志
+        // 加倍标志
+        // 王癞玩法
+        // 茶楼类型,普通还是比赛
+        const CreateClubStartName = 'CreateClubStartName';
+        const CreateClubMatchStartName = 'CreateClubMatchStartName';
+        let name = '';
+        switch (config[NUMBER22]) {
+            case 0:
+                name = await redisClient.hgetAsync(memory.base, CreateClubStartName);
+                break;
+            case 1:
+                name = await redisClient.hgetAsync(memory.base, CreateClubMatchStartName);
+                break;
+            default:
+                break;
+        }
+
         return {
-            play_setting: config[0],
-            person_number: config[1],
-            end_points: config[2],
-            round_total: config[3],
+            name,
+            play_type: config[0],
+            player_num: config[1],
+            base_point: config[2],
+            round: config[3],
             pay_type: config[4],
             start_type: config[5],
             bolus_type: config[6],
             max_banker_bet: config[7],
             double_rule: config[8],
-            special_card_type: config[9],
-            advanced_options: config[10],
-            laizi_type: config[NUMBER11],
-            type,
-            name
+            all_contrast_play: config[9],
+            take_turns_play: config[10],
+            up_banker_play: config[NUMBER11],
+            special_card: config[NUMBER12],
+            fast_flag: config[NUMBER13],
+            half_way_add: config[NUMBER14],
+            rubbing_flag: config[NUMBER15],
+            item_use: config[NUMBER16],
+            buy_code: config[NUMBER17],
+            bolus_limit: config[NUMBER18],
+            grab_flag: config[NUMBER19],
+            double_flag: config[NUMBER20],
+            laizi_type: config[NUMBER21],
+            type: config[NUMBER22]
         };
     }
 
-    public static parseChangeConfigInRoom(config: IChange) {
-        const NUMBER11 = 11;
-        const NUMBER12 = 12;
-        const NUMBER13 = 13;
-        const NUMBER14 = 14;
-        const NUMBER15 = 15;
-        const NUMBER16 = 16;
-        const NUMBER17 = 17;
-        const NUMBER18 = 18;
-        const NUMBER19 = 19;
-        const NUMBER20 = 20;
-        const NUMBER21 = 21;
-        const NUMBER22 = 22;
-        const NUMBER23 = 23;
-        const NUMBER24 = 24;
-        const NUMBER25 = 25;
-        const NUMBER26 = 26;
-        // [
-        //     0,   玩法 0
-        //     0,   人数  1
-        //     0,   底分  2
-        //     0,   局数  3
-        //     0,   房费  4 
-        //     0,   游戏开始方式  5
-        //     0,   推注选项  6 
-        //     0,   最大抢庄  7 
-        //     0,   翻倍规则  8
-        //     0,   特殊牌型 十六进制  9
-        //     0,   高级选项  十六进制  10
-        //     0,   王赖玩法  11
-        //     0,   玩法类型  12
-
-
-
-        //     'string' 茶楼名字 13
+    public static async parseInfoConfig(config: any[]): Promise<IChangeReturn> {
         //         审核开关  14
         // 积分是否可查看标识  15 
         // 打烊标志  16
         // 隐私标志  17 
-        // 非aa支付开关  18 
-        // 参加分数  19 
-        // 参加抢庄分数  20 
-        // 负分设置    21 
-        // 积分调整选项  22
-        // 积分权限类型  23
-        // 表情赠送对象  24 
-        // 表情赠送次数  25 
-        // 赠送积分  26
-
+        // name
+        // 公告
         // ]
-        const type = config[NUMBER12];
-        const name = defaultClubName[type];
         return {
-            play_setting: config[0],
-            person_number: config[1],
-            end_points: config[2],
-            round_total: config[3],
-            pay_type: config[4],
-            start_type: config[5],
-            bolus_type: config[6],
-            max_banker_bet: config[7],
-            double_rule: config[8],
-            special_card_type: config[9],
-            advanced_options: config[10],
-            laizi_type: config[NUMBER11],
-            type: config[NUMBER12],
-            name: config[NUMBER13],
-
-            audit_flag: config[NUMBER14],
-            integral_flag: config[NUMBER15],
-            open_flag: config[NUMBER16],
-            privacy_flag: config[NUMBER17],
-            pay_flag: config[NUMBER18],
-            join_points: config[NUMBER19],
-            join_rob_banker: config[NUMBER20],
-            point_setflag: config[NUMBER21],
-            point_adjustflag: config[NUMBER22],
-            point_permission: config[NUMBER23],
-            present_target: config[NUMBER24],
-            present_times: config[NUMBER25],
-            present_points: config[NUMBER26]
+            audit_flag: config[0],
+            integral_flag: config[1],
+            open_flag: config[2],
+            privacy_flag: config[3],
+            name: config[4],
+            notice: config[5]
         };
     }
 }

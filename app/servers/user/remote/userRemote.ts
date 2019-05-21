@@ -1,6 +1,6 @@
 import { Application, FrontendSession, RemoterClass } from 'pinus';
 import { Login } from '../../../controller/account/login';
-import { IAccountInfoRequest, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
+import { IAccountInfoRequest, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
 
 export default function (app: Application) {
     return new Remote(app);
