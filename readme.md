@@ -17,13 +17,16 @@ cd dist && pinus start
 ├── app                       //项目开发文件
 |   ├── controller            //控制层
 |       ├── account           //登陆控制层
+|       ├── club              //club控制层
+|       ├── clubRoom          //clubRoom控制层
 |       ├── user              //user控制层
-|       └──     
+|       └── room              //野生房间控制层
+|           
+|   ├── db                    //数据库和redis
 |   ├── gameConfig            //游戏固定配置
 |   ├── init                  //项目第一次上线时的init
-|   ├── interface             
+|   ├── interface                     
 |   ├── models                // m层             
-|   ├── sequelize             // 数据库链接配置，以后可能会改名，把redis整合进来
 |   ├── servers               // 核心服务器
 |   ├── test                  // 测试模块
 |   └── util                  // 工具类
