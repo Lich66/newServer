@@ -213,7 +213,7 @@ export class Handler {
         await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${session.uid}`, '-1');
         await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${redisKeyPrefix.chair}${chairIndex}`, '-1');
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
-        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
+        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubid}`, { user, action: 3, chairIndex, roomid });
         roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${roomid}`, { user, action: 3 });
         return {
             code: 200
