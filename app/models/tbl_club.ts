@@ -36,25 +36,24 @@ export class tbl_club extends Model<tbl_club> {
     public notice: string;
 
     @Column({
-        type: DataType.STRING(STRING512),
-        comment: '茶楼默认玩法设置'
+        comment: '玩法类型'
     })
-    public play_setting: string;
+    public play_type: number;
 
     @Column({
         comment: '开桌'
     })
-    public person_number: number;
+    public player_num: number;
 
     @Column({
         comment: '底分'
     })
-    public end_points: number;
+    public base_point: number;
 
     @Column({
         comment: '总回合数'
     })
-    public round_total: number;
+    public round: number;
 
     @Column({
         comment: '支付方式'
@@ -82,14 +81,64 @@ export class tbl_club extends Model<tbl_club> {
     public double_rule: number;
 
     @Column({
-        comment: '特殊牌型'
+        comment: '通比玩法'
     })
-    public special_card_type: string;
+    public all_contrast_play: number;
 
     @Column({
-        comment: '高级选项'
+        comment: '轮庄玩法'
     })
-    public advanced_options: string;
+    public take_turns_play: number;
+
+    @Column({
+        comment: '上庄玩法'
+    })
+    public up_banker_play: number;
+
+    @Column({
+        comment: '特殊牌型'
+    })
+    public special_card: string;
+
+    @Column({
+        comment: '快速模式标志位'
+    })
+    public fast_flag: boolean;
+
+    @Column({
+        comment: '中途禁入标志'
+    })
+    public half_way_add: boolean;
+
+    @Column({
+        comment: '搓牌标志'
+    })
+    public rubbing_flag: boolean;
+
+    @Column({
+        comment: '道具禁用标志'
+    })
+    public item_use: boolean;
+
+    @Column({
+        comment: '闲家买码'
+    })
+    public buy_code: boolean;
+
+    @Column({
+        comment: '表情禁用'
+    })
+    public emotion: boolean;
+
+    @Column({
+        comment: '暗抢庄家标志'
+    })
+    public grab_flag: boolean;
+
+    @Column({
+        comment: '加倍标志'
+    })
+    public double_flag: boolean;
 
     @Column({
         comment: '王癞玩法'

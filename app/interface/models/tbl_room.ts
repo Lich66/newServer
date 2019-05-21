@@ -3,17 +3,19 @@ export interface IRoom {
     roomid: number;
     clubid: number;
     create_time: Date;
-    owner: string;
     play_type: number;
-    base_point: number;
     player_num: number;
+    base_point: number;
     round: number;
-    room_pay: number;
-    start_option: number;
-    push_flag: boolean;
-    max_grab: number;
+    pay_type: number;
+    start_type: number;
+    bolus_type: number;
+    max_banker_bet: number;
     double_rule: number;
-    special_card: number;
+    special_card: string;
+    all_contrast_play: number;
+    take_turns_play: number;
+    up_banker_play: number;
     fast_flag: boolean;
     half_way_add: boolean;
     rubbing_flag: boolean;
@@ -23,7 +25,6 @@ export interface IRoom {
     grab_flag: boolean;
     double_flag: boolean;
     laizi_type: number;
-    // [key: string]: any;
 }
 
 

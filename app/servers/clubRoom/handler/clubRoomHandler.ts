@@ -32,7 +32,6 @@ export class Handler {
         delete njson.roomid;
         delete njson.create_time;
         delete njson.clubid;
-        delete njson.owner;
 
         let result = await ClubRoom.updateClubRoom({ roomid: ClubRoominfo.roomid, clubid: ClubRoominfo.roomid, uid: session.uid }, njson);
         if (result) {
