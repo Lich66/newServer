@@ -31,33 +31,43 @@ export class Club {
                 let arr: tbl_room[];
                 if (club) {
                     arr = await tbl_room.bulkCreate([{
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
                         owner: json.uid
                     }], { validate: true, transaction: t });
@@ -68,8 +78,7 @@ export class Club {
                 if (arr.length > 0) {
                     arr.forEach(async (element) => {
                         const json = SelfUtils.assign<IRoom>(element.toJSON(), {});
-                        // 这里假设是4
-                        const chartnumber = 4;
+                        const chartnumber = json.player_num;
                         let index = 0;
                         do {
                             await ClubRoomState.setClubRoomState({ redisRoomId: `${redisKeyPrefix.clubRoom}${json.roomid}`, chairIndex: `${redisKeyPrefix.chair}${index}`, state: '-1' });

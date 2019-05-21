@@ -1,4 +1,5 @@
 import { redisClient } from '../db/redis';
+import { person_number } from './config';
 import { memory } from './memoryConfig';
 
 const NUMBER11 = 11;
@@ -143,7 +144,7 @@ export class GameUitl {
         return {
             name,
             play_type: config[0],
-            player_num: config[1],
+            player_num: person_number[config[1]],
             base_point: config[2],
             round: config[3],
             pay_type: config[4],

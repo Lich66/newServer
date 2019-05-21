@@ -1,9 +1,9 @@
-import { Application, BackendSession, ChannelService } from 'pinus';
+import { Application, BackendSession, ChannelService, IComponent } from 'pinus';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRoomRequest, IClubRoomReturn, IClubRoomRpc } from '../../../interface/clubRoom/clubRoomInterface';
+import { IClubRoomRequest, IClubRoomReturn, IClubRoomRpc, IClubRoomStateReturn } from '../../../interface/clubRoom/clubRoomInterface';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -74,6 +74,51 @@ export class Handler {
             };
         }
     }
+
+
+    public async getAllClubRoomState(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomStateReturn> {
+        const MAXLENGTH = 20;
+        const clubid = session.get('clubid');
+        if (!clubid) {
+            return {
+                code: 500
+            };
+        }
+        const roomIdList = await redisClient.lrangeAsync(`${redisKeyPrefix.club}${clubid}`, 0, MAXLENGTH);
+        console.log(roomIdList);
+        const roomarr = [];
+        for (const iterator of roomIdList) {
+            const json: any = {};
+            json.roomid = iterator;
+            const state = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${iterator}`);
+            for (const key in state) {
+                if (state.hasOwnProperty(key)) {
+                    // const element = state[key];
+                    if (!key.startsWith(redisKeyPrefix.chair)) {
+                        const userinfo = await User.getUser({ userid: Number.parseInt(key, 0) });
+                        json[key] = userinfo;
+                    } else {
+                        json[key] = state[key];
+                    }
+                }
+            }
+            roomarr.push(json);
+        }
+        console.log(roomarr);
+        if (roomarr.length > 0) {
+            return {
+                code: 200,
+                data: roomarr
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
+
+
+
     public async leaveClubRoom(clubroomrpc: IClubRoomRpc, session: BackendSession): Promise<IClubRoomReturn> {
         const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, false);
         const roomChannelUser = roomChannel.getMember(`${session.uid}`);
@@ -99,14 +144,23 @@ export class Handler {
     }
     public async sitDown(obj: any, session: BackendSession): Promise<IClubRoomReturn> {
         const MAXLENGTH = 20;
-        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, false);
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${roomid}`, false);
         const roomChannelUser = roomChannel.getMember(`${session.uid}`);
         if (!roomChannelUser) {
             return {
                 code: 500
             };
         }
-        const roomInfo = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`);
+        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubid}`, false);
+        const clubChannelUser = clubChannel.getMember(`${session.uid}`);
+        if (!clubChannelUser) {
+            return {
+                code: 500
+            };
+        }
+        const roomInfo = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${roomid}`);
 
         let chairIndex = -1;
         let index = 0;
@@ -122,35 +176,45 @@ export class Handler {
                 code: 500
             };
         }
-        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, `${session.uid}`, `${chairIndex}`);
-        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, `${redisKeyPrefix.chair}${chairIndex}`, `${session.uid}`);
+        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${session.uid}`, `${chairIndex}`);
+        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${redisKeyPrefix.chair}${chairIndex}`, `${session.uid}`);
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
-        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
-        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, { user, action: 2, chairIndex });
+        clubChannel.pushMessage(`${redisKeyPrefix.club}${clubid}`, { user, action: 2, chairIndex, roomid });
+        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${roomid}`, { user, action: 2, chairIndex });
         return {
             code: 200
         };
 
     }
     public async standUp(obj: any, session: BackendSession): Promise<IClubRoomReturn> {
-        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, false);
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${roomid}`, false);
         const roomChannelUser = roomChannel.getMember(`${session.uid}`);
+        
         if (!roomChannelUser) {
             return {
                 code: 500
             };
         }
-        const chairIndex = await redisClient.hgetAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, `${session.uid}`);
+        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubid}`, false);
+        const clubChannelUser = clubChannel.getMember(`${session.uid}`);
+        if (!clubChannelUser) {
+            return {
+                code: 500
+            };
+        }
+        const chairIndex = await redisClient.hgetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${session.uid}`);
         if (Number.parseInt(chairIndex, 0) < 0) {
             return {
                 code: 500
             };
         }
-        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, `${session.uid}`, '-1');
-        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, `${redisKeyPrefix.chair}${chairIndex}`, '-1');
+        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${session.uid}`, '-1');
+        await redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${roomid}`, `${redisKeyPrefix.chair}${chairIndex}`, '-1');
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
         // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
-        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${session.get('roomid')}`, { user, action: 3 });
+        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${roomid}`, { user, action: 3 });
         return {
             code: 200
         };
