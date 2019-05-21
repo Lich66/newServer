@@ -53,7 +53,7 @@ type IindexAsync = (key: string, index: number) => Promise<string>;
 
 type ILinsertAsync = (key: string, dir: 'BEFORE' | 'AFTER', pivot: string, value: string) => Promise<string>;
 
-type ILlenAsync = (key: string) => Promise<string>;
+type ILlenAsync = (key: string) => Promise<number>;
 
 type ILpopAsync = (key: string) => Promise<string>;
 
