@@ -2,16 +2,21 @@ import { Application, BackendSession, ChannelService, IComponent } from 'pinus';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
 import { redisClient } from '../../../db/redis';
-import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
+import { gameKeyPrefix, redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IClubRoomRequest, IClubRoomReturn, IClubRoomRpc, IClubRoomStateReturn } from '../../../interface/clubRoom/clubRoomInterface';
+import { ITbl_room } from '../../../interface/models/tbl_room';
+import { Game } from '../../../util/game';
+
 
 export default function (app: Application) {
     return new Handler(app);
 }
 
 export class Handler {
+    private app: Application;
     private channelService: ChannelService;
-    public constructor(private app: Application) {
+    public constructor(app: Application) {
+        this.app = app;
         this.channelService = app.get('channelService');
     }
 
@@ -251,5 +256,41 @@ export class Handler {
         return {
             code: 200
         };
+    }
+
+    public async startGame(roomid: number, roomInfo: ITbl_room) {
+        const MAXTime = 50000;
+        let clubRoom: ITbl_room;
+        if (!roomInfo) {
+            clubRoom = await ClubRoom.getClubRoom({ roomid });
+        } else {
+            clubRoom = roomInfo;
+        }
+        // const channel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${roomid}`);
+        let game = new Game(clubRoom, this.channelService);
+        this.app.set(`${gameKeyPrefix.club_room_game}${roomid}`, game);
+        const state = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${roomid}`);
+        for (const key in state) {
+            if (state.hasOwnProperty(key)) {
+                // const element = state[key];
+                if (key.startsWith(redisKeyPrefix.chair)) {
+                    game.pushUser(Number.parseInt(state[key], 0));
+                }
+            }
+        }
+        const round = clubRoom.round;
+        let roundIndex = 1;
+        const timmer = setInterval(() => {
+
+            game.sendPoker();
+            setTimeout(() => {
+                game.settlement();
+            }, 10000);
+            roundIndex++;
+            if (roundIndex == round) {
+                clearInterval(timmer);
+                game = null;
+            }
+        }, MAXTime);
     }
 }

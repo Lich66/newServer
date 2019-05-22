@@ -24,3 +24,13 @@ export const redisKeyPrefix = {
      */
     chair: 'chair_'
 };
+
+/**
+ * 房间游戏的命名空间
+ */
+export const gameKeyPrefix = {
+    /**
+     * 游戏的命名空间
+     */
+    club_room_game: 'club_room_game_'
+};
