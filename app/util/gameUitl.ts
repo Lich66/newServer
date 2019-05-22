@@ -1,5 +1,5 @@
 import { redisClient } from '../db/redis';
-import { person_number } from './config';
+import { RoomConfig } from '../gameConfig/roomConfig';
 import { memory } from './memoryConfig';
 
 const NUMBER11 = 11;
@@ -14,6 +14,30 @@ const NUMBER19 = 19;
 const NUMBER20 = 20;
 const NUMBER21 = 21;
 const NUMBER22 = 22;
+interface IRoomConfigReturn {
+    play_type: number;
+    player_num: number;
+    base_point: string;
+    round: number;
+    pay_type: number;
+    start_type: number;
+    bolus_type: number;
+    max_banker_bet: number;
+    double_rule: number;
+    all_contrast_play: number;
+    take_turns_play: number;
+    up_banker_play: number;
+    special_card: string;
+    fast_flag: boolean;
+    half_way_add: boolean;
+    rubbing_flag: boolean;
+    item_use: boolean;
+    buy_code: boolean;
+    bolus_limit: boolean;
+    grab_flag: boolean;
+    double_flag: boolean;
+    laizi_type: number;
+}
 interface ICreateReturn {
     name: string;
     play_type: number;
@@ -79,8 +103,9 @@ export class GameUitl {
     }
 
     /**
-     * 
-     * @param str 十六进制转8位二进制
+     * 十六进制转8位二进制
+     * @param str 十六进制字符串
+     * @return 8位的二进制字符串
      */
     public static hex_to_bin(str: string) {
         let binstr = parseInt(str, 16).toString(2);   // 16进制转成2进制
@@ -91,8 +116,9 @@ export class GameUitl {
     }
 
     /**
-     * 
-     * @param str 二进制转十六进制
+     * 二进制转十六进制
+     * @param str 二进制字符串
+     * * @return 16进制字符串
      */
     public static bin_to_hex(str: string) {
         const num = 16;
@@ -101,31 +127,64 @@ export class GameUitl {
     }
 
     /**
-     * 
+     * 计算房费(房间规则解析前)
+     * @param playerNum 几人桌 config[1]
+     * @param round 局数 config[3]
+     * @param payType 支付方式 config[4]
+     * @returns 房费
+     */
+    public static getRoomRate1(playerNum: number, round: number, payType: number): number {
+        let needDiamond: number;
+        if (payType === 0) {
+            needDiamond = RoomConfig.round[round] / 10;
+        } else {
+            needDiamond = RoomConfig.playerNum[playerNum] * RoomConfig.round[round] / NUMBER20;
+        }
+        return needDiamond;
+    }
+
+    /**
+     * 计算房费(房间规则解析后)
+     * @param playerNum 几人桌
+     * @param round 局数
+     * @param payType 支付方式
+     * @returns 房费
+     */
+    public static getRoomRate2(playerNum: number, round: number, payType: number): number {
+        let needDiamond: number;
+        if (payType === 0) {
+            needDiamond = round / 10;
+        } else {
+            needDiamond = playerNum * round / NUMBER20;
+        }
+        return needDiamond;
+    }
+
+
+    /**
+     * 解析房间配置
      * @param config 房间参数,eg:[1,1,1,1,1,1,1,1,1,1,1,1,'159C9',1,1,1,1,1,1,1,1,1]
      */
-    public static async parsePRoomConfig(config: any[]): Promise<ICreateReturn> {
+    public static async parsePRoomConfig(config: any[]): Promise<IRoomConfigReturn> {
         // 0:玩法类型, 1:开桌, 2:底分, 3:总回合数, 4:支付方式, 5:开始方式
         // 6:推注方式, 7:最大抢庄倍数, 8:翻倍规则, 9:通比玩法, 10:轮庄玩法
-        // 11:上庄玩法, 12:特殊牌型, 13:快速模式标志位, 14:中途禁入标志
+        // 11:上庄玩法, 12:特殊牌型(16进制), 13:快速模式标志位, 14:中途禁入标志
         // 15:搓牌标志, 16:道具禁用标志, 17:闲家买码, 18:表情禁用
         // 19:暗抢庄家标志, 20:加倍标志, 21:王癞玩法
-
         return {
-            name: 'nihao',
             play_type: config[0],
-            player_num: person_number[config[1]],
-            base_point: config[2],
-            round: config[3],
+            player_num: RoomConfig.playerNum[config[1]],
+            base_point: RoomConfig.basePoint[config[2]],
+            round: RoomConfig.round[config[3]],
             pay_type: config[4],
             start_type: config[5],
-            bolus_type: config[6],
-            max_banker_bet: config[7],
+            bolus_type: RoomConfig.bolusType[config[6]],
+            max_banker_bet: RoomConfig.bolusType[config[7]],
             double_rule: config[8],
             all_contrast_play: config[9],
             take_turns_play: config[10],
-            up_banker_play: config[NUMBER11],
-            special_card: config[NUMBER12],
+            up_banker_play: RoomConfig.upBankerScore[config[NUMBER11]],
+            special_card: GameUitl.hex_to_bin(config[NUMBER12]),
             fast_flag: config[NUMBER13],
             half_way_add: config[NUMBER14],
             rubbing_flag: config[NUMBER15],
@@ -134,8 +193,7 @@ export class GameUitl {
             bolus_limit: config[NUMBER18],
             grab_flag: config[NUMBER19],
             double_flag: config[NUMBER20],
-            laizi_type: config[NUMBER21],
-            type: config[NUMBER22]
+            laizi_type: config[NUMBER21]
         };
     }
 
@@ -143,29 +201,11 @@ export class GameUitl {
      * parsePlayConfig
      */
     public static async parsePlayConfig(config: any[]): Promise<ICreateReturn> {
-        // 玩法类型
-        // 开桌
-        // 底分
-        // 总回合数
-        // 支付方式
-        // 开始方式
-        // 推注方式
-        // 最大抢庄倍数
-        // 翻倍规则
-        // 通比玩法
-        // 轮庄玩法
-        // 上庄玩法
-        // 特殊牌型
-        // 快速模式标志位
-        // 中途禁入标志
-        // 搓牌标志
-        // 道具禁用标志
-        // 闲家买码
-        // 表情禁用
-        // 暗抢庄家标志
-        // 加倍标志
-        // 王癞玩法
-        // 茶楼类型,普通还是比赛
+        // 0:玩法类型, 1:开桌, 2:底分, 3:总回合数, 4:支付方式, 5:开始方式
+        // 6:推注方式, 7:最大抢庄倍数, 8:翻倍规则, 9:通比玩法, 10:轮庄玩法
+        // 11:上庄玩法, 12:特殊牌型(16进制), 13:快速模式标志位, 14:中途禁入标志
+        // 15:搓牌标志, 16:道具禁用标志, 17:闲家买码, 18:表情禁用
+        // 19:暗抢庄家标志, 20:加倍标志, 21:王癞玩法, 22:茶楼类型,普通还是比赛
         const CreateClubStartName = 'CreateClubStartName';
         const CreateClubMatchStartName = 'CreateClubMatchStartName';
         let name = '';
@@ -183,7 +223,7 @@ export class GameUitl {
         return {
             name,
             play_type: config[0],
-            player_num: person_number[config[1]],
+            player_num: RoomConfig.playerNum[config[1]],
             base_point: config[2],
             round: config[3],
             pay_type: config[4],

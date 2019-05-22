@@ -12,7 +12,7 @@ export class RoomManager {
 
     public roomList = {};
 
-    public static async createRoom(userId: number, config: Array<number | string>) {
+    public static async createRoom(userId: number, config: any) {
         // 先判断玩家的房间数是否超过10个
         let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
         if (roomListLen && roomListLen === 10) {
@@ -20,13 +20,10 @@ export class RoomManager {
         }
         let userData = await User.getUser({ userid: userId });
         console.log('获取数据库的信息为:' + JSON.stringify(userData));
-        // 再判断玩家的钻石是否足够; config[4]代表房费, >2表示支付方式为房主支付
-        let needDaimond: number;
-        if (config[4] > 2) {
-            needDaimond = parseInt(RoomConfig.payType[config[4]], 0);
-            if (userData.diamond < needDaimond) {
-                return { flag: false, code: 12001 };
-            }
+        // 再判断玩家的钻石是否足够; 
+        let roomRate: number = GameUitl.getRoomRate1(config[1], config[3], config[4]);
+        if (userData.diamond < roomRate) {
+            return { flag: false, code: 12001 };
         }
         // 生成房间号
         let roomId: number;
@@ -36,14 +33,14 @@ export class RoomManager {
         let createTime = GameUitl.getLocalDateStr();
         console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
         // 更改数据库及redis玩家钻石数
-        let nowDiamond = userData.diamond - needDaimond;
+        let nowDiamond = userData.diamond - roomRate;
         let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
         if (result === 0) {
             return { flag: false, code: 12003 };
         }
         await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
-        console.log('改变后redis的钻石数' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
-
+        // 解析房间配置信息
+        let json = await GameUitl.parsePRoomConfig(config);
         // let json1 = room_0_0(config);
         // console.log('转义后的房间配置信息: ' + json1);
         // let json2 = {
