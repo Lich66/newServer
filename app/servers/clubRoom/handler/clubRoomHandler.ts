@@ -117,6 +117,39 @@ export class Handler {
         }
     }
 
+    public async getClubRoomState(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomStateReturn> {
+        const clubid = session.get('clubid');
+        if (!clubid) {
+            return {
+                code: 500
+            };
+        }
+        const roomid = session.get('roomid');
+        if (!roomid) {
+            return {
+                code: 500
+            };
+        }
+        const json: any = {};
+        json.roomid = roomid;
+        const state = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${roomid}`);
+        for (const key in state) {
+            if (state.hasOwnProperty(key)) {
+                // const element = state[key];
+                if (!key.startsWith(redisKeyPrefix.chair)) {
+                    const userinfo = await User.getUser({ userid: Number.parseInt(key, 0) });
+                    json[key] = userinfo;
+                } else {
+                    json[key] = state[key];
+                }
+            }
+        }
+        return {
+            code: 200,
+            data: json
+        };
+    }
+
 
 
     public async leaveClubRoom(clubroomrpc: IClubRoomRpc, session: BackendSession): Promise<IClubRoomReturn> {
@@ -191,7 +224,7 @@ export class Handler {
         const clubid = session.get('clubid');
         const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${roomid}`, false);
         const roomChannelUser = roomChannel.getMember(`${session.uid}`);
-        
+
         if (!roomChannelUser) {
             return {
                 code: 500
