@@ -61,35 +61,35 @@ export const RoomConfig = {
     /** 
      * 快速模式 -- -1:未选中,1:选中
      */
-    fastFlag: [-1, 1],
+    fastFlag: [0, 1],
     /**
      * 中途禁入 -- -1:未选中,1:选中
      */
-    halfWayAdd: [-1, 1],
+    halfWayAdd: [0, 1],
     /**
      * 禁止搓牌 -- -1:未选中,1:选中
      */
-    rubbingFlag: [-1, 1],
+    rubbingFlag: [0, 1],
     /**
      * 禁用道具 -- -1:未选中,1:选中
      */
-    itemUse: [-1, 1],
+    itemUse: [0, 1],
     /**
      * 闲家买码 -- -1:未选中,1:选中
      */
-    buyCode: [-1, 1],
+    buyCode: [0, 1],
     /**
      * 推注限制 -- -1:未选中,1:选中
      */
-    bolusLimit: [-1, 1],
+    bolusLimit: [0, 1],
     /**
      * 暗抢庄家 -- -1:未选中,1:选中
      */
-    grabFlag: [-1, 1],
+    grabFlag: [0, 1],
     /**
      * 下注加倍 -- -1:未选中,1:选中
      */
-    doubleFlag: [-1, 1],
+    doubleFlag: [0, 1],
     /**
      * 王癞玩法
      */

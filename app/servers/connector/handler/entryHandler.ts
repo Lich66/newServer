@@ -99,21 +99,22 @@ export class Handler {
     }
 
     public async joinRoom(msg: IJoinRoomRequest, session: FrontendSession) {
-        console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
-        let userId: number = parseInt(session.uid, 0);
-        let result = await RoomManager.joinRoom(userId, msg.roomId);
-        if (!result.flag) {
-            return {
-                code: result.code,
-                msg: result.msg
-            };
-        }
-        return {
-            code: result.code,
-            roomConfig: result.roomConfig,
-            userList: result.userList,
-            onlookerList: result.onlookerList
-        };
+        // console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
+        // let userId: number = parseInt(session.uid, 0);
+        // let result = await RoomManager.joinRoom(userId, msg.roomId);
+        // if (!result.flag) {
+        //     return {
+        //         code: result.code,
+        //         msg: result.msg
+        //     };
+        // }
+        // return {
+        //     code: result.code,
+        //     roomConfig: result.roomConfig,
+        //     userList: result.userList,
+        //     onlookerList: result.onlookerList
+        // };
+        return { code: 500 };
     }
 
     public async publish(msg: any, session: FrontendSession) {

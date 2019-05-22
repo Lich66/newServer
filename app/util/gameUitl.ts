@@ -101,6 +101,45 @@ export class GameUitl {
     }
 
     /**
+     * 
+     * @param config 房间参数,eg:[1,1,1,1,1,1,1,1,1,1,1,1,'159C9',1,1,1,1,1,1,1,1,1]
+     */
+    public static async parsePRoomConfig(config: any[]): Promise<ICreateReturn> {
+        // 0:玩法类型, 1:开桌, 2:底分, 3:总回合数, 4:支付方式, 5:开始方式
+        // 6:推注方式, 7:最大抢庄倍数, 8:翻倍规则, 9:通比玩法, 10:轮庄玩法
+        // 11:上庄玩法, 12:特殊牌型, 13:快速模式标志位, 14:中途禁入标志
+        // 15:搓牌标志, 16:道具禁用标志, 17:闲家买码, 18:表情禁用
+        // 19:暗抢庄家标志, 20:加倍标志, 21:王癞玩法
+
+        return {
+            name: 'nihao',
+            play_type: config[0],
+            player_num: person_number[config[1]],
+            base_point: config[2],
+            round: config[3],
+            pay_type: config[4],
+            start_type: config[5],
+            bolus_type: config[6],
+            max_banker_bet: config[7],
+            double_rule: config[8],
+            all_contrast_play: config[9],
+            take_turns_play: config[10],
+            up_banker_play: config[NUMBER11],
+            special_card: config[NUMBER12],
+            fast_flag: config[NUMBER13],
+            half_way_add: config[NUMBER14],
+            rubbing_flag: config[NUMBER15],
+            item_use: config[NUMBER16],
+            buy_code: config[NUMBER17],
+            bolus_limit: config[NUMBER18],
+            grab_flag: config[NUMBER19],
+            double_flag: config[NUMBER20],
+            laizi_type: config[NUMBER21],
+            type: config[NUMBER22]
+        };
+    }
+
+    /**
      * parsePlayConfig
      */
     public static async parsePlayConfig(config: any[]): Promise<ICreateReturn> {
