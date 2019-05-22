@@ -3,47 +3,47 @@
     "connector": [{
       "id": "connector-server-1",
       "host": "192.168.1.21",
-      "port": 3150,
+      "port": 9150,
       "clientHost": "192.168.1.21",
-      "clientPort": 3010,
+      "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10001"
     }],
     "gate": [{
       "id": "gate-server-1",
       "host": "192.168.1.21",
-      "clientPort": 3014,
+      "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10003"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "192.168.1.21",
-      "port": 3160,
+      "port": 9160,
       "args": "--inspect=10005"
     }],
     "hall": [{
       "id": "hall-server-1",
       "host": "192.168.1.21",
-      "port": 3170,
+      "port": 9170,
       "args": " --inspect=10007"
     }],
     "club": [{
       "id": "club-server-1",
       "host": "192.168.1.21",
-      "port": 3180,
+      "port": 9180,
       "args": " --inspect=10009"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
       "host": "192.168.1.21",
-      "port": 3190,
+      "port": 9190,
       "args": " --inspect=10011"
     }],
     "room": [{
       "id": "room-server-1",
       "host": "192.168.1.21",
-      "port": 3200,
+      "port": 9200,
       "args": " --inspect=10013"
     }]
   },
@@ -51,47 +51,47 @@
     "connector": [{
       "id": "connector-server-1",
       "host": "192.168.1.21",
-      "port": 3150,
+      "port": 9150,
       "clientHost": "192.168.1.21",
-      "clientPort": 3010,
+      "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10002"
     }],
     "gate": [{
       "id": "gate-server-1",
       "host": "192.168.1.21",
-      "clientPort": 3014,
+      "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10004"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "192.168.1.21",
-      "port": 3160,
+      "port": 9160,
       "args": "--inspect=10006"
     }],
     "hall": [{
       "id": "hall-server-1",
       "host": "192.168.1.21",
-      "port": 3170,
+      "port": 9170,
       "args": " --inspect=10008"
     }],
     "club": [{
       "id": "club-server-1",
       "host": "192.168.1.21",
-      "port": 3180,
+      "port": 9180,
       "args": " --inspect=10010"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
       "host": "192.168.1.21",
-      "port": 3190,
+      "port": 9190,
       "args": " --inspect=10012"
     }],
     "room": [{
       "id": "room-server-1",
       "host": "192.168.1.21",
-      "port": 3200,
+      "port": 9200,
       "args": " --inspect=10014"
     }]
   }

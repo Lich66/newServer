@@ -10,13 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
+const sequelize_1 = require("../db/sequelize");
 let Bullfight_BaseDB = 
 // tslint:disable-next-line: class-name
 class Bullfight_BaseDB extends sequelize_typescript_1.Model {
 };
 __decorate([
     sequelize_typescript_1.PrimaryKey,
-    sequelize_typescript_1.Column,
+    sequelize_typescript_1.Column({
+        type: sequelize_typescript_1.DataType.STRING(sequelize_1.MAXVARCHA)
+    }),
     __metadata("design:type", String)
 ], Bullfight_BaseDB.prototype, "Index", void 0);
 __decorate([
@@ -36,4 +39,4 @@ Bullfight_BaseDB = __decorate([
     // tslint:disable-next-line: class-name
 ], Bullfight_BaseDB);
 exports.Bullfight_BaseDB = Bullfight_BaseDB;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQnVsbGZpZ2h0X0Jhc2VEQi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2FwcC9tb2RlbHMvQnVsbGZpZ2h0X0Jhc2VEQi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztBQUFBLCtEQUF3RTtBQUl4RSxJQUFhLGdCQUFnQjtBQUQ3Qix1Q0FBdUM7QUFDdkMsTUFBYSxnQkFBaUIsU0FBUSw0QkFBdUI7Q0FlNUQsQ0FBQTtBQVhDO0lBRkMsaUNBQVU7SUFDViw2QkFBTTs7K0NBQ2M7QUFHckI7SUFEQyw2QkFBTTs7NkNBQ1k7QUFHbkI7SUFEQyw2QkFBTTs7OENBQ2E7QUFHcEI7SUFEQyw2QkFBTTs7K0NBQ2M7QUFiVixnQkFBZ0I7SUFGNUIsNEJBQUssQ0FBQyxFQUFFLFVBQVUsRUFBRSxLQUFLLEVBQUUsQ0FBQztJQUM3Qix1Q0FBdUM7R0FDMUIsZ0JBQWdCLENBZTVCO0FBZlksNENBQWdCIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQnVsbGZpZ2h0X0Jhc2VEQi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2FwcC9tb2RlbHMvQnVsbGZpZ2h0X0Jhc2VEQi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7OztBQUFBLCtEQUFrRjtBQUNsRiwrQ0FBNEM7QUFJNUMsSUFBYSxnQkFBZ0I7QUFEN0IsdUNBQXVDO0FBQ3ZDLE1BQWEsZ0JBQWlCLFNBQVEsNEJBQXVCO0NBaUI1RCxDQUFBO0FBWEM7SUFKQyxpQ0FBVTtJQUNWLDZCQUFNLENBQUM7UUFDTixJQUFJLEVBQUUsK0JBQVEsQ0FBQyxNQUFNLENBQUMscUJBQVMsQ0FBQztLQUNqQyxDQUFDOzsrQ0FDbUI7QUFHckI7SUFEQyw2QkFBTTs7NkNBQ1k7QUFHbkI7SUFEQyw2QkFBTTs7OENBQ2E7QUFHcEI7SUFEQyw2QkFBTTs7K0NBQ2M7QUFmVixnQkFBZ0I7SUFGNUIsNEJBQUssQ0FBQyxFQUFFLFVBQVUsRUFBRSxLQUFLLEVBQUUsQ0FBQztJQUM3Qix1Q0FBdUM7R0FDMUIsZ0JBQWdCLENBaUI1QjtBQWpCWSw0Q0FBZ0IifQ==

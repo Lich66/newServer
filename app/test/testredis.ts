@@ -5,10 +5,10 @@ redisClient.hgetallAsync('base').then((e) => {
 });
 
 
-// // 批量插入
-// redisClient.hmsetAsync('zhjtest', { 'hmsetAsync3': '3', 'parm1': 'parm1', 'parm2': 'parm2', 'parm3': 'parm3' }).then((r) => {
-//     console.log(r);
-// });
+// 批量插入
+redisClient.hmsetAsync('zhjtest', { 'hmsetAsync3': '3', 'parm1': 'parm1', 'parm2': 'parm2', 'parm3': 'parm3' }).then((r) => {
+    console.log(r);
+});
 // // 插入
 
 // redisClient.hsetAsync('user_502', 'userid', '502');
@@ -20,9 +20,9 @@ redisClient.hgetallAsync('base').then((e) => {
 //     console.log(r);
 // });
 // // 获取全部
-// redisClient.hgetallAsync('zhjtest').then((r) => {
-//     console.log(r);
-// });
+redisClient.hgetallAsync('zhjtest').then((r) => {
+    console.log(r);
+});
 // // 检查有没有
 // redisClient.hexistsAsync('zhjtest', 'parm3').then((r) => {
 //     console.log(r);

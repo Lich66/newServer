@@ -1,11 +1,13 @@
-import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
-
+import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { MAXVARCHA } from '../db/sequelize';
 @Table({ timestamps: false })
 // tslint:disable-next-line: class-name
-export class Bullfight_MingPaiQiangZhuang extends Model<Bullfight_MingPaiQiangZhuang> {
-  
+export class Bullfight_PlayTypeLists extends Model<Bullfight_PlayTypeLists> {
+
   @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.STRING(MAXVARCHA)
+  })
   public index: string;
 
   @Column

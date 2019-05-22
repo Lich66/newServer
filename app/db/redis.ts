@@ -4,6 +4,7 @@ import * as redis from 'redis';
 
 const port = 6379;
 const reidsHost = '192.168.1.21';
+const password = '123456';
 type IDelAsync = (key: string | string[]) => Promise<number>;
 
 type ISetAsync = (key: string, value: string, mode?: string, duration?: number, flag?: string) => Promise<'OK' | undefined>;
@@ -244,5 +245,5 @@ interface IBlueRedisClient extends redis.RedisClient {
     rpushxAsync?: IRpushxAsync;
 }
 
-export const redisClient: IBlueRedisClient = redis.createClient(port, reidsHost);
+export const redisClient: IBlueRedisClient = redis.createClient(port, reidsHost, { password });
 promisifyAll(redis);
