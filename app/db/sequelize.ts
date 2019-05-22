@@ -11,7 +11,9 @@ export const sequelize: Sequelize = new Sequelize({
     dialect: 'mysql',
     username: 'root',
     password: '123456',
-
+    define: {
+        charset: 'utf8mb4'
+    },
     // storage: ':memory:',
     // define: {
     //     // timestamps: true, // 开启时间戳 create_at delete_at update_at
