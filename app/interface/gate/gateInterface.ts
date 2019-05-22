@@ -1,4 +1,4 @@
-import { IResponse } from '../../global/response';
+import { IResponse } from '../global/response';
 
 export interface IRequest {
     clientVer: string;

@@ -2,11 +2,10 @@ import { Application, FrontendSession } from 'pinus';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRequest, IClubReturn } from '../../../interface/club/handler/clubInterface';
-import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/handler/clubRoomInterfaces';
-import { IUserReturn } from '../../../interface/connector/handler/connectorInterface';
-import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/handler/hallInterfaces';
-import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/remote/userInterface';
+import { IClubRequest, IClubReturn } from '../../../interface/club/clubInterface';
+import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/clubRoomInterface';
+import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/hallInterface';
+import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -92,8 +91,7 @@ export class Handler {
         let result = await RoomManager.createRoom(userid, msg.roomConfig);
         if (!result.flag) {
             return {
-                code: result.code,
-                msg: result.msg
+                code: result.code
             };
         }
         await this.app.rpc.room.roomRemote.createRoom.route(session)(result.roomId);

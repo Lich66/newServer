@@ -1,5 +1,5 @@
 export interface ICreateRoomRequest {
-    roomConfig: number[][];
+    roomConfig: Array<number | string>;
     // [key: string]: any;
 }
 

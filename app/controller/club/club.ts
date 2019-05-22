@@ -3,7 +3,7 @@ import * as Sequelize from 'sequelize';
 import { sequelize } from '../../db/sequelize';
 import { defaultClubName } from '../../gameConfig/defaultClubName';
 import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
-import { IClubRequest } from '../../interface/club/handler/clubInterface';
+import { IClubRequest } from '../../interface/club/clubInterface';
 import { IRoom } from '../../interface/models/tbl_room';
 import { tbl_club } from '../../models/tbl_club';
 import { tbl_room } from '../../models/tbl_room';
@@ -19,7 +19,7 @@ const MAXCOMPETITIONCLUB = 30;
 // const CHAIRSTR = 'chair_';
 
 export class Club {
-    public static async createClub(json: IClubRequest, usernick: string): Promise<tbl_club> {
+    public static async createClub(json: IClubRequest): Promise<tbl_club> {
         let result = await tbl_club.findAndCountAll({ where: { uid: json.uid, type: json.type } });
         if ((json.type == 0 && result.count > MAXCLUB) || (json.type == 1 && result.count > MAXCOMPETITIONCLUB)) {
             return null;
@@ -31,35 +31,45 @@ export class Club {
                 let arr: tbl_room[];
                 if (club) {
                     arr = await tbl_room.bulkCreate([{
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }, {
+                        ...json,
                         clubid: club.clubid,
-                        owner: usernick
+                        owner: json.uid
                     }], { validate: true, transaction: t });
                 }
                 if (arr.length == 0) {
@@ -68,8 +78,7 @@ export class Club {
                 if (arr.length > 0) {
                     arr.forEach(async (element) => {
                         const json = SelfUtils.assign<IRoom>(element.toJSON(), {});
-                        // 这里假设是4
-                        const chartnumber = 4;
+                        const chartnumber = json.player_num;
                         let index = 0;
                         do {
                             await ClubRoomState.setClubRoomState({ redisRoomId: `${redisKeyPrefix.clubRoom}${json.roomid}`, chairIndex: `${redisKeyPrefix.chair}${index}`, state: '-1' });

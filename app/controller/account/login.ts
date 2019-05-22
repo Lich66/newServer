@@ -4,27 +4,15 @@ import { sequelize } from '../../db/sequelize';
 import { defaultUser } from '../../gameConfig/defaultUser';
 import { ITbl_account } from '../../interface/models/tbl_account';
 import { ITbl_user } from '../../interface/models/tbl_user';
-import { IAccountInfoRequest, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../interface/user/remote/userInterface';
+import { IAccountInfoRequest, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../interface/user/userInterface';
 import { tbl_account } from '../../models/tbl_account';
 import { tbl_user } from '../../models/tbl_user';
+import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
+
 
 const Op = Sequelize.Op;
 const testAccount = 500;
-function assign<T>(json1: { [key: string]: any }, json2: { [key: string]: any }): T {
-    const json = {};
-    for (const key in json1) {
-        if (json1.hasOwnProperty(key)) {
-            json[key] = json1[key];
-        }
-    }
-    for (const key in json2) {
-        if (json2.hasOwnProperty(key)) {
-            json[key] = json2[key];
-        }
-    }
-    return json as T;
-}
 export class Login {
     public static async login(json: IUserinfoRequest): Promise<IUserResponse> {
         let userAccount: ITbl_account;
@@ -48,7 +36,7 @@ export class Login {
             const userModel = await User.getUser({
                 userid: userAccount.uid
             });
-            return assign<IUserResponse>(userModel.toJSON(), {
+            return SelfUtils.assign<IUserResponse>(userModel.toJSON(), {
                 token: userAccount.token
             });
         } else {
@@ -76,7 +64,7 @@ export class Login {
                     }, {
                             transaction: t
                         });
-                    return assign<IUserResponse>(userModel.toJSON(), {
+                    return SelfUtils.assign<IUserResponse>(userModel.toJSON(), {
                         token
                     });
                 });
@@ -101,7 +89,7 @@ export class Login {
             const userModel = await User.getUser({
                 userid: userAccount.uid
             });
-            return assign<IUserResponse>(userModel.toJSON(), {
+            return SelfUtils.assign<IUserResponse>(userModel.toJSON(), {
                 token: ''
             });
         } else {
@@ -127,7 +115,7 @@ export class Login {
                     userid: account[1][0].uid
                 }
             });
-            return assign<IUserResponse>(userModel.toJSON(), {
+            return SelfUtils.assign<IUserResponse>(userModel.toJSON(), {
                 token: ''
             });
         }
@@ -143,7 +131,7 @@ export class Login {
             const userModel = await User.getUser({
                 userid: userAccount.uid
             });
-            return assign<IUserResponse>(userModel.toJSON(), {
+            return SelfUtils.assign<IUserResponse>(userModel.toJSON(), {
                 token: userAccount.token
             });
         } else {

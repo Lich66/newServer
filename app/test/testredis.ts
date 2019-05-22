@@ -109,14 +109,14 @@ redisClient.hgetallAsync('base').then((e) => {
 // redisClient.lpushxAsync('zhjtestlist', 'x').then((r) => {
 //     console.log(r);
 // })
-redisClient.keysAsync('*').then((r) => {
-    console.log(r);
-    for (const iterator of r) {
-        redisClient.delAsync(iterator).then((s) => {
-            console.log(s);
-        });
-    }
-});
+// redisClient.keysAsync('*').then((r) => {
+//     console.log(r);
+//     for (const iterator of r) {
+//         redisClient.delAsync(iterator).then((s) => {
+//             console.log(s);
+//         });
+//     }
+// });
 // redisClient.blpopAsync('zhjtestlist', 100).then((r) => {
 //     console.log(r)
 // })
@@ -158,14 +158,17 @@ redisClient.keysAsync('*').then((r) => {
 // });
 
 // redisClient.rpushAsync('zhjtestlist', 'e').then((r) => {
-//     console.log(r)
+//     console.log(r);
 // });
 // redisClient.lrangeAsync('zhjtestlist', 0, 100).then((r) => {
-//     console.log(r)
+//     console.log(r);
 // });
 // redisClient.rpushAsync('zhjtestlist', 'f', 'g').then((r) => {
-//     console.log(r)
+//     console.log(r);
 // });
 // redisClient.lrangeAsync('zhjtestlist', 0, 100).then((r) => {
 //     console.log(r)
+// });
+// redisClient.llenAsync('zhjtestlist').then((r) => {
+//     console.log(r + ' ; ' + typeof r);
 // });

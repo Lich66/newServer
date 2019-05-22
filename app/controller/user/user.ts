@@ -1,5 +1,5 @@
 import { ITbl_user } from '../../interface/models/tbl_user';
-import { IUserRequest } from '../../interface/user/remote/userInterface';
+import { IUserRequest } from '../../interface/user/userInterface';
 import { tbl_user } from '../../models/tbl_user';
 export class User {
     // 实际上没这个方法 创建用户永远是和account里面一起创建的

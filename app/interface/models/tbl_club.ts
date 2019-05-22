@@ -23,7 +23,7 @@ export interface IClub {
     rubbing_flag: boolean;
     item_use: boolean;
     buy_code: boolean;
-    emotion: boolean;
+    bolus_limit: boolean;
     grab_flag: boolean;
     double_flag: boolean;
     laizi_type: number;

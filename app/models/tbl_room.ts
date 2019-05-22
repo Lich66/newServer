@@ -124,9 +124,9 @@ export class tbl_room extends Model<tbl_room> {
     public buy_code: boolean;
 
     @Column({
-        comment: '表情禁用'
+        comment: '推注限制'
     })
-    public emotion: boolean;
+    public bolus_limit: boolean;
 
     @Column({
         comment: '暗抢庄家标志'

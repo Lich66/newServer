@@ -1,5 +1,5 @@
 
-import { IClubRoomCRUD, IClubRoomRequest } from '../../interface/clubRoom/handler/clubRoomInterfaces';
+import { IClubRoomCRUD, IClubRoomRequest } from '../../interface/clubRoom/clubRoomInterface';
 import { ITbl_room } from '../../interface/models/tbl_room';
 import { tbl_room } from '../../models/tbl_room';
 // import { redisClient } from '../../db/redis';

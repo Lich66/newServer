@@ -1,5 +1,5 @@
 import { Application, FrontendSession } from 'pinus';
-import { IEntryReturn, IRequest } from '../../../interface/gate/handler/gateInterface';
+import { IEntryReturn, IRequest } from '../../../interface/gate/gateInterface';
 import { dispatch } from '../../../util/dispatcher';
 
 export default function (app: Application) {

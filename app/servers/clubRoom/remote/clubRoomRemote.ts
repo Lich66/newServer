@@ -3,7 +3,7 @@ import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
-import { IClubRoomRpc } from '../../../interface/clubRoom/remote/clubRoomInterface';
+import { IClubRoomRpc } from '../../../interface/clubRoom/clubRoomInterface';
 import { tbl_room } from '../../../models/tbl_room';
 
 export default function (app: Application) {
