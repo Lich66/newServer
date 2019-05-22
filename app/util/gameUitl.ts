@@ -169,7 +169,7 @@ export class GameUitl {
     }
 
     public static async parseInfoConfig(config: any[]): Promise<IChangeReturn> {
-        //         审核开关  14
+        // 审核开关  14
         // 积分是否可查看标识  15 
         // 打烊标志  16
         // 隐私标志  17 
