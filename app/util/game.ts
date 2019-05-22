@@ -1,17 +1,18 @@
+import { ITbl_room } from '../interface/models/tbl_room';
 import { Pokers } from './poker';
 
 export class Game {
     // 房间的配置信息
-    private roomConfig: number[][];
+    private clubroom: ITbl_room;
     // 玩多少局
     private roundNumber: number;
     // 发的牌是什么 结算用
     private poker: number[][][];
     // 发的牌是什么 发给用户用 主要用户核对
     private poker_user: number[][][];
-    public constructor(roomConfig: number[][], roundNumber: number) {
-        this.roomConfig = roomConfig;
-        this.roundNumber = roundNumber;
+    public constructor(clubroom: ITbl_room) {
+        this.clubroom = clubroom;
+        this.roundNumber = clubroom.round;
         this.poker = [];
         this.poker_user = [];
     }
@@ -57,7 +58,7 @@ export class Game {
             sindex++;
         } while (sindex < sendcount);
         // 发牌，发四张
-        
+
 
 
     }
