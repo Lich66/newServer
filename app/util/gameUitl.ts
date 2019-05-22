@@ -163,7 +163,7 @@ export class GameUitl {
 
     /**
      * 解析房间配置
-     * @param config 房间参数,eg:[1,1,1,1,1,1,1,1,1,1,1,1,'159C9',1,1,1,1,1,1,1,1,1]
+     * @param config 房间参数
      */
     public static async parsePRoomConfig(config: any[]): Promise<IRoomConfigReturn> {
         // 0:玩法类型, 1:开桌, 2:底分, 3:总回合数, 4:支付方式, 5:开始方式

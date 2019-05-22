@@ -2,7 +2,7 @@ import { Application, BackendSession, ChannelService } from 'pinus';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
-import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IClubCreateRequest, IClubRequest, IClubReturn, IClubUpdateRequest } from '../../../interface/club/clubInterface';
 import { GameUitl } from '../../../util/gameUitl';
 

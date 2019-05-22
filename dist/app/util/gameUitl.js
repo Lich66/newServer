@@ -108,7 +108,7 @@ class GameUitl {
     }
     /**
      * 解析房间配置
-     * @param config 房间参数,eg:[1,1,1,1,1,1,1,1,1,1,1,1,'159C9',1,1,1,1,1,1,1,1,1]
+     * @param config 房间参数
      */
     static parsePRoomConfig(config) {
         return __awaiter(this, void 0, void 0, function* () {

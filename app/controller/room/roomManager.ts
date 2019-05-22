@@ -1,9 +1,10 @@
 
 import { Application, ChannelService } from 'pinus';
 import { redisClient } from '../../db/redis';
-import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { RoomConfig } from '../../gameConfig/roomConfig';
 import { GameUitl } from '../../util/gameUitl';
+import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
 
 
@@ -38,19 +39,20 @@ export class RoomManager {
         if (result === 0) {
             return { flag: false, code: 12003 };
         }
+        // console.log('修改redis之前的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
         await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
+        // console.log('修改redis之后的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
+       
         // 解析房间配置信息
-        let json = await GameUitl.parsePRoomConfig(config);
-        // let json1 = room_0_0(config);
-        // console.log('转义后的房间配置信息: ' + json1);
-        // let json2 = {
-        //     roomId,
-        //     creatorId: userId,
-        //     createTime,
-        //     roomConfig: config
-        // };
-        // let roomConfig = SelfUtils.assign(json1, json2);
-        // console.log('合并后的房间配置: ' + JSON.stringify(roomConfig));
+        let json1 = await GameUitl.parsePRoomConfig(config);
+        let json2 = {
+            roomId,
+            creatorId: userId,
+            createTime,
+            roomConfig: config
+        };
+        let json = SelfUtils.assign(json1, json2);
+        console.log('合并后的房间配置: ' + JSON.stringify(json));
         // for (let key in roomConfig) {
         //     if (roomConfig.hasOwnProperty(key)) {
         //         await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);

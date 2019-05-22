@@ -2,7 +2,7 @@ import { Application, BackendSession, ChannelService, IComponent } from 'pinus';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
 import { redisClient } from '../../../db/redis';
-import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IClubRoomRequest, IClubRoomReturn, IClubRoomRpc, IClubRoomStateReturn } from '../../../interface/clubRoom/clubRoomInterface';
 
 export default function (app: Application) {

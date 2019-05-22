@@ -1,0 +1,29 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.redisKeyPrefix = {
+    /**
+     * 用户存储前缀
+     */
+    user: 'user_',
+    /**
+     * 房间列表存储前缀
+     */
+    userRoomList: 'userRoomList_',
+    /**
+     * 房间存储前缀
+     */
+    room: 'room_',
+    /**
+     * 茶楼存储前缀
+     */
+    club: 'club_',
+    /**
+     * 茶楼房间存储前缀
+     */
+    clubRoom: 'clubRoom_',
+    /**
+     * 茶楼房间位置存储前缀
+     */
+    chair: 'chair_'
+};
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibmFtZVNwYWNlLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vYXBwL2dhbWVDb25maWcvbmFtZVNwYWNlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQWEsUUFBQSxjQUFjLEdBQUc7SUFDMUI7O09BRUc7SUFDSCxJQUFJLEVBQUUsT0FBTztJQUNiOztPQUVHO0lBQ0gsWUFBWSxFQUFFLGVBQWU7SUFDN0I7O09BRUc7SUFDSCxJQUFJLEVBQUUsT0FBTztJQUNiOztPQUVHO0lBQ0gsSUFBSSxFQUFFLE9BQU87SUFDYjs7T0FFRztJQUNILFFBQVEsRUFBRSxXQUFXO0lBQ3JCOztPQUVHO0lBQ0gsS0FBSyxFQUFFLFFBQVE7Q0FDbEIsQ0FBQyJ9

@@ -1,7 +1,7 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
-import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IClubRpc } from '../../../interface/club/clubInterface';
 import { tbl_club } from '../../../models/tbl_club';
 import { tbl_user } from '../../../models/tbl_user';

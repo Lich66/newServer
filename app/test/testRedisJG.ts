@@ -9,7 +9,7 @@ let room = {
 
 redisClient.setAsync('room:123456', JSON.stringify(room));
 
-let room1 = new RoomChannelService();
+// let room1 = new RoomChannelService();
 
  redisClient.getAsync('room:123456').then((xx) => {
     {

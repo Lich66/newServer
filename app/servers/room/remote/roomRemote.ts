@@ -28,6 +28,7 @@ export class RoomRemote {
         "roomConfig":[[1,1],[1,1,1,1,1,1,1,1,9,9,1]]}
         */
         let channel = this.channelService.createChannel(roomId.toString());
+        
     }
 
 }

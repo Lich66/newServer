@@ -2,7 +2,7 @@ import * as Sequelize from 'sequelize';
 // const Sequelize = require('sequelize');
 import { sequelize } from '../../db/sequelize';
 import { defaultClubName } from '../../gameConfig/defaultClubName';
-import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { IClubRequest } from '../../interface/club/clubInterface';
 import { IRoom } from '../../interface/models/tbl_room';
 import { tbl_club } from '../../models/tbl_club';

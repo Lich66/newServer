@@ -1,7 +1,7 @@
 import { Application, FrontendSession } from 'pinus';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { redisClient } from '../../../db/redis';
-import { redisKeyPrefix } from '../../../gameConfig/redisKeyPrefix';
+import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IClubRequest, IClubReturn } from '../../../interface/club/clubInterface';
 import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/clubRoomInterface';
 import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/hallInterface';
