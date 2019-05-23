@@ -224,7 +224,7 @@ export class GameUitl {
             name,
             play_type: config[0],
             player_num: RoomConfig.playerNum[config[1]],
-            base_point: config[2],
+            base_point:  RoomConfig.round[config[2]],
             round: config[3],
             pay_type: config[4],
             start_type: config[5],

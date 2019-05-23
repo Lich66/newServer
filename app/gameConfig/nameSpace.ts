@@ -34,3 +34,14 @@ export const gameKeyPrefix = {
      */
     club_room_game: 'club_room_game_'
 };
+
+
+/**
+ * 房间游戏的命名空间
+ */
+export const channelKeyPrefix = {
+    /**
+     * 游戏的命名空间
+     */
+    channel: 'channel_'
+};

@@ -1,5 +1,5 @@
 import { pinus } from 'pinus';
-import { Sequelize } from 'sequelize-typescript';
+import { createGlobalChannelStatusPlugin } from 'pinus-global-channel-status';
 import { sequelize } from './app/db/sequelize';
 import { baseInit } from './app/util/memoryInit';
 import { preload } from './preload';
@@ -44,6 +44,16 @@ app.configure('production|development', 'connector', function () {
       // useDict: true,
       // useProtobuf: true
     });
+  app.use(createGlobalChannelStatusPlugin(), {
+    family: 4,           // 4 (IPv4) or 6 (IPv6)
+    options: {},
+    host: '192.168.1.21',
+    password: '123456',
+    port: 6379,
+    db: 10,      // optinal, from 0 to 15 with default redis configure
+    // optional
+    cleanOnStartUp: app.getServerType() == 'connector'
+  });
 });
 app.configure('production|development', 'gate', function () {
   app.set('connectorConfig',

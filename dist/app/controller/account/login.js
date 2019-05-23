@@ -1,12 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Sequelize = require("sequelize");
 const sequelize_1 = require("../../db/sequelize");
@@ -18,132 +10,126 @@ const user_1 = require("../user/user");
 const Op = Sequelize.Op;
 const testAccount = 500;
 class Login {
-    static login(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let userAccount;
-            if (json.token) {
-                userAccount = yield tbl_account_1.tbl_account.findOne({
-                    where: { token: json.token }
-                });
-            }
-            else if (json.wxopenid) {
-                userAccount = yield tbl_account_1.tbl_account.findOne({
-                    where: { wxopenid: json.wxopenid, token: { [Op.regexp]: '\.' } }
-                });
-            }
-            else if (json.xlopenid) {
-                userAccount = yield tbl_account_1.tbl_account.findOne({
-                    where: { xlopenid: json.xlopenid, token: { [Op.regexp]: '\.' } }
-                });
-            }
-            // const userAccount: ITbl_account = await tbl_account.findOne({
-            //     where: { ...parms, to }
-            // });
-            if (userAccount) {
-                const userModel = yield user_1.User.getUser({
-                    userid: userAccount.uid
-                });
-                return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
-                    token: userAccount.token
-                });
-            }
-            else {
-                try {
-                    return sequelize_1.sequelize.transaction((t) => __awaiter(this, void 0, void 0, function* () {
-                        // 这里还要生成一个token 注册时候是没有token的
-                        const token = json.token;
-                        const account = yield tbl_account_1.tbl_account.create(Object.assign({}, json, { token }), {
-                            transaction: t
-                        });
-                        // 这里面从第三方获取
-                        const num = (Math.random() * 1000).toFixed(0);
-                        const sdk = {
-                            usernick: `test${num}`,
-                            image: `img${num}`,
-                            sex: Number.parseInt(num, 0)
-                        };
-                        const userModel = yield tbl_user_1.tbl_user.create(Object.assign({}, sdk, { userid: account.uid }, defaultUser_1.defaultUser), {
-                            transaction: t
-                        });
-                        return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
-                            token
-                        });
-                    }));
-                }
-                catch (error) {
-                    return null;
-                }
-            }
-        });
-    }
-    static accountLogin(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const userAccount = yield tbl_account_1.tbl_account.findOne({
-                where: {
-                    account: json.account
-                }
-            });
-            if (userAccount && userAccount.password !== json.password) {
-                // 存在   但是账号密码不符
-                return null;
-            }
-            else if (userAccount && userAccount.password === json.password) {
-                // 存在 账号密码相符
-                const userModel = yield user_1.User.getUser({
-                    userid: userAccount.uid
-                });
-                return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
-                    token: ''
-                });
-            }
-            else {
-                // 不存在 创建一个
-                let newIndex = 0;
-                for (let index = 0; index < testAccount; index++) {
-                    const element = yield tbl_account_1.tbl_account.findOne({
-                        where: {
-                            uid: index
-                        }
-                    });
-                    if (!element.password && !element.account) {
-                        newIndex = index;
-                    }
-                }
-                const account = yield tbl_account_1.tbl_account.update(json, {
-                    where: {
-                        uid: newIndex
-                    }
-                });
-                const userModel = yield tbl_user_1.tbl_user.findOne({
-                    where: {
-                        userid: account[1][0].uid
-                    }
-                });
-                return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
-                    token: ''
-                });
-            }
-        });
-    }
-    static tokenLogin(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // 功能没写完 是假的
-            const userAccount = yield tbl_account_1.tbl_account.findOne({
+    static async login(json) {
+        let userAccount;
+        if (json.token) {
+            userAccount = await tbl_account_1.tbl_account.findOne({
                 where: { token: json.token }
             });
-            if (userAccount) {
-                const userModel = yield user_1.User.getUser({
-                    userid: userAccount.uid
-                });
-                return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
-                    token: userAccount.token
+        }
+        else if (json.wxopenid) {
+            userAccount = await tbl_account_1.tbl_account.findOne({
+                where: { wxopenid: json.wxopenid, token: { [Op.regexp]: '\.' } }
+            });
+        }
+        else if (json.xlopenid) {
+            userAccount = await tbl_account_1.tbl_account.findOne({
+                where: { xlopenid: json.xlopenid, token: { [Op.regexp]: '\.' } }
+            });
+        }
+        // const userAccount: ITbl_account = await tbl_account.findOne({
+        //     where: { ...parms, to }
+        // });
+        if (userAccount) {
+            const userModel = await user_1.User.getUser({
+                userid: userAccount.uid
+            });
+            return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
+                token: userAccount.token
+            });
+        }
+        else {
+            try {
+                return sequelize_1.sequelize.transaction(async (t) => {
+                    // 这里还要生成一个token 注册时候是没有token的
+                    const token = json.token;
+                    const account = await tbl_account_1.tbl_account.create(Object.assign({}, json, { token }), {
+                        transaction: t
+                    });
+                    // 这里面从第三方获取
+                    const num = (Math.random() * 1000).toFixed(0);
+                    const sdk = {
+                        usernick: `test${num}`,
+                        image: `img${num}`,
+                        sex: Number.parseInt(num, 0)
+                    };
+                    const userModel = await tbl_user_1.tbl_user.create(Object.assign({}, sdk, { userid: account.uid }, defaultUser_1.defaultUser), {
+                        transaction: t
+                    });
+                    return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
+                        token
+                    });
                 });
             }
-            else {
+            catch (error) {
                 return null;
             }
+        }
+    }
+    static async accountLogin(json) {
+        const userAccount = await tbl_account_1.tbl_account.findOne({
+            where: {
+                account: json.account
+            }
         });
+        if (userAccount && userAccount.password !== json.password) {
+            // 存在   但是账号密码不符
+            return null;
+        }
+        else if (userAccount && userAccount.password === json.password) {
+            // 存在 账号密码相符
+            const userModel = await user_1.User.getUser({
+                userid: userAccount.uid
+            });
+            return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
+                token: ''
+            });
+        }
+        else {
+            // 不存在 创建一个
+            let newIndex = 0;
+            for (let index = 0; index < testAccount; index++) {
+                const element = await tbl_account_1.tbl_account.findOne({
+                    where: {
+                        uid: index
+                    }
+                });
+                if (!element.password && !element.account) {
+                    newIndex = index;
+                }
+            }
+            const account = await tbl_account_1.tbl_account.update(json, {
+                where: {
+                    uid: newIndex
+                }
+            });
+            const userModel = await tbl_user_1.tbl_user.findOne({
+                where: {
+                    userid: account[1][0].uid
+                }
+            });
+            return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
+                token: ''
+            });
+        }
+    }
+    static async tokenLogin(json) {
+        // 功能没写完 是假的
+        const userAccount = await tbl_account_1.tbl_account.findOne({
+            where: { token: json.token }
+        });
+        if (userAccount) {
+            const userModel = await user_1.User.getUser({
+                userid: userAccount.uid
+            });
+            return selfUtils_1.SelfUtils.assign(userModel.toJSON(), {
+                token: userAccount.token
+            });
+        }
+        else {
+            return null;
+        }
     }
 }
 exports.Login = Login;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibG9naW4uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9hcHAvY29udHJvbGxlci9hY2NvdW50L2xvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFDQSx1Q0FBdUM7QUFDdkMsa0RBQStDO0FBQy9DLDhEQUEyRDtBQUkzRCwwREFBdUQ7QUFDdkQsb0RBQWlEO0FBQ2pELG9EQUFpRDtBQUNqRCx1Q0FBb0M7QUFHcEMsTUFBTSxFQUFFLEdBQUcsU0FBUyxDQUFDLEVBQUUsQ0FBQztBQUN4QixNQUFNLFdBQVcsR0FBRyxHQUFHLENBQUM7QUFDeEIsTUFBYSxLQUFLO0lBQ1AsTUFBTSxDQUFPLEtBQUssQ0FBQyxJQUFzQjs7WUFDNUMsSUFBSSxXQUF5QixDQUFDO1lBQzlCLElBQUksSUFBSSxDQUFDLEtBQUssRUFBRTtnQkFDWixXQUFXLEdBQUcsTUFBTSx5QkFBVyxDQUFDLE9BQU8sQ0FBQztvQkFDcEMsS0FBSyxFQUFFLEVBQUUsS0FBSyxFQUFFLElBQUksQ0FBQyxLQUFLLEVBQUU7aUJBQy9CLENBQUMsQ0FBQzthQUNOO2lCQUFNLElBQUksSUFBSSxDQUFDLFFBQVEsRUFBRTtnQkFDdEIsV0FBVyxHQUFHLE1BQU0seUJBQVcsQ0FBQyxPQUFPLENBQUM7b0JBQ3BDLEtBQUssRUFBRSxFQUFFLFFBQVEsRUFBRSxJQUFJLENBQUMsUUFBUSxFQUFFLEtBQUssRUFBRSxFQUFFLENBQUMsRUFBRSxDQUFDLE1BQU0sQ0FBQyxFQUFFLElBQUksRUFBRSxFQUFFO2lCQUNuRSxDQUFDLENBQUM7YUFDTjtpQkFBTSxJQUFJLElBQUksQ0FBQyxRQUFRLEVBQUU7Z0JBQ3RCLFdBQVcsR0FBRyxNQUFNLHlCQUFXLENBQUMsT0FBTyxDQUFDO29CQUNwQyxLQUFLLEVBQUUsRUFBRSxRQUFRLEVBQUUsSUFBSSxDQUFDLFFBQVEsRUFBRSxLQUFLLEVBQUUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxNQUFNLENBQUMsRUFBRSxJQUFJ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
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibG9naW4uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi8uLi9hcHAvY29udHJvbGxlci9hY2NvdW50L2xvZ2luLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0EsdUNBQXVDO0FBQ3ZDLGtEQUErQztBQUMvQyw4REFBMkQ7QUFJM0QsMERBQXVEO0FBQ3ZELG9EQUFpRDtBQUNqRCxvREFBaUQ7QUFDakQsdUNBQW9DO0FBR3BDLE1BQU0sRUFBRSxHQUFHLFNBQVMsQ0FBQyxFQUFFLENBQUM7QUFDeEIsTUFBTSxXQUFXLEdBQUcsR0FBRyxDQUFDO0FBQ3hCLE1BQWEsS0FBSztJQUNQLE1BQU0sQ0FBQyxLQUFLLENBQUMsS0FBSyxDQUFDLElBQXNCO1FBQzVDLElBQUksV0FBeUIsQ0FBQztRQUM5QixJQUFJLElBQUksQ0FBQyxLQUFLLEVBQUU7WUFDWixXQUFXLEdBQUcsTUFBTSx5QkFBVyxDQUFDLE9BQU8sQ0FBQztnQkFDcEMsS0FBSyxFQUFFLEVBQUUsS0FBSyxFQUFFLElBQUksQ0FBQyxLQUFLLEVBQUU7YUFDL0IsQ0FBQyxDQUFDO1NBQ047YUFBTSxJQUFJLElBQUksQ0FBQyxRQUFRLEVBQUU7WUFDdEIsV0FBVyxHQUFHLE1BQU0seUJBQVcsQ0FBQyxPQUFPLENBQUM7Z0JBQ3BDLEtBQUssRUFBRSxFQUFFLFFBQVEsRUFBRSxJQUFJLENBQUMsUUFBUSxFQUFFLEtBQUssRUFBRSxFQUFFLENBQUMsRUFBRSxDQUFDLE1BQU0sQ0FBQyxFQUFFLElBQUksRUFBRSxFQUFFO2FBQ25FLENBQUMsQ0FBQztTQUNOO2FBQU0sSUFBSSxJQUFJLENBQUMsUUFBUSxFQUFFO1lBQ3RCLFdBQVcsR0FBRyxNQUFNLHlCQUFXLENBQUMsT0FBTyxDQUFDO2dCQUNwQyxLQUFLLEVBQUUsRUFBRSxRQUFRLEVBQUUsSUFBSSxDQUFDLFFBQVEsRUFBRSxLQUFLLEVBQUUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxNQUFNLENBQUMsRUFBRSxJQUFJLEVBQUUs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

@@ -44,6 +44,10 @@ export class ClubRemote {
             channel.add(`${clubrpc.uid}`, clubrpc.sid);
         }
         // redisClient.getAsync
+        console.log('----------------------');
+        console.log(`${redisKeyPrefix.club}${clubrpc.clubid}`);
+        console.log(channel.getMembers());
+
         const user = await User.getUser({ userid: clubrpc.uid });
         channel.pushMessage(`${redisKeyPrefix.club}${clubrpc.clubid}`, { user, action: 1 });
         return club;

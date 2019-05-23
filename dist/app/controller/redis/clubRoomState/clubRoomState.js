@@ -1,30 +1,16 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = require("../../../db/redis");
 class ClubRoomState {
-    static setClubRoomState(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield redis_1.redisClient.hsetAsync(json.redisRoomId, `${json.chairIndex}`, `${json.state}`);
-        });
+    static async setClubRoomState(json) {
+        return await redis_1.redisClient.hsetAsync(json.redisRoomId, `${json.chairIndex}`, `${json.state}`);
     }
-    static getClubRoomState(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield redis_1.redisClient.hgetAsync(json.redisRoomId, `${json.chairIndex}`);
-        });
+    static async getClubRoomState(json) {
+        return await redis_1.redisClient.hgetAsync(json.redisRoomId, `${json.chairIndex}`);
     }
-    static getAllClubRoomState(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield redis_1.redisClient.hgetallAsync(json.redisRoomId);
-        });
+    static async getAllClubRoomState(json) {
+        return await redis_1.redisClient.hgetallAsync(json.redisRoomId);
     }
 }
 exports.ClubRoomState = ClubRoomState;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21TdGF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2FwcC9jb250cm9sbGVyL3JlZGlzL2NsdWJSb29tU3RhdGUvY2x1YlJvb21TdGF0ZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7O0FBQUEsNkNBQWdEO0FBRWhELE1BQWEsYUFBYTtJQUNmLE1BQU0sQ0FBTyxnQkFBZ0IsQ0FBQyxJQUFnRTs7WUFDakcsT0FBTyxNQUFNLG1CQUFXLENBQUMsU0FBUyxDQUFDLElBQUksQ0FBQyxXQUFXLEVBQUUsR0FBRyxJQUFJLENBQUMsVUFBVSxFQUFFLEVBQUUsR0FBRyxJQUFJLENBQUMsS0FBSyxFQUFFLENBQUMsQ0FBQztRQUNoRyxDQUFDO0tBQUE7SUFDTSxNQUFNLENBQU8sZ0JBQWdCLENBQUMsSUFBZ0U7O1lBQ2pHLE9BQU8sTUFBTSxtQkFBVyxDQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUMsV0FBVyxFQUFFLEdBQUcsSUFBSSxDQUFDLFVBQVUsRUFBRSxDQUFDLENBQUM7UUFDL0UsQ0FBQztLQUFBO0lBRU0sTUFBTSxDQUFPLG1CQUFtQixDQUFDLElBQWdFOztZQUNwRyxPQUFPLE1BQU0sbUJBQVcsQ0FBQyxZQUFZLENBQUMsSUFBSSxDQUFDLFdBQVcsQ0FBQyxDQUFDO1FBQzVELENBQUM7S0FBQTtDQUNKO0FBWEQsc0NBV0MifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21TdGF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2FwcC9jb250cm9sbGVyL3JlZGlzL2NsdWJSb29tU3RhdGUvY2x1YlJvb21TdGF0ZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLDZDQUFnRDtBQUVoRCxNQUFhLGFBQWE7SUFDZixNQUFNLENBQUMsS0FBSyxDQUFDLGdCQUFnQixDQUFDLElBQWdFO1FBQ2pHLE9BQU8sTUFBTSxtQkFBVyxDQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUMsV0FBVyxFQUFFLEdBQUcsSUFBSSxDQUFDLFVBQVUsRUFBRSxFQUFFLEdBQUcsSUFBSSxDQUFDLEtBQUssRUFBRSxDQUFDLENBQUM7SUFDaEcsQ0FBQztJQUNNLE1BQU0sQ0FBQyxLQUFLLENBQUMsZ0JBQWdCLENBQUMsSUFBZ0U7UUFDakcsT0FBTyxNQUFNLG1CQUFXLENBQUMsU0FBUyxDQUFDLElBQUksQ0FBQyxXQUFXLEVBQUUsR0FBRyxJQUFJLENBQUMsVUFBVSxFQUFFLENBQUMsQ0FBQztJQUMvRSxDQUFDO0lBRU0sTUFBTSxDQUFDLEtBQUssQ0FBQyxtQkFBbUIsQ0FBQyxJQUFnRTtRQUNwRyxPQUFPLE1BQU0sbUJBQVcsQ0FBQyxZQUFZLENBQUMsSUFBSSxDQUFDLFdBQVcsQ0FBQyxDQUFDO0lBQzVELENBQUM7Q0FDSjtBQVhELHNDQVdDIn0=
