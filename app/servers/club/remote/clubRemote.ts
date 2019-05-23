@@ -1,11 +1,12 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
+import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
+import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { IClubRpc } from '../../../interface/club/clubInterface';
 import { tbl_club } from '../../../models/tbl_club';
-import { tbl_user } from '../../../models/tbl_user';
-// import { redisClient } from '../../../db/redis';
+
 
 
 export default function (app: Application) {
@@ -22,10 +23,10 @@ declare global {
 
 export class ClubRemote {
     private app: Application;
-    private channelService: ChannelService;
+    private globalChannelStatus: GlobalChannelServiceStatus;
     public constructor(app: Application) {
         this.app = app;
-        this.channelService = app.get('channelService');
+        this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
     }
 
     public async createclub(userId: string, clubConfig: number[][]) {
@@ -38,19 +39,26 @@ export class ClubRemote {
         if (!club) {
             return null;
         }
-        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubrpc.clubid}`, clubrpc.flag);
-        const channelUser = channel.getMember(`${clubrpc.uid}`);
-        if (!channelUser) {
-            channel.add(`${clubrpc.uid}`, clubrpc.sid);
+        // console.log('*******************************');
+        // console.log(this.app.getServerId());
+
+        // 某对象的整体事件
+        const userstate = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.club}${clubrpc.clubid}`);
+        // // { connector_1:{ channelName1: [ 'uuid_21', 'uuid_12', 'uuid_24', 'uuid_27' ] },
+        // // 							connector_2: { channelName1: [ 'uuid_15', 'uuid_9', 'uuid_0', 'uuid_18' ] },
+        // // 							 connector_3: { channelName1: [ 'uuid_6', 'uuid_3' ] }
+        // this.app.ge
+        for (const key in userstate) {
+            if (userstate.hasOwnProperty(key)) {
+                const element = userstate[key];
+                const ishas = element[`${redisKeyPrefix.club}${clubrpc.clubid}`].includes(`${clubrpc.uid}`);
+                if (!ishas) {
+                    this.globalChannelStatus.add(`${clubrpc.uid}`, key, `${redisKeyPrefix.club}${clubrpc.clubid}`);
+                }
+            }
         }
-        // redisClient.getAsync
-        console.log('----------------------');
-        console.log(`${redisKeyPrefix.club}${clubrpc.clubid}`);
-        console.log(channel.getMembers());
-
         const user = await User.getUser({ userid: clubrpc.uid });
-        channel.pushMessage(`${redisKeyPrefix.club}${clubrpc.clubid}`, { user, action: 1 });
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClub}`, { user }, `${redisKeyPrefix.club}${clubrpc.clubid}`);
         return club;
-
     }
 }

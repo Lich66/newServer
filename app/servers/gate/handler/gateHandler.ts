@@ -12,7 +12,7 @@ export class Handler {
         this.app = app;
     }
 
-    public async queryEntry(request: IRequest): Promise<IEntryReturn> {
+    public async queryEntry(request: IRequest, session: FrontendSession): Promise<IEntryReturn> {
 
         let connectors = this.app.getServersByType('connector');
         if (!connectors || connectors.length === 0) {

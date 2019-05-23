@@ -1,10 +1,14 @@
 import { Application, ChannelService, FrontendSession, RemoterClass } from 'pinus';
+import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
 import { User } from '../../../controller/user/user';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
+import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { IClubRoomRpc } from '../../../interface/clubRoom/clubRoomInterface';
 import { tbl_room } from '../../../models/tbl_room';
+
+
 
 export default function (app: Application) {
     return new ClubRoomRemote(app);
@@ -20,10 +24,12 @@ declare global {
 
 export class ClubRoomRemote {
     private app: Application;
-    private channelService: ChannelService;
+    // private channelService: ChannelService;
+    private globalChannelStatus: GlobalChannelServiceStatus;
     public constructor(app: Application) {
         this.app = app;
-        this.channelService = app.get('channelService');
+        // this.channelService = app.get('channelService');
+        this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
     }
 
     public async createclub(userId: string, clubConfig: number[][]) {
@@ -36,21 +42,35 @@ export class ClubRoomRemote {
         if (!clubRoom) {
             return null;
         }
-        const roomChannel = this.channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, clubroomrpc.flag);
-        const roomChannelUser = roomChannel.getMember(`${clubroomrpc.uid}`);
-        if (!roomChannelUser) {
-            roomChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
-        }
-        const clubChannel = this.channelService.getChannel(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, clubroomrpc.flag);
-        const clubChannelUser = clubChannel.getMember(`${clubroomrpc.uid}`);
-        if (!clubChannelUser) {
-            clubChannel.add(`${clubroomrpc.uid}`, clubroomrpc.sid);
+        const clubChannel = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.club}${clubroomrpc.clubid}`);
+        for (const key in clubChannel) {
+            if (clubChannel.hasOwnProperty(key)) {
+                const element = clubChannel[key];
+                const ishas = element[`${redisKeyPrefix.club}${clubroomrpc.clubid}`].includes(`${clubroomrpc.uid}`);
+                if (!ishas) {
+                    this.globalChannelStatus.add(`${clubroomrpc.uid}`, key, `${redisKeyPrefix.club}${clubroomrpc.clubid}`);
+                }
+            }
         }
 
+        const roomChannel = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`);
+        for (const key in roomChannel) {
+            if (roomChannel.hasOwnProperty(key)) {
+                const element = roomChannel[key];
+                const ishas = element[`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`].includes(`${clubroomrpc.uid}`);
+                if (!ishas) {
+                    this.globalChannelStatus.add(`${clubroomrpc.uid}`, key, `${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`);
+                }
+            }
+        }
         const user = await User.getUser({ userid: clubroomrpc.uid });
+        // 发送到房间
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user }, `${redisKeyPrefix.clubRoom}${clubroomrpc.clubid}`);
+        // 发送到大厅
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user, roomid: clubroomrpc.roomid }, `${redisKeyPrefix.clubRoom}${clubroomrpc.clubid}`);
+
         redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, `${user.userid}`, '-1');
-        // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 0 });
-        roomChannel.pushMessage(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, { user, action: 1 });
+
         return clubRoom;
 
     }

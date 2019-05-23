@@ -1,8 +1,10 @@
 import { Application, BackendSession, ChannelService } from 'pinus';
+import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
 import { User } from '../../../controller/user/user';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
+import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { IClubCreateRequest, IClubRequest, IClubReturn, IClubUpdateRequest } from '../../../interface/club/clubInterface';
 import { GameUitl } from '../../../util/gameUitl';
 
@@ -12,9 +14,11 @@ export default function (app: Application) {
 }
 
 export class Handler {
-    private channelService: ChannelService;
+    // private channelService: ChannelService;
+    private globalChannelStatus: GlobalChannelServiceStatus;
     public constructor(private app: Application) {
-        this.channelService = app.get('channelService');
+        // this.channelService = app.get('channelService');
+        this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
     }
 
     public async createClub(clubinfo: IClubCreateRequest, session: BackendSession): Promise<IClubReturn> {
@@ -110,14 +114,19 @@ export class Handler {
     }
 
     public async leaveClub(obj: any, session: BackendSession): Promise<IClubReturn> {
-        const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${session.get('clubid')}`, false);
-        const channelUser = channel.getMember(`${session.uid}`);
-        if (channelUser) {
-            channel.removeMember(`${session.uid}`);
+        const channels = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.club}${session.get('clubid')}`);
+        // const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${session.get('clubid')}`, false);
+        for (const key in channels) {
+            if (channels.hasOwnProperty(key)) {
+                const element = channels[key];
+                const ishas = element[`${redisKeyPrefix.club}${session.get('clubid')}`].includes(`${session.uid}`);
+                if (ishas) {
+                    this.globalChannelStatus.leave(`${session.uid}`, key, `${redisKeyPrefix.club}${session.get('clubid')}`);
+                }
+            }
         }
-        // redisClient.getAsync
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
-        channel.pushMessage(`${redisKeyPrefix.club}${session.get('clubid')}`, { user, action: 0 });
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClub}`, { user }, `${redisKeyPrefix.club}${session.get('clubid')}`);
         session.set('roomid', null);
         session.push('roomid', () => {
 
