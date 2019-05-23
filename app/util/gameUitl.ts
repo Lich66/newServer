@@ -15,28 +15,28 @@ const NUMBER20 = 20;
 const NUMBER21 = 21;
 const NUMBER22 = 22;
 interface IRoomConfigReturn {
-    play_type: number;
-    player_num: number;
-    base_point: string;
+    playType: string;
+    playerNum: number;
+    basePoint: string;
     round: number;
-    pay_type: number;
-    start_type: number;
-    bolus_type: number;
-    max_banker_bet: number;
-    double_rule: number;
-    all_contrast_play: number;
-    take_turns_play: number;
-    up_banker_play: number;
-    special_card: string;
-    fast_flag: boolean;
-    half_way_add: boolean;
-    rubbing_flag: boolean;
-    item_use: boolean;
-    buy_code: boolean;
-    bolus_limit: boolean;
-    grab_flag: boolean;
-    double_flag: boolean;
-    laizi_type: number;
+    payType: number;
+    startType: number;
+    bolusType: number;
+    maxBankerBet: number;
+    doubleRule: number;
+    allContrastPlay: number;
+    takeTurnsPlay: number;
+    upBankerScore: number;
+    specialCard: string;
+    fastFlag: boolean;
+    halfWayAdd: boolean;
+    rubbingFlag: boolean;
+    itemUse: boolean;
+    buyCode: boolean;
+    bolusLimit: boolean;
+    grabFlag: boolean;
+    doubleFlag: boolean;
+    laiziType: number;
 }
 interface ICreateReturn {
     name: string;
@@ -172,28 +172,28 @@ export class GameUitl {
         // 15:搓牌标志, 16:道具禁用标志, 17:闲家买码, 18:表情禁用
         // 19:暗抢庄家标志, 20:加倍标志, 21:王癞玩法
         return {
-            play_type: config[0],
-            player_num: RoomConfig.playerNum[config[1]],
-            base_point: RoomConfig.basePoint[config[2]],
+            playType: config[0],
+            playerNum: RoomConfig.playerNum[config[1]],
+            basePoint: RoomConfig.basePoint[config[2]],
             round: RoomConfig.round[config[3]],
-            pay_type: config[4],
-            start_type: config[5],
-            bolus_type: RoomConfig.bolusType[config[6]],
-            max_banker_bet: RoomConfig.bolusType[config[7]],
-            double_rule: config[8],
-            all_contrast_play: config[9],
-            take_turns_play: config[10],
-            up_banker_play: RoomConfig.upBankerScore[config[NUMBER11]],
-            special_card: GameUitl.hex_to_bin(config[NUMBER12]),
-            fast_flag: config[NUMBER13],
-            half_way_add: config[NUMBER14],
-            rubbing_flag: config[NUMBER15],
-            item_use: config[NUMBER16],
-            buy_code: config[NUMBER17],
-            bolus_limit: config[NUMBER18],
-            grab_flag: config[NUMBER19],
-            double_flag: config[NUMBER20],
-            laizi_type: config[NUMBER21]
+            payType: config[4],
+            startType: config[5],
+            bolusType: RoomConfig.bolusType[config[6]],
+            maxBankerBet: RoomConfig.bolusType[config[7]],
+            doubleRule: config[8],
+            allContrastPlay: config[9],
+            takeTurnsPlay: config[10],
+            upBankerScore: RoomConfig.upBankerScore[config[NUMBER11]],
+            specialCard: GameUitl.hex_to_bin(config[NUMBER12]),
+            fastFlag: config[NUMBER13],
+            halfWayAdd: config[NUMBER14],
+            rubbingFlag: config[NUMBER15],
+            itemUse: config[NUMBER16],
+            buyCode: config[NUMBER17],
+            bolusLimit: config[NUMBER18],
+            grabFlag: config[NUMBER19],
+            doubleFlag: config[NUMBER20],
+            laiziType: config[NUMBER21]
         };
     }
 
