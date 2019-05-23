@@ -31,4 +31,21 @@ export class RoomHandler {
         console.log('roomHandler查看房间是否挂上去了:' + JSON.stringify(Object.keys(this.app.get(appKeyPrefix.roomList))));
         return { code: 0, roomid: result.roomId };
     }
+
+    public async leaveRoom(session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let roomId: number = session.get('roomId');
+        console.log('离开房间获取信息: ' + userId + ' : ' + roomId);
+        let channel = this.channelService.getChannel(`${roomId}`);
+        const user = channel.getMember(`${userId}`);
+        if (user) {
+            channel.removeMember(`${userId}`);
+        }
+        channel.pushMessage('onLeaveRoom', userId);
+        let roomList = this.app.get(appKeyPrefix.roomList);
+        let room = roomList[roomId];
+        // todo 删除离开房间玩家 
+        for (let i of room.onlookerList) {
+        }
+    }
 }

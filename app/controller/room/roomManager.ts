@@ -91,9 +91,11 @@ export class RoomManager {
         room.onlookerList.push(userData);
         return {
             code: 0,
-            userList: room.userList,
-            onlookerList: room.onlookerList,
-            roomconfig: room.roomConfig
+            data: {
+                userList: room.userList,
+                onlookerList: room.onlookerList,
+                roomconfig: room.roomConfig
+            }
         };
     }
 }

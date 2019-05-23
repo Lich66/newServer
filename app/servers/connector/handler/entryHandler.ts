@@ -105,7 +105,10 @@ export class Handler {
         let userId: number = parseInt(session.uid, 0);
         let sid = this.app.getServerId();
         let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId, sid);
+        session.set('roomId', msg.roomId);
+        session.push('roomId', () => {
 
+        });
         // let roomList = this.app.get('roomList');
         // console.log('在connector获取roomList:' + JSON.stringify(Object.keys(roomList)));
 
@@ -123,7 +126,7 @@ export class Handler {
         //     userList: result.userList,
         //     onlookerList: result.onlookerList
         // };
-        
+
         return result;
     }
 
