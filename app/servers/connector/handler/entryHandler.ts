@@ -94,7 +94,8 @@ export class Handler {
                 code: result.code
             };
         }
-        await this.app.rpc.room.roomRemote.createRoom.route(session)(result.roomId);
+        const sid = this.app.getServerId();
+        await this.app.rpc.room.roomRemote.createRoom.route(session)(result.json, sid);
         return { code: 200, roomid: result.roomId };
     }
 

@@ -3,6 +3,7 @@ import { Application, ChannelService } from 'pinus';
 import { redisClient } from '../../db/redis';
 import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { RoomConfig } from '../../gameConfig/roomConfig';
+import { IRoomConfig } from '../../interface/room/roomInterfaces';
 import { GameUitl } from '../../util/gameUitl';
 import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
@@ -11,7 +12,7 @@ import { User } from '../user/user';
 
 export class RoomManager {
 
-    public roomList = {};
+    public static roomList = {};
 
     public static async createRoom(userId: number, config: any) {
         // 先判断玩家的房间数是否超过10个
@@ -42,7 +43,7 @@ export class RoomManager {
         // console.log('修改redis之前的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
         await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
         // console.log('修改redis之后的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
-       
+
         // 解析房间配置信息
         let json1 = await GameUitl.parsePRoomConfig(config);
         let json2 = {
@@ -51,15 +52,9 @@ export class RoomManager {
             createTime,
             roomConfig: config
         };
-        let json = SelfUtils.assign(json1, json2);
+        let json: IRoomConfig = SelfUtils.assign(json1, json2);
         console.log('合并后的房间配置: ' + JSON.stringify(json));
-        // for (let key in roomConfig) {
-        //     if (roomConfig.hasOwnProperty(key)) {
-        //         await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);
-        //     }
-        // }
-        // console.log('从redis捞出来的roomConfig = ' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`)));
-        return { flag: true, roomId };
+        return { flag: true, roomId, json };
     }
 
     public static async joinRoom(userId: number, roomId: number) {
