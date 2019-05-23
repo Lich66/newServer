@@ -2,8 +2,8 @@ import { Channel, ChannelService } from 'pinus';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 
 export class RoomChannelService {
-    private channel: Channel;
-    public createTime: string;
+    public channel: Channel;
+    public createTime: number;
     public roomId: number;
     public creatorId: number;
     public roomConfig: Array<number | string>;
@@ -30,11 +30,39 @@ export class RoomChannelService {
     public doubleFlag: boolean;
     public laiziType: number;
 
-    public userList: string[];
-    public onlookerList: string[];
+    public userList: any[];
+    public onlookerList: any[];
 
-    public constructor(channel: Channel) {
+    public constructor(channel: Channel, configJson: IRoomConfig) {
         this.channel = channel;
+        this.roomConfig = configJson.roomConfig;
+        this.createTime = (new Date()).valueOf();
+        this.roomId = configJson.roomId;
+        this.creatorId = configJson.creatorId;
+        this.playType = configJson.playType;
+        this.playerNum = configJson.playerNum;
+        this.basePoint = configJson.basePoint;
+        this.round = configJson.round;
+        this.payType = configJson.payType;
+        this.startType = configJson.startType;
+        this.bolusType = configJson.bolusType;
+        this.maxBankerBet = configJson.maxBankerBet;
+        this.doubleRule = configJson.doubleRule;
+        this.allContrastPlay = configJson.allContrastPlay;
+        this.takeTurnsPlay = configJson.takeTurnsPlay;
+        this.upBankerScore = configJson.upBankerScore;
+        this.specialCard = configJson.specialCard;
+        this.fastFlag = configJson.fastFlag;
+        this.halfWayAdd = configJson.halfWayAdd;
+        this.rubbingFlag = configJson.rubbingFlag;
+        this.itemUse = configJson.itemUse;
+        this.buyCode = configJson.buyCode;
+        this.bolusLimit = configJson.bolusLimit;
+        this.grabFlag = configJson.grabFlag;
+        this.doubleFlag = configJson.doubleFlag;
+        this.laiziType = configJson.laiziType;
+        this.onlookerList = [];
+        this.userList = [];
     }
 
     public hasUser(userId: string) {

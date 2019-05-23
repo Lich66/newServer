@@ -34,3 +34,7 @@ export const gameKeyPrefix = {
      */
     club_room_game: 'club_room_game_'
 };
+
+export const appKeyPrefix = {
+    roomList: 'roomList'
+};

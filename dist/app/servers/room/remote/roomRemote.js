@@ -8,7 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const roomChannelService_1 = require("../../../channelService/roomChannelService/roomChannelService");
 const roomManager_1 = require("../../../controller/room/roomManager");
 function default_1(app) {
     return new RoomRemote(app);
@@ -19,24 +18,24 @@ class RoomRemote {
         this.app = app;
         this.channelService = app.get('channelService');
     }
-    createRoom(configJson, sid) {
+    // public async createRoom(configJson: IRoomConfig) {
+    //     console.log('进来了');
+    //     let channel = this.channelService.createChannel(configJson.roomId.toString());
+    //     let room = new RoomChannelService(channel, configJson);
+    //     let roomList = this.app.get(appKeyPrefix.roomList);
+    //     roomList[configJson.roomId] = room;
+    //     console.log('查看房间是否挂上去了:' + JSON.stringify(Object.keys(this.app.get(appKeyPrefix.roomList))));
+    // }
+    joinRoom(userId, roomId, sid) {
         return __awaiter(this, void 0, void 0, function* () {
-            /*{"gameType":1,"playType":1,"deskType":1,"baseScore":1,"roundCount":1,
-            "payType":1,"startType":1,"pushWager":1,"maxRobBanker":1,"doubleRule":1,
-            "specialCardType":"00001001","advancedOptions":"00001001","lazarilloDeTormes":1,
-            "roomId":3235622,"creatorId":502,"createTime":"2019/5/17  13:53:46",
-            "roomConfig":[[1,1],[1,1,1,1,1,1,1,1,9,9,1]]}
-            */
-            console.log('进入roomRemote了');
-            let channel = this.channelService.createChannel(configJson.roomId.toString());
-            console.log('产生channel了');
-            ;
-            let room = new roomChannelService_1.RoomChannelService(channel);
-            console.log('实例化room了');
-            roomManager_1.RoomManager.roomList[room.roomId] = room;
-            console.log('序列化房间: ' + JSON.stringify(room));
+            console.log('joinRoom进来了');
+            let result = yield roomManager_1.RoomManager.joinRoom(userId, roomId, sid, this.app);
+            console.log('====返回的加入房间信息' + JSON.stringify(result));
+            return result;
+            // let roomList = await this.app.get(appKeyPrefix.roomList);
+            // console.log('roomRemote查看房间是否挂上去了:' + JSON.stringify(Object.keys(roomList)));
         });
     }
 }
 exports.RoomRemote = RoomRemote;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicm9vbVJlbW90ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2FwcC9zZXJ2ZXJzL3Jvb20vcmVtb3RlL3Jvb21SZW1vdGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUNBLHNHQUFtRztBQUVuRyxzRUFBbUU7QUFFbkUsbUJBQXlCLEdBQWdCO0lBQ3JDLE9BQU8sSUFBSSxVQUFVLENBQUMsR0FBRyxDQUFDLENBQUM7QUFDL0IsQ0FBQztBQUZELDRCQUVDO0FBVUQsTUFBYSxVQUFVO0lBR25CLFlBQW1CLEdBQWdCO1FBQy9CLElBQUksQ0FBQyxHQUFHLEdBQUcsR0FBRyxDQUFDO1FBQ2YsSUFBSSxDQUFDLGNBQWMsR0FBRyxHQUFHLENBQUMsR0FBRyxDQUFDLGdCQUFnQixDQUFDLENBQUM7SUFDcEQsQ0FBQztJQUVZLFVBQVUsQ0FBQyxVQUF1QixFQUFFLEdBQVc7O1lBQ3hEOzs7OztjQUtFO1lBQ0gsT0FBTyxDQUFDLEdBQUcsQ0FBQyxlQUFlLENBQUMsQ0FBQztZQUM1QixJQUFJLE9BQU8sR0FBRyxJQUFJLENBQUMsY0FBYyxDQUFDLGFBQWEsQ0FBQyxVQUFVLENBQUMsTUFBTSxDQUFDLFFBQVEsRUFBRSxDQUFDLENBQUM7WUFDOUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxZQUFZLENBQUMsQ0FBQztZQUFBLENBQUM7WUFDM0IsSUFBSSxJQUFJLEdBQUcsSUFBSSx1Q0FBa0IsQ0FBQyxPQUFPLENBQUMsQ0FBQztZQUMzQyxPQUFPLENBQUMsR0FBRyxDQUFDLFVBQVUsQ0FBQyxDQUFDO1lBQ3hCLHlCQUFXLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsR0FBRyxJQUFJLENBQUM7WUFDekMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxTQUFTLEdBQUcsSUFBSSxDQUFDLFNBQVMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDO1FBRWxELENBQUM7S0FBQTtDQUVKO0FBekJELGdDQXlCQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicm9vbVJlbW90ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL2FwcC9zZXJ2ZXJzL3Jvb20vcmVtb3RlL3Jvb21SZW1vdGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUlBLHNFQUFtRTtBQUVuRSxtQkFBeUIsR0FBZ0I7SUFDckMsT0FBTyxJQUFJLFVBQVUsQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUMvQixDQUFDO0FBRkQsNEJBRUM7QUFVRCxNQUFhLFVBQVU7SUFHbkIsWUFBbUIsR0FBZ0I7UUFDL0IsSUFBSSxDQUFDLEdBQUcsR0FBRyxHQUFHLENBQUM7UUFDZixJQUFJLENBQUMsY0FBYyxHQUFHLEdBQUcsQ0FBQyxHQUFHLENBQUMsZ0JBQWdCLENBQUMsQ0FBQztJQUNwRCxDQUFDO0lBRUQscURBQXFEO0lBQ3JELDBCQUEwQjtJQUMxQixxRkFBcUY7SUFDckYsOERBQThEO0lBQzlELDBEQUEwRDtJQUMxRCwwQ0FBMEM7SUFDMUMscUdBQXFHO0lBQ3JHLElBQUk7SUFDUyxRQUFRLENBQUMsTUFBYyxFQUFFLE1BQWMsRUFBRSxHQUFXOztZQUM3RCxPQUFPLENBQUMsR0FBRyxDQUFDLGFBQWEsQ0FBQyxDQUFDO1lBQzNCLElBQUksTUFBTSxHQUFHLE1BQU0seUJBQVcsQ0FBQyxRQUFRLENBQUMsTUFBTSxFQUFFLE1BQU0sRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO1lBQ3ZFLE9BQU8sQ0FBQyxHQUFHLENBQUMsZUFBZSxHQUFHLElBQUksQ0FBQyxTQUFTLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQztZQUN0RCxPQUFPLE1BQU0sQ0FBQztZQUNkLDREQUE0RDtZQUM1RCxnRkFBZ0Y7UUFDcEYsQ0FBQztLQUFBO0NBQ0o7QUF4QkQsZ0NBd0JDIn0=

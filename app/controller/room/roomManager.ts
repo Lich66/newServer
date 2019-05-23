@@ -1,7 +1,7 @@
 
 import { Application, ChannelService } from 'pinus';
 import { redisClient } from '../../db/redis';
-import { redisKeyPrefix } from '../../gameConfig/nameSpace';
+import { appKeyPrefix, redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { RoomConfig } from '../../gameConfig/roomConfig';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 import { GameUitl } from '../../util/gameUitl';
@@ -14,7 +14,7 @@ export class RoomManager {
 
     public static roomList = {};
 
-    public static async createRoom(userId: number, config: any) {
+    public static async createRoom(userId: number, config: any, app: Application) {
         // 先判断玩家的房间数是否超过10个
         let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
         if (roomListLen && roomListLen === 10) {
@@ -28,12 +28,11 @@ export class RoomManager {
             return { flag: false, code: 12001 };
         }
         // 生成房间号
+        let roomList = app.get(appKeyPrefix.roomList);
         let roomId: number;
         do {
             roomId = GameUitl.generateRoomId();
-        } while (await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`));
-        let createTime = GameUitl.getLocalDateStr();
-        console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
+        } while (roomList.roomId);
         // 更改数据库及redis玩家钻石数
         let nowDiamond = userData.diamond - roomRate;
         let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
@@ -49,7 +48,6 @@ export class RoomManager {
         let json2 = {
             roomId,
             creatorId: userId,
-            createTime,
             roomConfig: config
         };
         let json: IRoomConfig = SelfUtils.assign(json1, json2);
@@ -57,31 +55,45 @@ export class RoomManager {
         return { flag: true, roomId, json };
     }
 
-    public static async joinRoom(userId: number, roomId: number) {
+    public static async joinRoom(userId: number, roomId: number, sid: string, app: Application) {
+        let roomList = app.get(appKeyPrefix.roomList);
+        console.log('挂在APP上的房间有:' + JSON.stringify(Object.keys(roomList)));
+        let room = roomList[roomId];
+        console.log('获取到的room' + JSON.stringify(room.roomId));
+
+        if (!room) {
+            return { code: 12013 };
+        }
         // let roomConfig = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
-        // let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
-        // // 如果是房间是AA类型,则需要判断玩家的房卡是否足够
-        // if (PayType[parseInt(roomConfig.playType, 0)].substr(0, 2) === 'AA') {
-        //     let needDaimond = parseInt(PayType[parseInt(roomConfig.playType, 0)].substr(4), 0);
-        //     if (parseInt(user.diamond, 0) < needDaimond) {
-        //         return { flag: false, code: 511, msg: 'You are short of diamonds' };
-        //     }
-        // }
-        // let num: number[][] = [[], []];
-        // let numstr: string[] = roomConfig.roomConfig.split(',');
-        // console.log('..................拆分出来的' + JSON.stringify(numstr));
-        // numstr.forEach((value, i) => {
-        //     if (i < 2) {
-        //         num[0][i] = parseInt(value, 0);
-        //     } else {
-        //         num[1][i - 2] = parseInt(value, 0);
-        //     }
-        // });
-        // console.log('..................解析出来的' + JSON.stringify(num));
-        // // todo 从redis上拉取房间里的玩家列表和观战玩家列表 
-        // const userList: string[] = [];
-        // const onlookerList: string[] = [];
-        // return { flag: true, roomConfig: num, userList, onlookerList };
-        return { code: 500 };
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 判断玩家的房卡是否足够
+        let needDaimond = GameUitl.getRoomRate2(room.playerNum, room.round, room.PayType);
+        if (room.PayType === 1) {
+            if (parseInt(user.diamond, 0) < needDaimond) {
+                return { code: 12011 };
+            }
+        } else {
+            if (room.creatorId === userId) {
+                if (parseInt(user.diamond, 0) < needDaimond) {
+                    return { code: 12011 };
+                }
+            }
+        }
+        let channel = room.channel;
+        channel.add(userId, sid);
+        let userData = {
+            userNick: user.usernick,
+            userID: user.userid,
+            image: user.image
+        };
+        channel.pushMessage('onJoinRoom', userData);
+        console.log('加入的玩家信息:' + JSON.stringify(userData));
+        room.onlookerList.push(userData);
+        return {
+            code: 0,
+            userList: room.userList,
+            onlookerList: room.onlookerList,
+            roomconfig: room.roomConfig
+        };
     }
 }
