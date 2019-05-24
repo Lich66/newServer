@@ -42,10 +42,9 @@ export class RoomHandler {
             channel.removeMember(`${userId}`);
         }
         channel.pushMessage('onLeaveRoom', userId);
-        let roomList = this.app.get(appKeyPrefix.roomList);
-        let room = roomList[roomId];
+        // let roomList = this.app.get(appKeyPrefix.roomList);
+        // let room = roomList[roomId];
         // todo 删除离开房间玩家 
-        for (let i of room.onlookerList) {
-        }
+        
     }
 }
