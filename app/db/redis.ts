@@ -246,4 +246,4 @@ interface IBlueRedisClient extends redis.RedisClient {
 }
 
 export const redisClient: IBlueRedisClient = redis.createClient(port, reidsHost, { password });
-promisifyAll(redis, { suffix: 'MySuffix' });
+// promisifyAll(redis);

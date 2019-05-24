@@ -65,9 +65,9 @@ export class ClubRoomRemote {
         }
         const user = await User.getUser({ userid: clubroomrpc.uid });
         // 发送到房间
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user }, `${redisKeyPrefix.clubRoom}${clubroomrpc.clubid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user }, `${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`);
         // 发送到大厅
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user, roomid: clubroomrpc.roomid }, `${redisKeyPrefix.clubRoom}${clubroomrpc.clubid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClubRoom}`, { user, roomid: clubroomrpc.roomid }, `${redisKeyPrefix.club}${clubroomrpc.clubid}`);
 
         redisClient.hsetAsync(`${redisKeyPrefix.clubRoom}${clubroomrpc.roomid}`, `${user.userid}`, '-1');
 

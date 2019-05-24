@@ -185,6 +185,8 @@ export class Handler {
         }
 
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStandUp}`, { user, roomid, chairIndex }, `${redisKeyPrefix.club}${clubid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStandUp}`, { user, chairIndex }, `${redisKeyPrefix.clubRoom}${roomid}`);
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClubRoom}`, { user }, `${redisKeyPrefix.clubRoom}${roomid}`);
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClubRoom}`, { user, roomid }, `${redisKeyPrefix.club}${clubid}`);
         // clubChannel.pushMessage(`${redisKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });

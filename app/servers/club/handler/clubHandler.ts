@@ -114,19 +114,20 @@ export class Handler {
     }
 
     public async leaveClub(obj: any, session: BackendSession): Promise<IClubReturn> {
-        const channels = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.club}${session.get('clubid')}`);
+        const clubid = session.get('clubid');
+        const channels = await this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.club}${clubid}`);
         // const channel = this.channelService.getChannel(`${redisKeyPrefix.club}${session.get('clubid')}`, false);
         for (const key in channels) {
             if (channels.hasOwnProperty(key)) {
                 const element = channels[key];
-                const ishas = element[`${redisKeyPrefix.club}${session.get('clubid')}`].includes(`${session.uid}`);
+                const ishas = element[`${redisKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
                 if (ishas) {
-                    this.globalChannelStatus.leave(`${session.uid}`, key, `${redisKeyPrefix.club}${session.get('clubid')}`);
+                    this.globalChannelStatus.leave(`${session.uid}`, key, `${redisKeyPrefix.club}${clubid}`);
                 }
             }
         }
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClub}`, { user }, `${redisKeyPrefix.club}${session.get('clubid')}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClub}`, { user }, `${redisKeyPrefix.club}${clubid}`);
         session.set('roomid', null);
         session.push('roomid', () => {
 
