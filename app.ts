@@ -37,9 +37,6 @@ preload();
 let app = pinus.createApp();
 app.set('name', 'magnate-server');
 
-let roomList = {};
-app.set(appKeyPrefix.roomList, roomList);
-
 // app configuration
 app.configure('production|development', 'connector', function () {
   app.set('connectorConfig',
