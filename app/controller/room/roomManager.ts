@@ -31,6 +31,7 @@ export class RoomManager {
         let roomList = app.get(appKeyPrefix.roomList);
         let roomId: number;
         do {
+            console.log('--------------');
             roomId = GameUitl.generateRoomId();
         } while (roomList.roomId);
         // 更改数据库及redis玩家钻石数
