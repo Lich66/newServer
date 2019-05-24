@@ -8,14 +8,6 @@
       "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10111"
-    },{
-      "id": "connector-server-2",
-      "host": "192.168.1.205",
-      "port": 9151,
-      "clientHost": "192.168.1.205",
-      "clientPort": 9011,
-      "frontend": true,
-      "args": " --inspect=10112"
     }],
     "gate": [{
       "id": "gate-server-1",
@@ -23,67 +15,36 @@
       "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10113"
-    },{
-      "id": "gate-server-2",
-      "host": "127.0.0.1",
-      "clientPort": 9015,
-      "frontend": true,
-      "args": "--inspect=10114"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "192.168.1.205",
       "port": 9160,
       "args": "--inspect=10115"
-    },{
-      "id": "user-server-2",
-      "host": "127.0.0.1",
-      "port": 9161,
-      "args": "--inspect=10116"
     }],
     "hall": [{
       "id": "hall-server-1",
       "host": "192.168.1.205",
       "port": 9170,
       "args": " --inspect=10117"
-    }, {
-      "id": "hall-server-2",
-      "host": "127.0.0.1",
-      "port": 9171,
-      "args": " --inspect=10118"
     }],
     "club": [{
       "id": "club-server-1",
       "host": "192.168.1.205",
       "port": 9180,
       "args": " --inspect=10119"
-    },{
-      "id": "club-server-2",
-      "host": "127.0.0.1",
-      "port": 9181,
-      "args": " --inspect=10120"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
       "host": "192.168.1.205",
       "port": 9190,
       "args": " --inspect=10121"
-    },{
-      "id": "clubRoom-server-2",
-      "host": "127.0.0.1",
-      "port": 9191,
-      "args": " --inspect=10122"
     }],
     "room": [{
       "id": "room-server-1",
       "host": "192.168.1.205",
       "port": 9200,
       "args": " --inspect=10123"
-    },{
-      "id": "room-server-2",
-      "host": "127.0.0.1",
-      "port": 9201,
-      "args": " --inspect=10124"
     }]
   },
   "production": {
@@ -95,14 +56,6 @@
       "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10111"
-    },{
-      "id": "connector-server-2",
-      "host": "192.168.1.205",
-      "port": 9151,
-      "clientHost": "192.168.1.205",
-      "clientPort": 9011,
-      "frontend": true,
-      "args": " --inspect=10112"
     }],
     "gate": [{
       "id": "gate-server-1",
@@ -110,67 +63,36 @@
       "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10113"
-    },{
-      "id": "gate-server-2",
-      "host": "127.0.0.1",
-      "clientPort": 9015,
-      "frontend": true,
-      "args": "--inspect=10114"
     }],
     "user": [{
       "id": "user-server-1",
       "host": "192.168.1.205",
       "port": 9160,
       "args": "--inspect=10115"
-    },{
-      "id": "user-server-2",
-      "host": "127.0.0.1",
-      "port": 9161,
-      "args": "--inspect=10116"
     }],
     "hall": [{
       "id": "hall-server-1",
       "host": "192.168.1.205",
       "port": 9170,
       "args": " --inspect=10117"
-    }, {
-      "id": "hall-server-2",
-      "host": "127.0.0.1",
-      "port": 9171,
-      "args": " --inspect=10118"
     }],
     "club": [{
       "id": "club-server-1",
       "host": "192.168.1.205",
       "port": 9180,
       "args": " --inspect=10119"
-    },{
-      "id": "club-server-2",
-      "host": "127.0.0.1",
-      "port": 9181,
-      "args": " --inspect=10120"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
       "host": "192.168.1.205",
       "port": 9190,
       "args": " --inspect=10121"
-    },{
-      "id": "clubRoom-server-2",
-      "host": "127.0.0.1",
-      "port": 9191,
-      "args": " --inspect=10122"
     }],
     "room": [{
       "id": "room-server-1",
       "host": "192.168.1.205",
       "port": 9200,
       "args": " --inspect=10123"
-    },{
-      "id": "room-server-2",
-      "host": "127.0.0.1",
-      "port": 9201,
-      "args": " --inspect=10124"
     }]
   }
 }
