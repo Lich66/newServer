@@ -4,6 +4,8 @@ const socketRouter = {
     onEntryClubRoom: 'onEntryClubRoom',
     onLeaveClubRoom: 'onLeaveClubRoom',
     onStandUp: 'onStandUp',
-    onSitDown: 'onSitDown'
+    onSitDown: 'onSitDown',
+    onJoinRoom: 'onJoinRoom',
+    onLeaveRoom: 'onLeaveRoom'
 };
 export default socketRouter;

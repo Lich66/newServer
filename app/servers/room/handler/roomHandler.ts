@@ -1,4 +1,5 @@
 import { Application, BackendSession, ChannelService } from 'pinus';
+import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { RoomChannelService } from '../../../channelService/roomChannelService/roomChannelService';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { appKeyPrefix } from '../../../gameConfig/nameSpace';
@@ -32,9 +33,10 @@ export class RoomHandler {
         return { code: 0, roomid: result.roomId };
     }
 
-    public async leaveRoom(session: BackendSession) {
+    public async leaveRoom(obj: any, session: BackendSession) {
+        // todo 先判断房间是否已开始游戏
         let userId: number = parseInt(session.uid, 0);
-        let roomId: number = session.get('roomId');
+        let roomId: number = parseInt(session.get('roomId'), 0);
         console.log('离开房间获取信息: ' + userId + ' : ' + roomId);
         let channel = this.channelService.getChannel(`${roomId}`);
         const user = channel.getMember(`${userId}`);
@@ -42,9 +44,25 @@ export class RoomHandler {
             channel.removeMember(`${userId}`);
         }
         channel.pushMessage('onLeaveRoom', userId);
-        // let roomList = this.app.get(appKeyPrefix.roomList);
-        // let room = roomList[roomId];
+        let roomList = this.app.get(appKeyPrefix.roomList);
+        let room = roomList[roomId];
         // todo 删除离开房间玩家 
-        
+        for (let i of room.onlookerList) {
+            let index = 0;
+            if (i.userId === userId) {
+                room.onlookerList.splice(index, 1);
+                break;
+            }
+            index++;
+        }
+        for (let i of room.userList) {
+            let index = 0;
+            if (i.userId === userId) {
+                room.userList.splice(index, 1);
+                break;
+            }
+            index++;
+        }
+        return { code: 0 };
     }
 }
