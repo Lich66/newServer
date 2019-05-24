@@ -1,15 +1,15 @@
 import { Channel, ChannelService } from 'pinus';
+import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { redisKeyPrefix } from '../gameConfig/nameSpace';
 import { ITbl_room } from '../interface/models/tbl_room';
 import { Pokers } from './poker';
-
 
 
 export class Game {
     // 房间的配置信息
     private clubroom: ITbl_room;
     // 玩多少局
-    private roundNumber: number;
+    private round: number;
     // 发的牌是什么 结算用
     private poker: number[][][];
     // user id
@@ -17,14 +17,14 @@ export class Game {
     // 发的牌是什么 发给用户用 主要用户核对
     private poker_user: { [key: string]: object };
     // 频道
-    private channelService: ChannelService;
+    private globalChannelStatus: GlobalChannelServiceStatus;
     // 频道
     private channel: Channel;
-    public constructor(clubroom: ITbl_room, channelService: ChannelService) {
+    public constructor(clubroom: ITbl_room, globalChannelStatus: GlobalChannelServiceStatus, clubid: number) {
         this.clubroom = clubroom;
-        this.channelService = channelService;
-        this.channel = channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroom.roomid}`);
-        this.roundNumber = clubroom.round;
+        this.globalChannelStatus = globalChannelStatus;
+        // this.channel = channelService.getChannel(`${redisKeyPrefix.clubRoom}${clubroom.roomid}`);
+        this.round = clubroom.round;
         this.poker = [];
         this.poker_user = {};
         this.users = [];
@@ -36,7 +36,7 @@ export class Game {
         this.users.push(uid);
     }
     public startRound() {
-        this.roundNumber--;
+        this.round--;
         this.sendPoker();
     }
     public sendPoker() {
@@ -47,36 +47,40 @@ export class Game {
         // 掏出一副牌
         const pokers = new Pokers();
 
-        const plength = this.users.length;
-        let pindex = 0;
-        // 初始化用户的牌
-        do {
-            this.poker[pindex] = [];
-            pindex++;
-        } while (pindex <= plength);
+        // 玩家数量
+        const ulength = this.users.length;
 
+        // // 玩家数量
+        // const ulength = 6;
+        /**
+         * 开始发牌
+         */
 
+        // 玩家的index
+        let uindex = 0;
+        // 发多少张牌
         const sendcount = 5;
-        let sindex = 0;
-        // 随机发牌（全发）
-        do {
-            let index = 0;
+
+        // 初始化用户的牌
+        while (uindex < ulength) {
+            this.poker[uindex] = [];
+            // 当前发的第几张牌
+            let pindex = 0;
             do {
-                const pokerone: number[] = pokers.getPoker();
-                this.poker[index].push(pokerone);
-                index++;
-            } while (index <= plength);
+                this.poker[uindex].push(pokers.lpop());
+                pindex++;
+            } while (pindex < sendcount);
+            uindex++;
+        }
 
-            sindex++;
-        } while (sindex < sendcount);
-
-        this.poker.forEach((element, i) => {
-            this.poker_user[this.users[i]] = element;
-            this.channelService.pushMessageByUids('onSendPoker', element.slice(0, 4), [{
-                uid: `${this.users[sindex]}`,
-                sid: this.channel.getMember(`${this.users[sindex]}`).sid
-            }]);
-        });
+        // this.poker.forEach((element, i) => {
+        //     this.poker_user[this.users[i]] = element;
+        //     // this.channelService.pushMessageByUids('onSendPoker', element.slice(0, 4), [{
+        //     //     uid: `${this.users[sindex]}`,
+        //     //     sid: this.channel.getMember(`${this.users[sindex]}`).sid
+        //     // }]);
+        // });
+        console.log(this.poker);
     }
     public settlement() {
         // 这个里还要有个结算

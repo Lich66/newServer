@@ -33,7 +33,7 @@ export class Handler {
         let result = await Club.createClub({ ...json, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
-                code: 200,
+                code: 0,
                 data: result
             };
         } else {
@@ -47,7 +47,7 @@ export class Handler {
         let result = await Club.deleteClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
-                code: 200,
+                code: 0,
                 data: result
             };
         } else {
@@ -73,7 +73,7 @@ export class Handler {
         let result = await Club.updateClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) }, njson);
         if (result) {
             return {
-                code: 200,
+                code: 0,
                 data: result
             };
         } else {
@@ -88,7 +88,7 @@ export class Handler {
         let result = await Club.getClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
-                code: 200,
+                code: 0,
                 data: result
             };
         } else {
@@ -103,7 +103,7 @@ export class Handler {
         let result = await Club.getAllClub({ uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
-                code: 200,
+                code: 0,
                 data: result
             };
         } else {
@@ -137,7 +137,7 @@ export class Handler {
 
         });
         return {
-            code: 200
+            code: 0
         };
     }
 }

@@ -25,7 +25,7 @@ export class Handler {
         // 这里写死了获取手机号 毕竟负载均衡都是假的，以后再改
         let res = dispatch(Math.random().toString(), connectors);
         return {
-            code: 200,
+            code: 0,
             data: {
                 host: res.host,
                 port: res.clientPort
@@ -37,7 +37,7 @@ export class Handler {
     public async publish(msg: any, session: FrontendSession) {
         let result = {
             topic: 'publish',
-            payload: JSON.stringify({ code: 200, msg: 'publish message is ok.' })
+            payload: JSON.stringify({ code: 0, msg: 'publish message is ok.' })
         };
         return result;
     }
@@ -45,7 +45,7 @@ export class Handler {
     public async subscribe(msg: any, session: FrontendSession) {
         let result = {
             topic: 'subscribe',
-            payload: JSON.stringify({ code: 200, msg: 'subscribe message is ok.' })
+            payload: JSON.stringify({ code: 0, msg: 'subscribe message is ok.' })
         };
         return result;
     }

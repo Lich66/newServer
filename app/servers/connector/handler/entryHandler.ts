@@ -48,7 +48,7 @@ export class Handler {
             }
         }
         return {
-            code: 200,
+            code: 0,
             data: user,
             msg: 'game server is ok.'
         };
@@ -57,7 +57,7 @@ export class Handler {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
         if (user) {
             return {
-                code: 200,
+                code: 0,
                 data: user
             };
         } else {
@@ -71,7 +71,7 @@ export class Handler {
         const user = await this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
         if (user) {
             return {
-                code: 200,
+                code: 0,
                 data: user
             };
         } else {
@@ -133,14 +133,14 @@ export class Handler {
     public async publish(msg: any, session: FrontendSession) {
         let result = {
             topic: 'publish',
-            payload: JSON.stringify({ code: 200, msg: 'publish message is ok.' })
+            payload: JSON.stringify({ code: 0, msg: 'publish message is ok.' })
         };
         return result;
     }
     public async subscribe(msg: any, session: FrontendSession) {
         let result = {
             topic: 'subscribe',
-            payload: JSON.stringify({ code: 200, msg: 'subscribe message is ok.' })
+            payload: JSON.stringify({ code: 0, msg: 'subscribe message is ok.' })
         };
         return result;
     }
@@ -155,7 +155,7 @@ export class Handler {
         let club = await this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
         if (club) {
             return {
-                code: 200,
+                code: 0,
                 data: club
             };
         } else {
@@ -175,7 +175,7 @@ export class Handler {
         let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
         if (clubRoom) {
             return {
-                code: 200,
+                code: 0,
                 data: clubRoom
             };
         } else {

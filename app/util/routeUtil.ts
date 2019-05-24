@@ -23,7 +23,8 @@ export function club(session: Session, msg: any, app: Application, cb: (err: Err
         cb(new Error('can not find club servers.'));
         return;
     }
-    console.log(JSON.stringify(clubServers));
+    console.log(JSON.stringify('clubclubclubclubclubclubclubclub'));
+    console.log(JSON.stringify(msg));
 
     let res = dispatch(Math.random().toString(), clubServers);
     console.log('res.id', res.id);
