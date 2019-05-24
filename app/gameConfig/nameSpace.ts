@@ -38,3 +38,12 @@ export const gameKeyPrefix = {
 export const appKeyPrefix = {
     roomList: 'roomList'
 };
+/**
+ * 房间游戏的命名空间
+ */
+export const channelKeyPrefix = {
+    /**
+     * 游戏的命名空间
+     */
+    channel: 'channel_'
+};
