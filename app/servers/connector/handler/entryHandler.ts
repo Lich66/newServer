@@ -145,44 +145,44 @@ export class Handler {
         return result;
     }
 
-    public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
-        session.set('clubid', msg.clubid);
-        session.push('clubid', () => {
+    // public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
+    //     session.set('clubid', msg.clubid);
+    //     session.push('clubid', () => {
 
-        });
-        const sid = this.app.getServerId();
-        // session.uid, this.app.getServerId(), msg.clubid.toString(), true
-        let club = await this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
-        if (club) {
-            return {
-                code: 0,
-                data: club
-            };
-        } else {
-            return {
-                code: 500
-            };
-        }
-    }
+    //     });
+    //     const sid = this.app.getServerId();
+    //     // session.uid, this.app.getServerId(), msg.clubid.toString(), true
+    //     let club = await this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
+    //     if (club) {
+    //         return {
+    //             code: 0,
+    //             data: club
+    //         };
+    //     } else {
+    //         return {
+    //             code: 500
+    //         };
+    //     }
+    // }
 
-    public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
-        session.set('roomid', msg.roomid);
-        session.push('roomid', () => {
+    // public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
+    //     session.set('roomid', msg.roomid);
+    //     session.push('roomid', () => {
 
-        });
-        const clubid = session.get('clubid');
-        const sid = this.app.getServerId();
-        let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
-        if (clubRoom) {
-            return {
-                code: 0,
-                data: clubRoom
-            };
-        } else {
-            return {
-                code: 500
-            };
-        }
-    }
+    //     });
+    //     const clubid = session.get('clubid');
+    //     const sid = this.app.getServerId();
+    //     let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
+    //     if (clubRoom) {
+    //         return {
+    //             code: 0,
+    //             data: clubRoom
+    //         };
+    //     } else {
+    //         return {
+    //             code: 500
+    //         };
+    //     }
+    // }
 
 }

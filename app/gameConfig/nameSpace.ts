@@ -14,25 +14,31 @@ export const redisKeyPrefix = {
     /**
      * 茶楼存储前缀
      */
-    club: 'club_',
+    club: 'MAGNATE:club_',
+    clubRoomId_List: ':roomList',
     /**
      * 茶楼房间存储前缀
      */
-    clubRoom: 'clubRoom_',
+    clubRoom: ':clubRoom_',
+    clubRoom_users: ':users',
+    clubRoom_sid: ':sid',
     /**
      * 茶楼房间位置存储前缀
      */
-    chair: 'chair_'
+    chair: ':chair'
 };
+
 
 /**
  * 房间游戏的命名空间
  */
-export const gameKeyPrefix = {
+export const gameChannelKeyPrefix = {
     /**
      * 游戏的命名空间
      */
-    club_room_game: 'club_room_game_'
+    club_room_game: 'club_room_game_',
+    club: 'club_',
+    clubRoom: ':clubRoom_'
 };
 
 export const appKeyPrefix = {

@@ -1,3 +1,5 @@
+export const MAXUSERSNUMBER = 50;
+
 const num_15 = 15;
 const num_20 = 20;
 const num_30 = 30;

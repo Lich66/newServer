@@ -57,6 +57,10 @@ export interface IClubRoomReturn extends IResponse {
     data?: IRoom | IRoom[] | number | [number, IRoom[]];
     // [key: string]: any;
 }
+export interface IClubRoomSidReturn extends IResponse {
+    data?: string;
+    // [key: string]: any;
+}
 export interface IClubRoomStateReturn extends IResponse {
     data?: any[];
     // [key: string]: any;

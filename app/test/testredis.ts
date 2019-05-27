@@ -1,14 +1,16 @@
 import { redisClient } from '../db/redis';
 
-redisClient.hgetallAsync('base').then((e) => {
-    console.log(e);
-});
+// redisClient.hgetallAsync('base').then((e) => {
+//     console.log(e);
+// });
 
 
 // 批量插入
-redisClient.hmsetAsync('zhjtest', { 'hmsetAsync3': '3', 'parm1': 'parm1', 'parm2': 'parm2', 'parm3': 'parm3' }).then((r) => {
-    console.log(r);
-});
+// redisClient.hmsetAsync('zhjtest', { 'hmsetAsync3': '3', 'parm1': 'parm1', 'parm2': 'parm2', 'parm3': 'parm3' }).then((r) => {
+//     console.log(r);
+// });
+
+// redisClient.('adssad', [{ a: 'b' }])
 // // 插入
 
 // redisClient.hsetAsync('user_502', 'userid', '502');
@@ -20,9 +22,9 @@ redisClient.hmsetAsync('zhjtest', { 'hmsetAsync3': '3', 'parm1': 'parm1', 'parm2
 //     console.log(r);
 // });
 // // 获取全部
-redisClient.hgetallAsync('zhjtest').then((r) => {
-    console.log(r);
-});
+// redisClient.hgetallAsync('zhjtest').then((r) => {
+//     console.log(r);
+// });
 // // 检查有没有
 // redisClient.hexistsAsync('zhjtest', 'parm3').then((r) => {
 //     console.log(r);
@@ -172,3 +174,4 @@ redisClient.hgetallAsync('zhjtest').then((r) => {
 // redisClient.llenAsync('zhjtestlist').then((r) => {
 //     console.log(r + ' ; ' + typeof r);
 // });
+redisClient.flushall();

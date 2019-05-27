@@ -23,17 +23,7 @@ export function club(session: Session, msg: any, app: Application, cb: (err: Err
         cb(new Error('can not find club servers.'));
         return;
     }
-    console.log(JSON.stringify('clubclubclubclubclubclubclubclub'));
-    console.log(JSON.stringify(msg));
-
     let res = dispatch(Math.random().toString(), clubServers);
-    console.log('res.id', res.id);
-    if (session.uid == '510') {
-        res.id = 'club-server-1';
-    }
-    if (session.uid == '511') {
-        res.id = 'club-server-2';
-    }
     cb(null, res.id);
 }
 
@@ -46,7 +36,11 @@ export function clubRoom(session: Session, msg: any, app: Application, cb: (err:
     }
 
     let res = dispatch(Math.random().toString(), clubRoomServers);
-
+    console.log('clubRoomclubRoomclubRoomclubRoomclubRoomclubRoomclubRoomclubRoomclubRoomclubRoom');
+    console.log(msg.body);
+    if (msg.body && msg.body.sid) {
+        res.id = msg.body.sid;
+    }
     cb(null, res.id);
 }
 

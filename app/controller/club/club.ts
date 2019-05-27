@@ -81,7 +81,7 @@ export class Club {
                         const chartnumber = json.player_num;
                         let index = 0;
                         do {
-                            await ClubRoomState.setClubRoomState({ redisRoomId: `${redisKeyPrefix.clubRoom}${json.roomid}`, chairIndex: `${redisKeyPrefix.chair}${index}`, state: '-1' });
+                            await ClubRoomState.setClubRoomChairState({ clubid: club.clubid, roomid: json.roomid, chairIndex: index, state: -1 });
                             index++;
                         } while (index < chartnumber);
 
@@ -89,7 +89,7 @@ export class Club {
                     let redisarr: string[] = arr.map((item) => {
                         return `${item.roomid}`;
                     });
-                    await ClubRoomList.setClubRoomList({ redisClubId: `${redisKeyPrefix.club}${club.clubid}`, List: redisarr });
+                    await ClubRoomList.setClubRoomList({ clubid: club.clubid, List: redisarr });
                 }
                 return club;
             });
@@ -103,7 +103,7 @@ export class Club {
                 await tbl_room.destroy({ where: { clubid: json.clubid, roomid: { [Op.regexp]: '\.' } }, transaction: t });
                 return await tbl_club.destroy({ where: { clubid: json.clubid }, transaction: t });
             });
-            let arr = await ClubRoomList.getClubRoomList({ redisClubId: `${redisKeyPrefix.club}${json.clubid}` });
+            let arr = await ClubRoomList.getClubRoomList({ clubid: json.clubid });
             for (const iterator of arr) {
                 console.log(`${redisKeyPrefix.clubRoom}${iterator}`);
                 await RedisKeys.delAsync(`${redisKeyPrefix.clubRoom}${iterator}`);
