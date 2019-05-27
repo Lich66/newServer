@@ -80,8 +80,13 @@ export class GameUitl {
      */
     public static generateRoomId(): number {
         let roomId = '';
-        for (let i = 0; i < 6; ++i) {
-            roomId += Math.floor(Math.random() * 10);
+        for (let i = 0; i < 6; i++) {
+            let num = Math.floor(Math.random() * 10);
+            if (i === 0 && num === 0) {
+                i--;
+                continue;
+            }
+            roomId += num;
         }
         return parseInt(roomId, 0);
     }
@@ -224,7 +229,7 @@ export class GameUitl {
             name,
             play_type: config[0],
             player_num: RoomConfig.playerNum[config[1]],
-            base_point:  RoomConfig.round[config[2]],
+            base_point: RoomConfig.round[config[2]],
             round: config[3],
             pay_type: config[4],
             start_type: config[5],

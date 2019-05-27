@@ -96,3 +96,38 @@ export const RoomConfig = {
      */
     laiziType: ['无', '经典王癞', '疯狂王癞']
 };
+
+/**
+ * 房间字段名
+ */
+export const RoomFields = {
+    sid: 'sid',
+    roomConfig: 'roomConfig',
+    roomId: 'roomId',
+    creatorId: 'creatorId',
+    createTime: 'createTime',
+    playType: 'playType',
+    playerNum: 'playerNum',
+    basePoint: 'basePoint',
+    round: 'round',
+    payType: 'payType',
+    startType: 'startType',
+    bolusType: 'bolusType',
+    maxBankerBet: 'maxBankerBet',
+    doubleRule: 'doubleRule',
+    allContrastPlay: 'allContrastPlay',
+    takeTurnsPlay: 'takeTurnsPlay',
+    upBankerScore: 'upBankerScore',
+    specialCard: 'specialCard',
+    fastFlag: 'fastFlag',
+    halfWayAdd: 'halfWayAdd',
+    rubbingFlag: 'rubbingFlag',
+    itemUse: 'itemUse',
+    buyCode: 'buyCode',
+    bolusLimit: 'bolusLimit',
+    grabFlag: 'grabFlag',
+    doubleFlag: 'doubleFlag',
+    laiziType: 'laiziType',
+    onlookerList: 'onlookerList',
+    userList: 'userList'
+};

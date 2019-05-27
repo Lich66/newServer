@@ -17,7 +17,7 @@ export class Handler {
         let connectors = this.app.getServersByType('connector');
         if (!connectors || connectors.length === 0) {
             return {
-                code: 500
+                code: 600
             };
         }
         // 这里有一段对比版本信息和入库谁被信息的代码

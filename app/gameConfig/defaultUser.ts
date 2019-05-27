@@ -1,3 +1,3 @@
 export const defaultUser = {
-    diamond: 12
+    diamond: 20000
 };

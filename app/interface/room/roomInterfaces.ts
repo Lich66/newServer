@@ -1,7 +1,9 @@
 export interface IRoomConfig {
+    sid?: string;
     roomConfig: Array<number | string>;
     roomId: number;
     creatorId: number;
+    createTime: number;
     playType: string;
     playerNum: number;
     basePoint: string;

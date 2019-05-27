@@ -83,50 +83,16 @@ export class Handler {
     }
 
 
-    // ---------------------------------------------------------------------
     // ------------------------------ 野生房间 ------------------------------    
-    // ---------------------------------------------------------------------
-    // public async createRoom(msg: ICreateRoomRequest, session: FrontendSession) {
-    //     console.log('大厅服务器收到创建房间消息:' + JSON.stringify(msg));
-    //     let userid: number = parseInt(session.uid, 0);
-    //     let result = await RoomManager.createRoom(userid, msg.roomConfig, this.app);
-    //     if (!result.flag) {
-    //         return {
-    //             code: result.code
-    //         };
-    //     }
-    //     const sid = this.app.getServerId();
-    //     await this.app.rpc.room.roomRemote.createRoom.route(session)(result.json);
-    //     return { code: 0, roomid: result.roomId };
-    // }
 
     public async joinRoom(msg: IJoinRoomRequest, session: FrontendSession) {
         console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
         let userId: number = parseInt(session.uid, 0);
-        let sid = this.app.getServerId();
-        let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId, sid);
+        let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId);
         session.set('roomId', msg.roomId);
         session.push('roomId', () => {
 
         });
-        // let roomList = this.app.get('roomList');
-        // console.log('在connector获取roomList:' + JSON.stringify(Object.keys(roomList)));
-
-        // let result = await RoomManager.joinRoom(userId, msg.roomId, this.app);
-
-        // if (!result.flag) {
-        //     return {
-        //         code: result.code,
-        //         msg: result.msg
-        //     };
-        // }
-        // return {
-        //     code: result.code,
-        //     roomConfig: result.roomConfig,
-        //     userList: result.userList,
-        //     onlookerList: result.onlookerList
-        // };
-
         return result;
     }
 
