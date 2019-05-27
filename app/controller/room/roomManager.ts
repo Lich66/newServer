@@ -16,7 +16,7 @@ export class RoomManager {
 
     public static async createRoom(userId: number, config: any) {
         // 先判断玩家的房间数是否超过10个
-        let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
+        let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.user}${userId}${redisKeyPrefix.userRoomList}${userId}`);
         if (roomListLen && roomListLen === 10) {
             return { flag: false, code: 12002 };
         }
@@ -61,7 +61,7 @@ export class RoomManager {
                 await redisClient.hsetAsync(`${redisKeyPrefix.room}${json.roomId}`, key, `${json[key]}`);
             }
         }
-        await redisClient.rpushAsync(`${redisKeyPrefix.userRoomList}${userId}`, `${roomId}`);
+        await redisClient.rpushAsync(`${redisKeyPrefix.user}${userId}${redisKeyPrefix.userRoomList}${userId}`, `${roomId}`);
         return { flag: true, json };
     }
 

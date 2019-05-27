@@ -1,7 +1,7 @@
 import { Application, FrontendSession, RemoterClass } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { RoomManager } from '../../../controller/room/roomManager';
-import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
+import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
 
 export default function (app: Application) {
@@ -41,7 +41,7 @@ export class RoomRemote {
         if (!result.flag) {
             return { code: result.code };
         }
-        let members = this.globalChannelStatus.getMembersByChannelName('connector', `${redisKeyPrefix.room}${roomId}`);
+        let members = this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${roomId}`);
         // { connector_1:{ channelName1: [ 'uuid_21', 'uuid_12', 'uuid_24', 'uuid_27' ] },
         // 	 connector_2: { channelName1: [ 'uuid_15', 'uuid_9', 'uuid_0', 'uuid_18' ] },
         // 	 connector_3: { channelName1: [ 'uuid_6', 'uuid_3' ] }
@@ -49,14 +49,14 @@ export class RoomRemote {
         for (const key in members) {
             if (members.hasOwnProperty(key)) {
                 const element = members[key];
-                const ishas = element[`${redisKeyPrefix.room}${roomId}`].includes(`${userId}`);
+                const ishas = element[`${gameChannelKeyPrefix.room}${roomId}`].includes(`${userId}`);
                 if (!ishas) {
-                    this.globalChannelStatus.add(`${userId}`, key, `${redisKeyPrefix.room}${roomId}`);
+                    this.globalChannelStatus.add(`${userId}`, key, `${gameChannelKeyPrefix.room}${roomId}`);
                 }
             }
         }
         let userData = result.userData;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onJoinRoom}`, { userData }, `${redisKeyPrefix.room}${roomId}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onJoinRoom}`, { userData }, `${gameChannelKeyPrefix.room}${roomId}`);
         // let channel = this.channelService.getChannel(`${redisKeyPrefix.room}${roomId}`);
         // let userData = result.userData;
         // channel.pushMessage('onJoinRoom', { userData });
