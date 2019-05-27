@@ -31,18 +31,19 @@ export class RoomManager {
         let roomList = app.get(appKeyPrefix.roomList);
         let roomId: number;
         do {
-            console.log('--------------');
             roomId = GameUitl.generateRoomId();
         } while (roomList.roomId);
         // 更改数据库及redis玩家钻石数
-        let nowDiamond = userData.diamond - roomRate;
-        let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
-        if (result === 0) {
-            return { flag: false, code: 12003 };
+        if (config[4] === 0) {
+            let nowDiamond = userData.diamond - roomRate;
+            let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
+            if (result === 0) {
+                return { flag: false, code: 12003 };
+            }
+            // console.log('修改redis之前的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
+            await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
+            // console.log('修改redis之后的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
         }
-        // console.log('修改redis之前的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
-        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
-        // console.log('修改redis之后的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
 
         // 解析房间配置信息
         let json1 = await GameUitl.parsePRoomConfig(config);
@@ -87,7 +88,7 @@ export class RoomManager {
             userID: user.userid,
             image: user.image
         };
-        channel.pushMessage('onJoinRoom', userData);
+        channel.pushMessage('onJoinRoom', {userData});
         console.log('加入的玩家信息:' + JSON.stringify(userData));
         room.onlookerList.push(userData);
         return {

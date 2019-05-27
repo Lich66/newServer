@@ -2,47 +2,47 @@
   "development": {
     "connector": [{
       "id": "connector-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9150,
-      "clientHost": "192.168.1.205",
+      "clientHost": "192.168.1.21",
       "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10111"
     }],
     "gate": [{
       "id": "gate-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10113"
     }],
     "user": [{
       "id": "user-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9160,
       "args": "--inspect=10115"
     }],
     "hall": [{
       "id": "hall-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9170,
       "args": " --inspect=10117"
     }],
     "club": [{
       "id": "club-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9180,
       "args": " --inspect=10119"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9190,
       "args": " --inspect=10121"
     }],
     "room": [{
       "id": "room-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9200,
       "args": " --inspect=10123"
     }]
@@ -50,47 +50,47 @@
   "production": {
     "connector": [{
       "id": "connector-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9150,
-      "clientHost": "192.168.1.205",
+      "clientHost": "192.168.1.21",
       "clientPort": 9010,
       "frontend": true,
       "args": " --inspect=10111"
     }],
     "gate": [{
       "id": "gate-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "clientPort": 9014,
       "frontend": true,
       "args": "--inspect=10113"
     }],
     "user": [{
       "id": "user-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9160,
       "args": "--inspect=10115"
     }],
     "hall": [{
       "id": "hall-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9170,
       "args": " --inspect=10117"
     }],
     "club": [{
       "id": "club-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9180,
       "args": " --inspect=10119"
     }],
     "clubRoom": [{
       "id": "clubRoom-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9190,
       "args": " --inspect=10121"
     }],
     "room": [{
       "id": "room-server-1",
-      "host": "192.168.1.205",
+      "host": "192.168.1.21",
       "port": 9200,
       "args": " --inspect=10123"
     }]

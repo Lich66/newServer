@@ -88,3 +88,7 @@ app.start();
 //   let clubServers = app.getServersByType('club');
 //   console.log(JSON.stringify(clubServers));
 // }, 10000)
+
+process.on('uncaughtException', function (err) {
+  console.error(' Caught exception: ' + err.stack);
+});

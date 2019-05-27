@@ -19,6 +19,11 @@ export class RoomHandler {
     public async createRoom(msg: ICreateRoomRequest, session: BackendSession) {
         console.log('大厅服务器收到创建房间消息:' + JSON.stringify(msg));
         let userid: number = parseInt(session.uid, 0);
+        if (!userid) {
+            return {
+                code: 10004
+            };
+        }
         let result = await RoomManager.createRoom(userid, msg.roomConfig, this.app);
         if (!result.flag) {
             return {
@@ -43,7 +48,7 @@ export class RoomHandler {
         if (user) {
             channel.removeMember(`${userId}`);
         }
-        channel.pushMessage('onLeaveRoom', userId);
+        channel.pushMessage('onLeaveRoom', { userId });
         let roomList = this.app.get(appKeyPrefix.roomList);
         let room = roomList[roomId];
         // todo 删除离开房间玩家 
