@@ -88,8 +88,7 @@ export class Handler {
     public async joinRoom(msg: IJoinRoomRequest, session: FrontendSession) {
         console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
         let userId: number = parseInt(session.uid, 0);
-        let sid = this.app.getServerId();
-        let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId, sid);
+        let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId);
         session.set('roomId', msg.roomId);
         session.push('roomId', () => {
 

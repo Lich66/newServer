@@ -40,7 +40,7 @@ export class tbl_email extends Model<tbl_email> {
         type: DataType.STRING(STRING32),
         comment: '发送时间'
     })
-    public sendTime: string;
+    public sendTime: number;
 
     @Column({
         comment: '是否已读(0:未读,1:已读)'

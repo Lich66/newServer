@@ -36,7 +36,7 @@ export class RoomChannelService {
     public constructor(channel: Channel, configJson: IRoomConfig) {
         this.channel = channel;
         this.roomConfig = configJson.roomConfig;
-        this.createTime = (new Date()).valueOf();
+        this.createTime = this.createTime;
         this.roomId = configJson.roomId;
         this.creatorId = configJson.creatorId;
         this.playType = configJson.playType;

@@ -55,7 +55,7 @@ __decorate([
         type: sequelize_typescript_1.DataType.STRING(STRING32),
         comment: '发送时间'
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Number)
 ], tbl_email.prototype, "sendTime", void 0);
 __decorate([
     sequelize_typescript_1.Column({
