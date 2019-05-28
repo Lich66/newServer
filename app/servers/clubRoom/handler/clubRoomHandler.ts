@@ -1,7 +1,6 @@
 import { Application, BackendSession } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { ClubRoom } from '../../../controller/clubRoom/clubRoom';
-import { GameManager } from '../../../controller/game/gameManager';
 import { ClubRoomList } from '../../../controller/redis/clubRoomList/clubRoomList';
 import { ClubRoomServerId } from '../../../controller/redis/clubRoomServerId/clubRoomServerId';
 import { ClubRoomState } from '../../../controller/redis/clubRoomState/clubRoomState';
@@ -9,6 +8,7 @@ import { User } from '../../../controller/user/user';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { IClubRoomRequest, IClubRoomReturn, IClubRoomRpc, IClubRoomSidReturn, IClubRoomStateReturn } from '../../../interface/clubRoom/clubRoomInterface';
+import { Game } from '../../../util/game';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -22,6 +22,12 @@ export class Handler {
         this.app = app;
         // this.channelService = app.get('channelService');
         this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
+    }
+    public getGlobalChannelServiceStatus(): GlobalChannelServiceStatus {
+        return this.globalChannelStatus;
+    }
+    public getApp(): Application {
+        return this.app;
     }
 
     public async createClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
@@ -237,6 +243,10 @@ export class Handler {
         };
     }
 
+    /**
+     * 
+     * 获取clubroom的serverid 
+     */
     public async getClubRoomServerId(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomSidReturn> {
         const clubid = session.get('clubid');
         let serverId = this.app.getServerId();
@@ -263,6 +273,8 @@ export class Handler {
     }
 
     public async joinClubRoom(clubroomrpc: IClubRoomRpc, session: BackendSession): Promise<IClubRoomReturn> {
+        session.set('roomid', clubroomrpc.roomid);
+        await session.apush('roomid');
         const clubid = session.get('clubid');
         const clubRoom = await ClubRoom.getClubRoom({ roomid: clubroomrpc.roomid });
         if (!clubRoom) {
@@ -337,12 +349,8 @@ export class Handler {
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStandUp}`, { user, chairIndex }, `${gameChannelKeyPrefix.clubRoom}${roomid}`);
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClubRoom}`, { user }, `${gameChannelKeyPrefix.clubRoom}${roomid}`);
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClubRoom}`, { user, roomid }, `${gameChannelKeyPrefix.club}${clubid}`);
-        // clubChannel.pushMessage(`${gameChannelKeyPrefix.club}${clubroomrpc.clubid}`, { user, action: 1 });
-        // roomChannel.pushMessage(`${gameChannelKeyPrefix.clubRoom}${session.get('roomid')}`, { user, action: 0 });
         session.set('roomid', null);
-        session.push('roomid', () => {
-
-        });
+        session.apush('roomid');
         return {
             code: 0,
             data: clubid
@@ -452,9 +460,44 @@ export class Handler {
     public async startGame(obj: any, session: BackendSession) {
         const roomid = session.get('roomid');
         const clubid = session.get('clubid');
-        await GameManager.startGame(clubid, roomid, this.globalChannelStatus);
+        const clubroom = await ClubRoom.getClubRoom({ roomid });
+        let game = new Game(clubroom, this, clubid, roomid);
+        this.app.set(`${gameChannelKeyPrefix.club_room_game}${roomid}`, game);
+        game.start();
         return {
             code: 0
         };
+    }
+    public async grabBanker(json: { number: number }, session: BackendSession) {
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        let game: Game = this.app.get(`${gameChannelKeyPrefix.club_room_game}${roomid}`);
+
+        let parms = {};
+        parms[session.uid] = json.number;
+        return {
+            code: game.userGrabBanker(parms)
+        };
+    }
+    public async setBet(json: { number: number }, session: BackendSession) {
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        let game: Game = this.app.get(`${gameChannelKeyPrefix.club_room_game}${roomid}`);
+
+        let parms = {};
+        parms[session.uid] = json.number;
+        return {
+            code: game.userSetBet(parms)
+        };
+    }
+
+    public async expression(info: any, session: BackendSession): Promise<any> {
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onExpression}`, { ...info, uid: session.uid }, `${gameChannelKeyPrefix.clubRoom}${roomid}`);
+        return {
+            code: 0
+        };
+        // return club;
     }
 }

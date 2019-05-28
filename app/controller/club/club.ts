@@ -89,7 +89,7 @@ export class Club {
                     let redisarr: string[] = arr.map((item) => {
                         return `${item.roomid}`;
                     });
-                    await ClubRoomList.setClubRoomList({ clubid: club.clubid, List: redisarr });
+                    await ClubRoomList.pushClubRoomList({ clubid: club.clubid, List: redisarr });
                 }
                 return club;
             });
