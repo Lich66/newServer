@@ -1,5 +1,6 @@
 import { Application, BackendSession } from 'pinus';
 import { SignIn } from '../../../controller/hall/signIn';
+import { User } from '../../../controller/user/user';
 import { ITbl_signIn } from '../../../interface/models/tbl_signIn';
 
 export default function (app: Application) {
@@ -78,11 +79,16 @@ export class HallHandler {
             }
         }
         form.push(newDate.getDate());
-        let result = await SignIn.updateSignInInfo({ userId }, { form: JSON.stringify(form), date: newDate.valueOf() });
-        if (result === 0) {
+        let user = await User.getUser({ userid: userId });
+        if (!user) {
             return { code: 12043 };
         }
-        return { code: 0 };
+        let result = await SignIn.signInTransaction(userId, JSON.stringify(form), newDate.valueOf(), (user.diamond + 1));
+        if (result) {
+            return { code: 0, data: { diamond: user.diamond + 1 } };
+        } else {
+            return { code: 12043 };
+        }
     }
 
 }
