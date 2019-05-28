@@ -56,7 +56,7 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
-        let members = this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${msg.roomId}`);
+        let members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${msg.roomId}`);
         console.log('加入房间== members ==: ' + JSON.stringify(members));
         for (const key in members) {
             if (members.hasOwnProperty(key)) {
