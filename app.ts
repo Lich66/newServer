@@ -76,7 +76,7 @@ app.configure('production|development', function () {
   // app.route('hall', routeUtil.hall);
   app.route('club', routeUtil.club);
   // app.route('clubRoom', routeUtil.clubRoom);
-  // app.route('room', routeUtil.room);
+  app.route('room', routeUtil.room);
   // app.route('user', routeUtil.user);
   // // filter configures
   // app.filter(new pinus.filters.timeout());
