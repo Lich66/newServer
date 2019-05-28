@@ -6,7 +6,7 @@ export const redisKeyPrefix = {
     /**
      * 房间列表存储前缀
      */
-    userRoomList: ':userRoomList_',
+    userRoomList: 'UserRoomList:userRoomList_',
     /**
      * 房间存储前缀
      */
