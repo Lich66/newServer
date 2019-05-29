@@ -42,9 +42,6 @@ export const gameChannelKeyPrefix = {
     room: 'room_'
 };
 
-export const appKeyPrefix = {
-    roomList: 'roomList'
-};
 /**
  * 房间游戏的命名空间
  */

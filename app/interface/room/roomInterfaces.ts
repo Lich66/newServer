@@ -1,5 +1,6 @@
 export interface IRoomConfig {
     sid?: string;
+    state: number;  // 0:未开始;1:开始
     roomConfig: Array<number | string>;
     roomId: number;
     creatorId: number;
