@@ -1,4 +1,4 @@
-import { Application, BackendSession, ChannelService } from 'pinus';
+import { Application, BackendSession, SessionService } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
@@ -10,11 +10,13 @@ export default function (app: Application) {
 }
 export class RoomHandler {
     private app: Application;
+    // private sessionService: SessionService;
     // private channelService: ChannelService;
     private globalChannelStatus: GlobalChannelServiceStatus;
     public constructor(app: Application) {
         this.app = app;
         // this.channelService = app.get('channelService');
+        // this.sessionServices = app.get('sessionService');
         this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
     }
 
@@ -103,8 +105,7 @@ export class RoomHandler {
         }
         let userData = result.userData;
         session.set('roomId', msg.roomId);
-        session.push('roomId', () => {
-        });
+        session.push('roomId', () => { });
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onJoinRoom}`, { userData }, `${gameChannelKeyPrefix.room}${msg.roomId}`);
         return {
             code: 0,
@@ -125,7 +126,6 @@ export class RoomHandler {
         let userId: number = parseInt(session.uid, 0);
         let roomId: number = parseInt(session.get('roomId'), 0);
         console.log('离开房间获取信息: ' + userId + ' : ' + roomId);
-        // todo 先判断是否为旁观者(是:直接离开,通知是都要的),再判断房间是否已开始游戏
         let result = await RoomManager.leaveRoom(userId, roomId);
         if (!result.flag) {
             return { code: result.code };
@@ -139,7 +139,7 @@ export class RoomHandler {
                 const element = members[key];
                 const ishas = element[`${gameChannelKeyPrefix.room}${roomId}`].includes(`${userId}`);
                 if (!ishas) {
-                    this.globalChannelStatus.leave(`${userId}`, key, `${gameChannelKeyPrefix.room}${roomId}`);
+                    await this.globalChannelStatus.leave(`${userId}`, key, `${gameChannelKeyPrefix.room}${roomId}`);
                 }
             }
         }
@@ -147,5 +147,33 @@ export class RoomHandler {
         return { code: 0 };
     }
 
+    /**
+     * 解散房间
+     * @param obj xx
+     * @param session session
+     */
+    public async dissolveRoom(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let roomId: number = parseInt(session.get('roomId'), 0);
+        console.log('解散房间获取信息: ' + userId + ' : ' + roomId);
+        let result = await RoomManager.dissolveRoom(userId, roomId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        // todo 清空玩家session中的roomId,暂时不能实现
+        // let sessionService = this.app.get('sessionService');
+        // for (const iterator of result.players.onlookerList) {
+        //     console.log('------------------------' + JSON.stringify(iterator));
+        //     let s = sessionService.getByUid(iterator);
+        //     console.log('+++++++++++++++++++++++++' + JSON.stringify(s));
+        //     s[0].set('roomId', null);
+        // }
+        // for (const iterator of result.players.userList) {
+        //     let s = sessionService.getByUid(iterator);
+        //     s[0].set('roomId', null);
+        // }
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { code: result.code }, `${gameChannelKeyPrefix.room}${roomId}`);
+        return { code: 0 };
+    }
 
 }
