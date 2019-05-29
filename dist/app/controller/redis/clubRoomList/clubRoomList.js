@@ -1,26 +1,18 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = require("../../../db/redis");
+const nameSpace_1 = require("../../../gameConfig/nameSpace");
+const roomConfig_1 = require("../../../gameConfig/roomConfig");
 class ClubRoomList {
-    static setClubRoomList(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield redis_1.redisClient.rpushAsync(json.redisClubId, ...json.List);
-        });
+    static async pushClubRoomList(json) {
+        return await redis_1.redisClient.rpushAsync(`${nameSpace_1.redisKeyPrefix.club}${json.clubid}${nameSpace_1.redisKeyPrefix.clubRoomId_List}`, ...json.List);
     }
-    static getClubRoomList(json) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const MAXLENGTH = 20;
-            return yield redis_1.redisClient.lrangeAsync(json.redisClubId, 0, MAXLENGTH);
-        });
+    static async getClubRoomList(json) {
+        return await redis_1.redisClient.lrangeAsync(`${nameSpace_1.redisKeyPrefix.club}${json.clubid}${nameSpace_1.redisKeyPrefix.clubRoomId_List}`, 0, roomConfig_1.MAXUSERSNUMBER);
+    }
+    static async lremClubRoomList(json) {
+        return await redis_1.redisClient.lremAsync(`${nameSpace_1.redisKeyPrefix.club}${json.clubid}${nameSpace_1.redisKeyPrefix.clubRoomId_List}`, 1, `${json.clubid}`);
     }
 }
 exports.ClubRoomList = ClubRoomList;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21MaXN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vYXBwL2NvbnRyb2xsZXIvcmVkaXMvY2x1YlJvb21MaXN0L2NsdWJSb29tTGlzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7O0FBQUEsNkNBQWdEO0FBRWhELE1BQWEsWUFBWTtJQUNkLE1BQU0sQ0FBTyxlQUFlLENBQUMsSUFBNkM7O1lBQzdFLE9BQU8sTUFBTSxtQkFBVyxDQUFDLFVBQVUsQ0FBQyxJQUFJLENBQUMsV0FBVyxFQUFFLEdBQUcsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO1FBQ3hFLENBQUM7S0FBQTtJQUVNLE1BQU0sQ0FBTyxlQUFlLENBQUMsSUFBNkI7O1lBQzdELE1BQU0sU0FBUyxHQUFHLEVBQUUsQ0FBQztZQUNyQixPQUFPLE1BQU0sbUJBQVcsQ0FBQyxXQUFXLENBQUMsSUFBSSxDQUFDLFdBQVcsRUFBRSxDQUFDLEVBQUUsU0FBUyxDQUFDLENBQUM7UUFDekUsQ0FBQztLQUFBO0NBQ0o7QUFURCxvQ0FTQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY2x1YlJvb21MaXN0LmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vYXBwL2NvbnRyb2xsZXIvcmVkaXMvY2x1YlJvb21MaXN0L2NsdWJSb29tTGlzdC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLDZDQUFnRDtBQUNoRCw2REFBK0Q7QUFDL0QsK0RBQWdFO0FBRWhFLE1BQWEsWUFBWTtJQUNkLE1BQU0sQ0FBQyxLQUFLLENBQUMsZ0JBQWdCLENBQUMsSUFBd0M7UUFDekUsT0FBTyxNQUFNLG1CQUFXLENBQUMsVUFBVSxDQUFDLEdBQUcsMEJBQWMsQ0FBQyxJQUFJLEdBQUcsSUFBSSxDQUFDLE1BQU0sR0FBRywwQkFBYyxDQUFDLGVBQWUsRUFBRSxFQUFFLEdBQUcsSUFBSSxDQUFDLElBQUksQ0FBQyxDQUFDO0lBQy9ILENBQUM7SUFFTSxNQUFNLENBQUMsS0FBSyxDQUFDLGVBQWUsQ0FBQyxJQUF3QjtRQUN4RCxPQUFPLE1BQU0sbUJBQVcsQ0FBQyxXQUFXLENBQUMsR0FBRywwQkFBYyxDQUFDLElBQUksR0FBRyxJQUFJLENBQUMsTUFBTSxHQUFHLDBCQUFjLENBQUMsZUFBZSxFQUFFLEVBQUUsQ0FBQyxFQUFFLDJCQUFjLENBQUMsQ0FBQztJQUNySSxDQUFDO0lBQ00sTUFBTSxDQUFDLEtBQUssQ0FBQyxnQkFBZ0IsQ0FBQyxJQUF3QjtRQUN6RCxPQUFPLE1BQU0sbUJBQVcsQ0FBQyxTQUFTLENBQUMsR0FBRywwQkFBYyxDQUFDLElBQUksR0FBRyxJQUFJLENBQUMsTUFBTSxHQUFHLDBCQUFjLENBQUMsZUFBZSxFQUFFLEVBQUUsQ0FBQyxFQUFFLEdBQUcsSUFBSSxDQUFDLE1BQU0sRUFBRSxDQUFDLENBQUM7SUFDckksQ0FBQztDQUNKO0FBWEQsb0NBV0MifQ==

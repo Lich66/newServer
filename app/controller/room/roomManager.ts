@@ -1,17 +1,21 @@
 
-import { Application, ChannelService } from 'pinus';
 import { redisClient } from '../../db/redis';
-import { redisKeyPrefix } from '../../gameConfig/redisKeyPrefix';
-import { RoomConfig } from '../../gameConfig/roomConfig';
+import { redisKeyPrefix } from '../../gameConfig/nameSpace';
+import { RoomFields } from '../../gameConfig/roomConfig';
+import { userConfig } from '../../gameConfig/userConfig';
+import { IRoomConfig } from '../../interface/room/roomInterfaces';
 import { GameUitl } from '../../util/gameUitl';
+import { SelfUtils } from '../../util/selfUtils';
 import { User } from '../user/user';
 
 
 
 export class RoomManager {
-
-    public roomList = {};
-
+    /**
+     * 创建房间逻辑
+     * @param userId 创建者id
+     * @param config 房间配置信息
+     */
     public static async createRoom(userId: number, config: any) {
         // 先判断玩家的房间数是否超过10个
         let roomListLen = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
@@ -30,61 +34,156 @@ export class RoomManager {
         do {
             roomId = GameUitl.generateRoomId();
         } while (await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`));
-        let createTime = GameUitl.getLocalDateStr();
-        console.log('roomid = ' + roomId + ' ; createTime = ' + createTime);
         // 更改数据库及redis玩家钻石数
-        let nowDiamond = userData.diamond - roomRate;
-        let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
-        if (result === 0) {
-            return { flag: false, code: 12003 };
+        if (config[4] === 0) {
+            let nowDiamond = userData.diamond - roomRate;
+            let result = await User.updateUser({ userid: userId }, { diamond: nowDiamond });
+            if (result === 0) {
+                return { flag: false, code: 12003 };
+            }
+            // console.log('修改redis之前的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
+            await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
+            // console.log('修改redis之后的数据情况:' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`)));
         }
-        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, 'diamond', nowDiamond.toString());
+
         // 解析房间配置信息
-        let json = await GameUitl.parsePRoomConfig(config);
-        // let json1 = room_0_0(config);
-        // console.log('转义后的房间配置信息: ' + json1);
-        // let json2 = {
-        //     roomId,
-        //     creatorId: userId,
-        //     createTime,
-        //     roomConfig: config
-        // };
-        // let roomConfig = SelfUtils.assign(json1, json2);
-        // console.log('合并后的房间配置: ' + JSON.stringify(roomConfig));
-        // for (let key in roomConfig) {
-        //     if (roomConfig.hasOwnProperty(key)) {
-        //         await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, key, roomConfig[key]);
-        //     }
-        // }
-        // console.log('从redis捞出来的roomConfig = ' + JSON.stringify(await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`)));
-        return { flag: true, roomId };
+        let json1 = await GameUitl.parsePRoomConfig(config);
+        let json2 = {
+            state: 0,
+            roomId,
+            creatorId: userId,
+            roomConfig: JSON.stringify(config),
+            createTime: (new Date()).valueOf(),
+            onlookerList: JSON.stringify([]),
+            userList: JSON.stringify([])
+        };
+        let json: IRoomConfig = SelfUtils.assign(json2, json1);
+        console.log('合并后的房间配置: ' + JSON.stringify(json));
+        for (const key in json) {
+            if (json.hasOwnProperty(key)) {
+                await redisClient.hsetAsync(`${redisKeyPrefix.room}${json.roomId}`, key, `${json[key]}`);
+            }
+        }
+        await redisClient.rpushAsync(`${redisKeyPrefix.userRoomList}${userId}`, `${roomId}`);
+        return { flag: true, json };
     }
 
+    /**
+     * 加入房间逻辑
+     * @param userId 加入者id
+     * @param roomId 房间id
+     */
     public static async joinRoom(userId: number, roomId: number) {
-        // let roomConfig = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
-        // let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
-        // // 如果是房间是AA类型,则需要判断玩家的房卡是否足够
-        // if (PayType[parseInt(roomConfig.playType, 0)].substr(0, 2) === 'AA') {
-        //     let needDaimond = parseInt(PayType[parseInt(roomConfig.playType, 0)].substr(4), 0);
-        //     if (parseInt(user.diamond, 0) < needDaimond) {
-        //         return { flag: false, code: 511, msg: 'You are short of diamonds' };
-        //     }
-        // }
-        // let num: number[][] = [[], []];
-        // let numstr: string[] = roomConfig.roomConfig.split(',');
-        // console.log('..................拆分出来的' + JSON.stringify(numstr));
-        // numstr.forEach((value, i) => {
-        //     if (i < 2) {
-        //         num[0][i] = parseInt(value, 0);
-        //     } else {
-        //         num[1][i - 2] = parseInt(value, 0);
-        //     }
-        // });
-        // console.log('..................解析出来的' + JSON.stringify(num));
-        // // todo 从redis上拉取房间里的玩家列表和观战玩家列表 
-        // const userList: string[] = [];
-        // const onlookerList: string[] = [];
-        // return { flag: true, roomConfig: num, userList, onlookerList };
-        return { code: 500 };
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        console.log('获取到的room' + JSON.stringify(room.roomId));
+        if (!room) {
+            return { flag: false, code: 12013 };
+        }
+        if (room.state === '1' && room.halfWayAdd === '1') {
+            return { flag: false, code: 12015 };
+        }
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 判断玩家的房卡是否足够
+        let needDaimond = GameUitl.getRoomRate2(parseInt(room.playerNum, 0), parseInt(room.round, 0), parseInt(room.PayType, 0));
+        if (parseInt(room.PayType, 0) === 1) {
+            if (parseInt(user.diamond, 0) < needDaimond) {
+                return { flag: false, code: 12011 };
+            }
+        } else {
+            if (parseInt(room.creatorId, 0) === userId) {
+                if (parseInt(user.diamond, 0) < needDaimond) {
+                    return { flag: false, code: 12011 };
+                }
+            }
+        }
+        let userData = {
+            userNick: user.usernick,
+            userID: user.userid,
+            image: user.image
+        };
+        let userList = JSON.parse(room.userList);
+        let onlookerList = JSON.parse(room.onlookerList);
+        let roomConfig = JSON.parse(room.roomConfig);
+        onlookerList.push(userData);
+        let onlookerListStr = JSON.stringify(onlookerList);
+        await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.onlookerList}`, onlookerListStr);
+        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`, `${roomId}`);
+        return {
+            flag: true,
+            userData,
+            userList,
+            onlookerList,
+            roomConfig
+        };
+    }
+
+    /**
+     * 获取房间所在服务器id
+     * @param roomId 房间id
+     */
+    public static async getRoomServerId(roomId: number): Promise<string> {
+        return await redisClient.hgetAsync(`${redisKeyPrefix.room}${roomId}`, 'sid');
+    }
+
+    /**
+     * 设置房间服务器id
+     * @param roomId 房间id
+     * @param sid 服务器id
+     */
+    public static async setRoomServerId(roomId: number, sid: string): Promise<number> {
+        return await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, 'sid', sid);
+    }
+
+    /**
+     * 离开房间逻辑
+     * @param userId 离开者id 
+     * @param roomId 离开房间id
+     */
+    public static async leaveRoom(userId: number, roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        // 房间是否存在
+        if (!room) {
+            return { flag: false, code: 13001 };
+        }
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 玩家是否在房间里
+        if (!user.roomId) {
+            return { flag: false, code: 13002 };
+        }
+        // 玩家有无座位号
+        if (user.seatNum) {
+            // 游戏是否开始
+            if (room.state === '1') {
+                return { flag: false, code: 13022 };
+            }
+            let userList = JSON.parse(room.userList);
+            for (let i of userList) {
+                let index = 0;
+                if (i.userId === userId) {
+                    userList.splice(index, 1);
+                    break;
+                }
+                index++;
+                // console.log('看看for-of能不能被break退出' + index);
+            }
+            await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.userList}`, JSON.stringify(userList));
+            await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+            await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.seatNum}`);
+            return { flag: true, userType: 1 };
+        } else {
+            let onlookerList = JSON.parse(room.onlookerList);
+            for (let i of onlookerList) {
+                let index = 0;
+                if (i.userId === userId) {
+                    onlookerList.splice(index, 1);
+                    break;
+                }
+                index++;
+                // console.log('看看for-of能不能被break退出' + index);
+            }
+            await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.onlookerList}`, JSON.stringify(onlookerList));
+            await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+            return { flag: true, userType: 0 };
+        }
     }
 }

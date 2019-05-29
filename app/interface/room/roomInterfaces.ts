@@ -1,17 +1,30 @@
 export interface IRoomConfig {
-    gameType: string;
+    sid?: string;
+    state: number;  // 0:未开始;1:开始
+    roomConfig: Array<number | string>;
+    roomId: number;
+    creatorId: number;
+    createTime: number;
     playType: string;
-    deskType: number;
-    baseScore: string;
-    roundCount: number;
-    payType: string;
-    startType: string;
-    pushWager: number;
-    maxRobBanker: number;
-    compareAllType: string;
-    doubleRule: string;
-    specialCardType: string[];
-    advancedOptions: string[];
-    lazarilloDeTormes: string;
-    // [key: string]: any;
+    playerNum: number;
+    basePoint: string;
+    round: number;
+    payType: number;
+    startType: number;
+    bolusType: number;
+    maxBankerBet: number;
+    doubleRule: number;
+    allContrastPlay: number;
+    takeTurnsPlay: number;
+    upBankerScore: number;
+    specialCard: string;
+    fastFlag: boolean;
+    halfWayAdd: boolean;
+    rubbingFlag: boolean;
+    itemUse: boolean;
+    buyCode: boolean;
+    bolusLimit: boolean;
+    grabFlag: boolean;
+    doubleFlag: boolean;
+    laiziType: number;
 }

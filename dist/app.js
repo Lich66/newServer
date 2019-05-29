@@ -1,16 +1,10 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const pinus_1 = require("pinus");
+const pinus_global_channel_status_1 = require("pinus-global-channel-status");
 const sequelize_1 = require("./app/db/sequelize");
 const memoryInit_1 = require("./app/util/memoryInit");
+const routeUtil = require("./app/util/routeUtil");
 const preload_1 = require("./preload");
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步
 // sequelize.sync({ force: true });
@@ -22,9 +16,9 @@ sequelize_1.sequelize
     .catch((err) => {
     console.error('Unable to connect to the database:', err);
 });
-(() => __awaiter(this, void 0, void 0, function* () {
+(async () => {
     memoryInit_1.baseInit();
-}))();
+})();
 /**
  *  替换全局Promise
  *  自动解析sourcemap
@@ -51,10 +45,35 @@ app.configure('production|development', 'gate', function () {
         // useProtobuf: true
     });
 });
-// app.configure('production|development', "hall|user|connector|room|club|gate", function () {
-//   var redisClient = require("redis").createClient(6379, "192.168.1.21");
-//   app.set("redisClient", redisClient);
-// })
+app.configure('production|development', 'connector|user|hall|club|clubRoom|room', function () {
+    app.use(pinus_global_channel_status_1.createGlobalChannelStatusPlugin(), {
+        family: 4,
+        options: {},
+        host: '192.168.1.21',
+        password: '123456',
+        port: 6379,
+        db: 10,
+        // optional
+        cleanOnStartUp: app.getServerType() == 'connector'
+    });
+});
+app.configure('production|development', function () {
+    // route configures
+    // app.route('hall', routeUtil.hall);
+    app.route('club', routeUtil.club);
+    // app.route('clubRoom', routeUtil.clubRoom);
+    app.route('room', routeUtil.room);
+    // app.route('user', routeUtil.user);
+    // // filter configures
+    // app.filter(new pinus.filters.timeout());
+});
 // start app
 app.start();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXBwLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vYXBwLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFBQSxpQ0FBOEI7QUFFOUIsa0RBQStDO0FBQy9DLHNEQUFpRDtBQUNqRCx1Q0FBb0M7QUFHcEMsNkJBQTZCO0FBQzdCLG1DQUFtQztBQUVuQyxxQkFBUztLQUNOLFlBQVksRUFBRTtLQUNkLElBQUksQ0FBQyxHQUFHLEVBQUU7SUFDVCxPQUFPLENBQUMsR0FBRyxDQUFDLCtDQUErQyxDQUFDLENBQUM7QUFDL0QsQ0FBQyxDQUFDO0tBQ0QsS0FBSyxDQUFDLENBQUMsR0FBRyxFQUFFLEVBQUU7SUFDYixPQUFPLENBQUMsS0FBSyxDQUFDLG9DQUFvQyxFQUFFLEdBQUcsQ0FBQyxDQUFDO0FBQzNELENBQUMsQ0FBQyxDQUFDO0FBRUwsQ0FBQyxHQUFTLEVBQUU7SUFDVixxQkFBUSxFQUFFLENBQUM7QUFDYixDQUFDLENBQUEsQ0FBQyxFQUFFLENBQUM7QUFHTDs7OztHQUlHO0FBQ0gsaUJBQU8sRUFBRSxDQUFDO0FBRVY7O0dBRUc7QUFDSCxJQUFJLEdBQUcsR0FBRyxhQUFLLENBQUMsU0FBUyxFQUFFLENBQUM7QUFDNUIsR0FBRyxDQUFDLEdBQUcsQ0FBQyxNQUFNLEVBQUUsZ0JBQWdCLENBQUMsQ0FBQztBQUVsQyxvQkFBb0I7QUFDcEIsR0FBRyxDQUFDLFNBQVMsQ0FBQyx3QkFBd0IsRUFBRSxXQUFXLEVBQUU7SUFDbkQsR0FBRyxDQUFDLEdBQUcsQ0FBQyxpQkFBaUIsRUFDdkI7UUFDRSxTQUFTLEVBQUUsYUFBSyxDQUFDLFVBQVUsQ0FBQyxlQUFlO1FBQzNDLFNBQVMsRUFBRSxDQUFDO1FBQ1osaUJBQWlCO1FBQ2pCLG9CQUFvQjtLQUNyQixDQUFDLENBQUM7QUFDUCxDQUFDLENBQUMsQ0FBQztBQUNILEdBQUcsQ0FBQyxTQUFTLENBQUMsd0JBQXdCLEVBQUUsTUFBTSxFQUFFO0lBQzlDLEdBQUcsQ0FBQyxHQUFHLENBQUMsaUJBQWlCLEVBQ3ZCO1FBQ0UsU0FBUyxFQUFFLGFBQUssQ0FBQyxVQUFVLENBQUMsZUFBZTtRQUMzQyxvQkFBb0I7S0FDckIsQ0FBQyxDQUFDO0FBQ1AsQ0FBQyxDQUFDLENBQUM7QUFFSCw4RkFBOEY7QUFDOUYsMkVBQTJFO0FBQzNFLHlDQUF5QztBQUN6QyxLQUFLO0FBRUwsWUFBWTtBQUNaLEdBQUcsQ0FBQyxLQUFLLEVBQUUsQ0FBQyJ9
+// setTimeout(() => {
+//   let clubServers = app.getServersByType('club');
+//   console.log(JSON.stringify(clubServers));
+// }, 10000)
+process.on('uncaughtException', function (err) {
+    console.error(' Caught exception: ' + err.stack);
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYXBwLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vYXBwLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsaUNBQThCO0FBQzlCLDZFQUE4RTtBQUM5RSxrREFBK0M7QUFDL0Msc0RBQWlEO0FBQ2pELGtEQUFtRDtBQUNuRCx1Q0FBb0M7QUFHcEMsNkJBQTZCO0FBQzdCLG1DQUFtQztBQUVuQyxxQkFBUztLQUNOLFlBQVksRUFBRTtLQUNkLElBQUksQ0FBQyxHQUFHLEVBQUU7SUFDVCxPQUFPLENBQUMsR0FBRyxDQUFDLCtDQUErQyxDQUFDLENBQUM7QUFDL0QsQ0FBQyxDQUFDO0tBQ0QsS0FBSyxDQUFDLENBQUMsR0FBRyxFQUFFLEVBQUU7SUFDYixPQUFPLENBQUMsS0FBSyxDQUFDLG9DQUFvQyxFQUFFLEdBQUcsQ0FBQyxDQUFDO0FBQzNELENBQUMsQ0FBQyxDQUFDO0FBRUwsQ0FBQyxLQUFLLElBQUksRUFBRTtJQUNWLHFCQUFRLEVBQUUsQ0FBQztBQUNiLENBQUMsQ0FBQyxFQUFFLENBQUM7QUFHTDs7OztHQUlHO0FBQ0gsaUJBQU8sRUFBRSxDQUFDO0FBRVY7O0dBRUc7QUFDSCxJQUFJLEdBQUcsR0FBRyxhQUFLLENBQUMsU0FBUyxFQUFFLENBQUM7QUFDNUIsR0FBRyxDQUFDLEdBQUcsQ0FBQyxNQUFNLEVBQUUsZ0JBQWdCLENBQUMsQ0FBQztBQUVsQyxvQkFBb0I7QUFDcEIsR0FBRyxDQUFDLFNBQVMsQ0FBQyx3QkFBd0IsRUFBRSxXQUFXLEVBQUU7SUFDbkQsR0FBRyxDQUFDLEdBQUcsQ0FBQyxpQkFBaUIsRUFDdkI7UUFDRSxTQUFTLEVBQUUsYUFBSyxDQUFDLFVBQVUsQ0FBQyxlQUFlO1FBQzNDLFNBQVMsRUFBRSxDQUFDO1FBQ1osaUJBQWlCO1FBQ2pCLG9CQUFvQjtLQUNyQixDQUFDLENBQUM7QUFDUCxDQUFDLENBQUMsQ0FBQztBQUNILEdBQUcsQ0FBQyxTQUFTLENBQUMsd0JBQXdCLEVBQUUsTUFBTSxFQUFFO0lBQzlDLEdBQUcsQ0FBQyxHQUFHLENBQUMsaUJBQWlCLEVBQ3ZCO1FBQ0UsU0FBUyxFQUFFLGFBQUssQ0FBQyxVQUFVLENBQUMsZUFBZTtRQUMzQyxvQkFBb0I7S0FDckIsQ0FBQyxDQUFDO0FBQ1AsQ0FBQyxDQUFDLENBQUM7QUFFSCxHQUFHLENBQUMsU0FBUyxDQUFDLHdCQUF3QixFQUFFLHdDQUF3QyxFQUFFO0lBQ2hGLEdBQUcsQ0FBQyxHQUFHLENBQUMsNkRBQStCLEVBQUUsRUFBRTtRQUN6QyxNQUFNLEVBQUUsQ0FBQztRQUNULE9BQU8sRUFBRSxFQUFFO1FBQ1gsSUFBSSxFQUFFLGNBQWM7UUFDcEIsUUFBUSxFQUFFLFFBQVE7UUFDbEIsSUFBSSxFQUFFLElBQUk7UUFDVixFQUFFLEVBQUUsRUFBRTtRQUNOLFdBQVc7UUFDWCxjQUFjLEVBQUUsR0FBRyxDQUFDLGFBQWEsRUFBRSxJQUFJLFdBQVc7S0FDbkQsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUM7QUFFSCxHQUFHLENBQUMsU0FBUyxDQUFDLHdCQUF3QixFQUFFO0lBQ3RDLG1CQUFtQjtJQUNuQixxQ0FBcUM7SUFDckMsR0FBRyxDQUFDLEtBQUssQ0FBQyxNQUFNLEVBQUUsU0FBUyxDQUFDLElBQUksQ0FBQyxDQUFDO0lBQ2xDLDZDQUE2QztJQUM3QyxHQUFHLENBQUMsS0FBSyxDQUFDLE1BQU0sRUFBRSxTQUFTLENBQUMsSUFBSSxDQUFDLENBQUM7SUFDbEMscUNBQXFDO0lBQ3JDLHVCQUF1QjtJQUN2QiwyQ0FBMkM7QUFDN0MsQ0FBQyxDQUFDLENBQUM7QUFFSCxZQUFZO0FBQ1osR0FBRyxDQUFDLEtBQUssRUFBRSxDQUFDO0FBQ1oscUJBQXFCO0FBQ3JCLG9EQUFvRDtBQUNwRCw4Q0FBOEM7QUFDOUMsWUFBWTtBQUVaLE9BQU8sQ0FBQyxFQUFFLENBQUMsbUJBQW1CLEVBQUUsVUFBVSxHQUFHO0lBQzNDLE9BQU8sQ0FBQyxLQUFLLENBQUMscUJBQXFCLEdBQUcsR0FBRyxDQUFDLEtBQUssQ0FBQyxDQUFDO0FBQ25ELENBQUMsQ0FBQyxDQUFDIn0=

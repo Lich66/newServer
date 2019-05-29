@@ -43,7 +43,6 @@ export interface IClubReturn extends IResponse {
 
 export interface IClubCreateRequest {
     config: number[];
-    type: number;
 }
 
 export interface IClubUpdateRequest {

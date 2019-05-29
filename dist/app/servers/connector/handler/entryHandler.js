@@ -1,16 +1,7 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const roomManager_1 = require("../../../controller/room/roomManager");
 const redis_1 = require("../../../db/redis");
-const redisKeyPrefix_1 = require("../../../gameConfig/redisKeyPrefix");
+const nameSpace_1 = require("../../../gameConfig/nameSpace");
 function default_1(app) {
     return new Handler(app);
 }
@@ -19,173 +10,106 @@ class Handler {
     constructor(app) {
         this.app = app;
     }
-    auth(userinfo, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!userinfo.token && !userinfo.wxopenid && !userinfo.xlopenid) {
-                return {
-                    code: 400
-                };
-            }
-            const user = yield this.app.rpc.user.userRemote.auth.route(session)(userinfo);
-            if (!user) {
-                return {
-                    code: 501
-                };
-            }
-            const sessionService = this.app.get('sessionService');
-            if (!!sessionService.getByUid(user.userid.toString())) {
-                return {
-                    code: 502
-                };
-            }
-            yield session.abind(user.userid.toString());
-            session.set('usernick', user.usernick);
-            session.push('usernick', () => {
-            });
-            console.log(JSON.stringify(user));
-            for (let key in user) {
-                if (user.hasOwnProperty(key)) {
-                    console.log(`${redisKeyPrefix_1.redisKeyPrefix.user}${user.userid}`, key, user[key]);
-                    yield redis_1.redisClient.hsetAsync(`${redisKeyPrefix_1.redisKeyPrefix.user}${user.userid}`, key, `${user[key]}`);
-                }
-            }
+    async auth(userinfo, session) {
+        if (!userinfo.token && !userinfo.wxopenid && !userinfo.xlopenid) {
             return {
-                code: 200,
-                data: user,
-                msg: 'game server is ok.'
+                code: 400
             };
+        }
+        const user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
+        if (!user) {
+            return {
+                code: 501
+            };
+        }
+        const sessionService = this.app.get('sessionService');
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 502
+            };
+        }
+        await session.abind(user.userid.toString());
+        session.set('usernick', user.usernick);
+        session.push('usernick', () => {
         });
+        console.log(JSON.stringify(user));
+        for (let key in user) {
+            if (user.hasOwnProperty(key)) {
+                console.log(`${nameSpace_1.redisKeyPrefix.user}${user.userid}`, key, user[key]);
+                await redis_1.redisClient.hsetAsync(`${nameSpace_1.redisKeyPrefix.user}${user.userid}`, key, `${user[key]}`);
+            }
+        }
+        return {
+            code: 0,
+            data: user,
+            msg: 'game server is ok.'
+        };
     }
-    accountLogin(userinfo, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
-            if (user) {
-                return {
-                    code: 200,
-                    data: user
-                };
-            }
-            else {
-                return {
-                    code: 500
-                };
-            }
-        });
+    async accountLogin(userinfo, session) {
+        const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
+        const sessionService = this.app.get('sessionService');
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 502
+            };
+        }
+        if (user) {
+            return {
+                code: 0,
+                data: user
+            };
+        }
+        else {
+            return {
+                code: 504
+            };
+        }
     }
-    tokenLogin(userinfo, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // console.log(JSON.stringify(userinfo));
-            const user = yield this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
-            if (user) {
-                return {
-                    code: 200,
-                    data: user
-                };
-            }
-            else {
-                return {
-                    code: 500
-                };
-            }
-        });
+    async tokenLogin(userinfo, session) {
+        // console.log(JSON.stringify(userinfo));
+        const user = await this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
+        const sessionService = this.app.get('sessionService');
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 502
+            };
+        }
+        if (user) {
+            return {
+                code: 0,
+                data: user
+            };
+        }
+        else {
+            return {
+                code: 504
+            };
+        }
     }
-    // ---------------------------------------------------------------------
     // ------------------------------ 野生房间 ------------------------------    
-    // ---------------------------------------------------------------------
-    createRoom(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('大厅服务器收到创建房间消息:' + JSON.stringify(msg));
-            let userid = parseInt(session.uid, 0);
-            let result = yield roomManager_1.RoomManager.createRoom(userid, msg.roomConfig);
-            if (!result.flag) {
-                return {
-                    code: result.code
-                };
-            }
-            yield this.app.rpc.room.roomRemote.createRoom.route(session)(result.roomId);
-            return { code: 200, roomid: result.roomId };
-        });
+    // public async joinRoom(msg: IJoinRoomRequest, session: FrontendSession) {
+    //     console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
+    //     let userId: number = parseInt(session.uid, 0);
+    //     let result = await this.app.rpc.room.roomRemote.joinRoom.route(session)(userId, msg.roomId);
+    //     session.set('roomId', msg.roomId);
+    //     session.push('roomId', () => {
+    //     });
+    //     return result;
+    // }
+    async publish(msg, session) {
+        let result = {
+            topic: 'publish',
+            payload: JSON.stringify({ code: 0, msg: 'publish message is ok.' })
+        };
+        return result;
     }
-    joinRoom(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // console.log('大厅服务器收到加入房间消息:' + JSON.stringify(msg));
-            // let userId: number = parseInt(session.uid, 0);
-            // let result = await RoomManager.joinRoom(userId, msg.roomId);
-            // if (!result.flag) {
-            //     return {
-            //         code: result.code,
-            //         msg: result.msg
-            //     };
-            // }
-            // return {
-            //     code: result.code,
-            //     roomConfig: result.roomConfig,
-            //     userList: result.userList,
-            //     onlookerList: result.onlookerList
-            // };
-            return { code: 500 };
-        });
-    }
-    publish(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let result = {
-                topic: 'publish',
-                payload: JSON.stringify({ code: 200, msg: 'publish message is ok.' })
-            };
-            return result;
-        });
-    }
-    subscribe(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            let result = {
-                topic: 'subscribe',
-                payload: JSON.stringify({ code: 200, msg: 'subscribe message is ok.' })
-            };
-            return result;
-        });
-    }
-    joinClub(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            session.set('clubid', msg.clubid);
-            session.push('clubid', () => {
-            });
-            const sid = this.app.getServerId();
-            // session.uid, this.app.getServerId(), msg.clubid.toString(), true
-            let club = yield this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
-            if (club) {
-                return {
-                    code: 200,
-                    data: club
-                };
-            }
-            else {
-                return {
-                    code: 500
-                };
-            }
-        });
-    }
-    joinClubRoom(msg, session) {
-        return __awaiter(this, void 0, void 0, function* () {
-            session.set('roomid', msg.roomid);
-            session.push('roomid', () => {
-            });
-            const clubid = session.get('clubid');
-            const sid = this.app.getServerId();
-            let clubRoom = yield this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
-            if (clubRoom) {
-                return {
-                    code: 200,
-                    data: clubRoom
-                };
-            }
-            else {
-                return {
-                    code: 500
-                };
-            }
-        });
+    async subscribe(msg, session) {
+        let result = {
+            topic: 'subscribe',
+            payload: JSON.stringify({ code: 0, msg: 'subscribe message is ok.' })
+        };
+        return result;
     }
 }
 exports.Handler = Handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZW50cnlIYW5kbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vYXBwL3NlcnZlcnMvY29ubmVjdG9yL2hhbmRsZXIvZW50cnlIYW5kbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFDQSxzRUFBbUU7QUFDbkUsNkNBQWdEO0FBQ2hELHVFQUFvRTtBQU1wRSxtQkFBeUIsR0FBZ0I7SUFDckMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUM1QixDQUFDO0FBRkQsNEJBRUM7QUFFRCxNQUFhLE9BQU87SUFDaEIsWUFBMkIsR0FBZ0I7UUFBaEIsUUFBRyxHQUFILEdBQUcsQ0FBYTtJQUUzQyxDQUFDO0lBQ1ksSUFBSSxDQUFDLFFBQTBCLEVBQUUsT0FBd0I7O1lBQ2xFLElBQUksQ0FBQyxRQUFRLENBQUMsS0FBSyxJQUFJLENBQUMsUUFBUSxDQUFDLFFBQVEsSUFBSSxDQUFDLFFBQVEsQ0FBQyxRQUFRLEVBQUU7Z0JBQzdELE9BQU87b0JBQ0gsSUFBSSxFQUFFLEdBQUc7aUJBQ1osQ0FBQzthQUNMO1lBQ0QsTUFBTSxJQUFJLEdBQUcsTUFBTSxJQUFJLENBQUMsR0FBRyxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDOUUsSUFBSSxDQUFDLElBQUksRUFBRTtnQkFDUCxPQUFPO29CQUNILElBQUksRUFBRSxHQUFHO2lCQUNaLENBQUM7YUFDTDtZQUNELE1BQU0sY0FBYyxHQUFHLElBQUksQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLGdCQUFnQixDQUFDLENBQUM7WUFFdEQsSUFBSSxDQUFDLENBQUMsY0FBYyxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVEsRUFBRSxDQUFDLEVBQUU7Z0JBQ25ELE9BQU87b0JBQ0gsSUFBSSxFQUFFLEdBQUc7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
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZW50cnlIYW5kbGVyLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vLi4vLi4vLi4vYXBwL3NlcnZlcnMvY29ubmVjdG9yL2hhbmRsZXIvZW50cnlIYW5kbGVyLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQ0EsNkNBQWdEO0FBQ2hELDZEQUErRDtBQUkvRCxtQkFBeUIsR0FBZ0I7SUFDckMsT0FBTyxJQUFJLE9BQU8sQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUM1QixDQUFDO0FBRkQsNEJBRUM7QUFFRCxNQUFhLE9BQU87SUFFaEIsWUFBbUIsR0FBZ0I7UUFDL0IsSUFBSSxDQUFDLEdBQUcsR0FBRyxHQUFHLENBQUM7SUFDbkIsQ0FBQztJQUNNLEtBQUssQ0FBQyxJQUFJLENBQUMsUUFBMEIsRUFBRSxPQUF3QjtRQUNsRSxJQUFJLENBQUMsUUFBUSxDQUFDLEtBQUssSUFBSSxDQUFDLFFBQVEsQ0FBQyxRQUFRLElBQUksQ0FBQyxRQUFRLENBQUMsUUFBUSxFQUFFO1lBQzdELE9BQU87Z0JBQ0gsSUFBSSxFQUFFLEdBQUc7YUFDWixDQUFDO1NBQ0w7UUFDRCxNQUFNLElBQUksR0FBRyxNQUFNLElBQUksQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsSUFBSSxDQUFDLEtBQUssQ0FBQyxPQUFPLENBQUMsQ0FBQyxRQUFRLENBQUMsQ0FBQztRQUM5RSxJQUFJLENBQUMsSUFBSSxFQUFFO1lBQ1AsT0FBTztnQkFDSCxJQUFJLEVBQUUsR0FBRzthQUNaLENBQUM7U0FDTDtRQUNELE1BQU0sY0FBYyxHQUFHLElBQUksQ0FBQyxHQUFHLENBQUMsR0FBRyxDQUFDLGdCQUFnQixDQUFDLENBQUM7UUFFdEQsSUFBSSxDQUFDLENBQUMsY0FBYyxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLFFBQVEsRUFBRSxDQUFDLEVBQUU7WUFDbkQsT0FBTztnQkFDSCxJQUFJLEVBQUUsR0FBRzthQUNaLENB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

@@ -1,7 +1,8 @@
 import { pinus } from 'pinus';
-import { Sequelize } from 'sequelize-typescript';
+import { createGlobalChannelStatusPlugin } from 'pinus-global-channel-status';
 import { sequelize } from './app/db/sequelize';
 import { baseInit } from './app/util/memoryInit';
+import * as  routeUtil from './app/util/routeUtil';
 import { preload } from './preload';
 
 
@@ -53,10 +54,37 @@ app.configure('production|development', 'gate', function () {
     });
 });
 
-// app.configure('production|development', "hall|user|connector|room|club|gate", function () {
-//   var redisClient = require("redis").createClient(6379, "192.168.1.21");
-//   app.set("redisClient", redisClient);
-// })
+app.configure('production|development', 'connector|user|hall|club|clubRoom|room', function () {
+  app.use(createGlobalChannelStatusPlugin(), {
+    family: 4,           // 4 (IPv4) or 6 (IPv6)
+    options: {},
+    host: '192.168.1.21',
+    password: '123456',
+    port: 6379,
+    db: 10,      // optinal, from 0 to 15 with default redis configure
+    // optional
+    cleanOnStartUp: app.getServerType() == 'connector'
+  });
+});
+
+app.configure('production|development', function () {
+  // route configures
+  // app.route('hall', routeUtil.hall);
+  app.route('club', routeUtil.club);
+  // app.route('clubRoom', routeUtil.clubRoom);
+  app.route('room', routeUtil.room);
+  // app.route('user', routeUtil.user);
+  // // filter configures
+  // app.filter(new pinus.filters.timeout());
+});
 
 // start app
 app.start();
+// setTimeout(() => {
+//   let clubServers = app.getServersByType('club');
+//   console.log(JSON.stringify(clubServers));
+// }, 10000)
+
+process.on('uncaughtException', function (err) {
+  console.error(' Caught exception: ' + err.stack);
+});
