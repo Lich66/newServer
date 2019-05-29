@@ -172,8 +172,25 @@ export class RoomHandler {
         //     let s = sessionService.getByUid(iterator);
         //     s[0].set('roomId', null);
         // }
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { code: result.code }, `${gameChannelKeyPrefix.room}${roomId}`);
+        if (result.code === 0) {
+            this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { code: result.code }, `${gameChannelKeyPrefix.room}${roomId}`);
+        } else {
+            this.globalChannelStatus.pushMessageByUids(result.userList, `${socketRouter.onDestoryRoom}`, { code: result.code, userData: result.userData });
+        }
         return { code: 0 };
     }
 
+    /**
+     * 解散房间的选择
+     * @param msg 同意与否
+     * @param session session 
+     */
+    public async optionOfDestoryRoom(msg: { option: number }, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.optionOfDestoryRoom(userId);
+        // todo  打算解散房间的操作放在game中
+    }
+
+
+  
 }

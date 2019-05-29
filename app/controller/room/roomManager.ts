@@ -146,7 +146,7 @@ export class RoomManager {
         }
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
         // 玩家是否在房间里
-        if (!user.roomId || user.roomId !== `${roomId}`) {
+        if (!user.roomId) {
             return { flag: false, code: 13002 };
         }
         // 玩家有无座位号
@@ -206,6 +206,20 @@ export class RoomManager {
     }
 
     /**
+     * 获取房间里的游戏的玩家
+     * @param roomId 房间id
+     */
+    public static async getGamingPlayerListForRoom(roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        let users = [];
+        let userList = JSON.parse(room.userList);
+        for (const iterator of userList) {
+            users.push(iterator.userId);
+        }
+        return users;
+    }
+
+    /**
      * 解散房间逻辑
      * @param userId 申请解散者id
      * @param roomId 解散房间id
@@ -218,7 +232,7 @@ export class RoomManager {
         }
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
         // 玩家是否在房间里
-        if (!user.roomId || user.roomId !== `${roomId}`) {
+        if (!user.roomId) {
             return { flag: false, code: 13002 };
         }
         // 游戏是否开始
@@ -239,8 +253,18 @@ export class RoomManager {
             await RedisKeys.delAsync(`${redisKeyPrefix.room}${roomId}`);
             return { flag: true, code: 0, players: result };
         } else {
-            // todo 游戏中解散房间,发起申请 
-
+            // todo 游戏中解散房间,发起申请 ,待测试
+            let userList = await RoomManager.getGamingPlayerListForRoom(roomId);
+            let userData = { userId, userNick: user.usernick };
+            return { flag: true, code: 1, userList, userData };
         }
+    }
+
+    /**
+     * 解散房间的选择的逻辑
+     * @param userId 解散房间同意与否玩家id
+     */
+    public static async optionOfDestoryRoom(userId: number) {
+        // todo 打算解散房间的操作放在game中
     }
 }

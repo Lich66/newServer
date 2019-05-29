@@ -14,7 +14,7 @@ export class HallHandler {
     /**
      * 获取签到信息
      * @param obj 客户端发送的参数
-     * @param session xx
+     * @param session session
      */
     public async signInInfo(obj: any, session: BackendSession) {
         let userId: number = parseInt(session.uid, 0);
@@ -91,4 +91,12 @@ export class HallHandler {
         }
     }
 
+    /**
+     * 获取房间列表
+     * @param obj xx
+     * @param session session
+     */
+    public async roomList(obj: any, session: BackendSession) {
+        
+    }
 }
