@@ -55,7 +55,7 @@ class Handler {
         }
         else {
             return {
-                code: 500
+                code: 504
             };
         }
     }
@@ -70,7 +70,7 @@ class Handler {
         }
         else {
             return {
-                code: 500
+                code: 504
             };
         }
     }
