@@ -41,7 +41,11 @@ export class Handler {
     }
 
     public async updateClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
-
+        if (!ClubRoominfo || !ClubRoominfo.roomid) {
+            return {
+                code: 10003
+            };
+        }
         let njson = { ...ClubRoominfo };
         delete njson.roomid;
         delete njson.create_time;
@@ -55,13 +59,17 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 15001
             };
         }
     }
 
     public async getClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
-
+        if (!ClubRoominfo || !ClubRoominfo.clubid) {
+            return {
+                code: 10003
+            };
+        }
         let result = await ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid });
         if (result) {
             return {
@@ -70,13 +78,17 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 15002
             };
         }
     }
 
     public async getAllClubRoom(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomReturn> {
-
+        if (!ClubRoominfo || !ClubRoominfo.clubid) {
+            return {
+                code: 10003
+            };
+        }
         let result = await ClubRoom.getAllClubRoom({ clubid: ClubRoominfo.clubid });
         if (result.length > 0) {
             return {
@@ -85,7 +97,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 15003
             };
         }
     }
@@ -98,12 +110,16 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!clubid) {
             return {
-                code: 501
+                code: 15004
             };
         }
         // const roomIdList = await redisClient.lrangeAsync(`${redisKeyPrefix.club}${clubid}`, 0, MAXLENGTH);
         const roomIdList = await ClubRoomList.getClubRoomList({ clubid });
-        console.log(roomIdList);
+        if (roomIdList.length == 0) {
+            return {
+                code: 15005
+            };
+        }
         const roomarr = [];
         for (const iterator of roomIdList) {
             const json: any = {};
@@ -119,7 +135,6 @@ export class Handler {
             }
             roomarr.push(json);
         }
-        console.log(roomarr);
         if (roomarr.length > 0) {
             return {
                 code: 0,
@@ -127,7 +142,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 502
+                code: 15005
             };
         }
     }
@@ -139,12 +154,11 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!clubid) {
             return {
-                code: 501
+                code: 15006
             };
         }
         // const roomIdList = await redisClient.lrangeAsync(`${redisKeyPrefix.club}${clubid}`, 0, MAXLENGTH);
         const roomIdList = await ClubRoomList.getClubRoomList({ clubid });
-        console.log(roomIdList);
         const roomarr = [];
         for (const iterator of roomIdList) {
             const json: any = {};
@@ -161,17 +175,10 @@ export class Handler {
             }
             roomarr.push(json);
         }
-        console.log(roomarr);
-        if (roomarr.length > 0) {
-            return {
-                code: 0,
-                data: roomarr
-            };
-        } else {
-            return {
-                code: 502
-            };
-        }
+        return {
+            code: 0,
+            data: roomarr
+        };
     }
 
     /**
@@ -182,7 +189,7 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!clubid) {
             return {
-                code: 500
+                code: 15007
             };
         }
         const roomid = session.get('roomid');
@@ -216,13 +223,13 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!clubid) {
             return {
-                code: 500
+                code: 15009
             };
         }
         const roomid = session.get('roomid');
         if (!roomid) {
             return {
-                code: 500
+                code: 15010
             };
         }
         const json: any = {};
@@ -273,12 +280,25 @@ export class Handler {
     }
 
     public async joinClubRoom(clubroomrpc: IClubRoomRpc, session: BackendSession): Promise<IClubRoomReturn> {
+        if (!clubroomrpc || !clubroomrpc.roomid) {
+            return {
+                code: 10003
+            };
+        }
+
+        const clubid = session.get('clubid');
+        if (!clubid) {
+            return {
+                code: 15011
+            };
+        }
         session.set('roomid', clubroomrpc.roomid);
         await session.apush('roomid');
-        const clubid = session.get('clubid');
         const clubRoom = await ClubRoom.getClubRoom({ roomid: clubroomrpc.roomid });
         if (!clubRoom) {
-            return null;
+            return {
+                code: 15012
+            };
         }
 
         const clubChannel = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.club}${clubid}`);
@@ -321,6 +341,16 @@ export class Handler {
     public async leaveClubRoom(clubroomrpc: IClubRoomRpc, session: BackendSession): Promise<IClubRoomReturn> {
         const roomid = session.get('roomid');
         const clubid = session.get('clubid');
+        if (!roomid) {
+            return {
+                code: 15013
+            };
+        }
+        if (!clubid) {
+            return {
+                code: 15014
+            };
+        }
         const channels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
         // const channel = this.channelService.getChannel(`${gameChannelKeyPrefix.club}${session.get('clubid')}`, false);
         for (const key in channels) {
@@ -361,6 +391,16 @@ export class Handler {
         const MAXLENGTH = 20;
         const roomid = session.get('roomid');
         const clubid = session.get('clubid');
+        if (!roomid) {
+            return {
+                code: 15015
+            };
+        }
+        if (!clubid) {
+            return {
+                code: 15016
+            };
+        }
         const roomChannels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
         for (const key in roomChannels) {
             if (roomChannels.hasOwnProperty(key)) {
@@ -418,6 +458,16 @@ export class Handler {
     public async standUp(obj: any, session: BackendSession): Promise<IClubRoomReturn> {
         const roomid = session.get('roomid');
         const clubid = session.get('clubid');
+        if (!roomid) {
+            return {
+                code: 15017
+            };
+        }
+        if (!clubid) {
+            return {
+                code: 15018
+            };
+        }
         const roomChannels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
         for (const key in roomChannels) {
             if (roomChannels.hasOwnProperty(key)) {
@@ -425,7 +475,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.clubRoom}${roomid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 501
+                        code: 15019
                     };
                 }
             }
@@ -437,7 +487,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 502
+                        code: 15020
                     };
                 }
             }
@@ -445,7 +495,7 @@ export class Handler {
         const chairIndex = await ClubRoomState.getClubRoomUserState({ clubid, roomid, uid: Number.parseInt(session.uid, 0) });
         if (Number.parseInt(chairIndex, 0) < 0) {
             return {
-                code: 500
+                code: 15021
             };
         }
         ClubRoomState.setClubRoomUserState({ clubid, roomid, uid: Number.parseInt(session.uid, 0), state: -1 });
@@ -460,6 +510,16 @@ export class Handler {
     public async startGame(obj: any, session: BackendSession) {
         const roomid = session.get('roomid');
         const clubid = session.get('clubid');
+        if (!roomid) {
+            return {
+                code: 15022
+            };
+        }
+        if (!clubid) {
+            return {
+                code: 15023
+            };
+        }
         const clubroom = await ClubRoom.getClubRoom({ roomid });
         let game = new Game(clubroom, this, clubid, roomid);
         this.app.set(`${gameChannelKeyPrefix.club_room_game}${roomid}`, game);

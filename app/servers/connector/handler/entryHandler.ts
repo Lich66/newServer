@@ -1,7 +1,7 @@
 import { Application, FrontendSession, SessionService } from 'pinus';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
-import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
+import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest } from '../../../interface/user/userInterface';
 
 export default function (app: Application) {
     return new Handler(app);
@@ -15,13 +15,13 @@ export class Handler {
     public async auth(userinfo: IUserinfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         if (!userinfo.token && !userinfo.wxopenid && !userinfo.xlopenid) {
             return {
-                code: 400
+                code: 10003
             };
         }
         const user = await this.app.rpc.user.userRemote.auth.route(session)(userinfo);
         if (!user) {
             return {
-                code: 501
+                code: 11005
             };
         }
         const sessionService: SessionService = this.app.get('sessionService');
@@ -33,7 +33,6 @@ export class Handler {
         await session.abind(user.userid.toString());
         session.set('usernick', user.usernick);
         session.apush('usernick');
-        console.log(JSON.stringify(user));
         session.on('closed', this.onUserLeave.bind(this));
         for (let key in user) {
             if (user.hasOwnProperty(key)) {
@@ -43,15 +42,13 @@ export class Handler {
         }
         return {
             code: 0,
-            data: user,
-            msg: 'game server is ok.'
+            data: user
         };
     }
     public async accountLogin(userinfo: IAccountInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
         const sessionService = this.app.get('sessionService');
         if (!!sessionService.getByUid(user.userid.toString())) {
-            console.log('已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录');
             sessionService.akick(user.userid.toString(), 'Other people login');
         }
         await session.abind(user.userid.toString());
@@ -63,7 +60,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 504
+                code: 11001
             };
         }
     }
@@ -83,7 +80,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 504
+                code: 11002
             };
         }
 

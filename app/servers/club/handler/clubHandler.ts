@@ -1,6 +1,5 @@
 import { Application, BackendSession } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
-// import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
 import { ClubUser } from '../../../controller/clubUsers/clubUsers';
 import { ClubRoomList } from '../../../controller/redis/clubRoomList/clubRoomList';
@@ -34,7 +33,7 @@ export class Handler {
         //     };
         // }
         const configLength = 23;
-        if (!clubinfo.config || clubinfo.config.length != configLength) {
+        if (!clubinfo || !clubinfo.config || clubinfo.config.length != configLength) {
             return {
                 code: 10003
             };
@@ -48,12 +47,17 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14001
             };
         }
     }
     public async deleteClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
+        if (!clubinfo || !clubinfo.clubid) {
+            return {
+                code: 10003
+            };
+        }
         let result = await Club.deleteClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
@@ -62,13 +66,19 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14002
             };
         }
     }
 
     public async updateClub(clubinfo: IClubUpdateRequest, session: BackendSession): Promise<IClubReturn> {
-
+        const play_config_length = 23;
+        const info_config_length = 6;
+        if (!clubinfo || !clubinfo.clubid || (!clubinfo.play_config && !clubinfo.info_config) || clubinfo.play_config.length != play_config_length || clubinfo.info_config.length != info_config_length) {
+            return {
+                code: 10003
+            };
+        }
         let njson = {};
         switch (clubinfo.type) {
             case 0:
@@ -88,13 +98,18 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14003
             };
         }
     }
 
     public async getClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubReturn> {
 
+        if (!clubinfo || !clubinfo.clubid) {
+            return {
+                code: 10003
+            };
+        }
         let result = await Club.getClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
@@ -103,7 +118,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14004
             };
         }
     }
@@ -118,22 +133,33 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14004
             };
         }
     }
 
     public async joinClub(clubrpc: IClubRpc, session: BackendSession): Promise<IClubReturn> {
+
+        if (!clubrpc || !clubrpc.clubid) {
+            return {
+                code: 10003
+            };
+        }
+
         session.set('clubid', clubrpc.clubid);
         await session.apush('clubid');
         const club = await Club.getClub({ clubid: clubrpc.clubid, uid: Number.parseInt(session.uid, 0) });
         if (!club) {
-            return null;
+            return {
+                code: 14005
+            };
         }
         const clubUser = await ClubUser.findClubUser({ clubid: clubrpc.clubid, userid: Number.parseInt(session.uid, 0) });
-        // console.log('*******************************');
-        // console.log(this.app.getServerId());
-
+        if (!clubUser) {
+            return {
+                code: 14006
+            };
+        }
         // 某对象的整体事件
         const userstate = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.club}${clubrpc.clubid}`);
         // // { connector_1:{ channelName1: [ 'uuid_21', 'uuid_12', 'uuid_24', 'uuid_27' ] },
@@ -145,7 +171,7 @@ export class Handler {
                 const element = userstate[key];
                 const ishas = element[`${gameChannelKeyPrefix.club}${clubrpc.clubid}`].includes(session.uid);
                 if (!ishas) {
-                    this.globalChannelStatus.add(session.uid, key, `${gameChannelKeyPrefix.club}${clubrpc.clubid}`);
+                    await this.globalChannelStatus.add(session.uid, key, `${gameChannelKeyPrefix.club}${clubrpc.clubid}`);
                 }
             }
         }
@@ -174,7 +200,7 @@ export class Handler {
         }
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClub}`, { user }, `${gameChannelKeyPrefix.club}${clubid}`);
-        ClubRoomList.lremClubRoomList(clubid);
+        // ClubRoomList.lremClubRoomList(clubid);
         session.set('roomid', null);
         session.apush('roomid');
         session.set('clubid', null);
@@ -185,6 +211,11 @@ export class Handler {
     }
 
     public async exitClub(json: { clubid: number }, session: BackendSession): Promise<IClubReturn> {
+        if (!json || !json.clubid) {
+            return {
+                code: 10003
+            };
+        }
         const clubuser = await ClubUser.deleteClubUser({ clubid: json.clubid, userid: Number.parseInt(session.uid, 0) });
         return {
             code: 0,
@@ -202,7 +233,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14007
             };
         }
     }
@@ -217,7 +248,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14008
             };
         }
     }
@@ -227,7 +258,7 @@ export class Handler {
         const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
         if (clubList.length == 0) {
             return {
-                code: 500
+                code: 14009
             };
         }
         let result = await ClubUser.updateClubUser({ clubid, userid: clubinfo.uid }, { points: clubinfo.points });
@@ -238,7 +269,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14010
             };
         }
     }
@@ -248,7 +279,7 @@ export class Handler {
         const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
         if (clubList.length == 0) {
             return {
-                code: 500
+                code: 14011
             };
         }
         let result = await ClubUser.deleteClubUser({ clubid, userid: clubinfo.uid });
@@ -259,7 +290,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 500
+                code: 14012
             };
         }
     }
