@@ -1,7 +1,6 @@
 import { Application, FrontendSession } from 'pinus';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
-import { IJoinRoomRequest } from '../../../interface/hall/hallInterface';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
 
 export default function (app: Application) {
@@ -34,9 +33,7 @@ export class Handler {
         }
         await session.abind(user.userid.toString());
         session.set('usernick', user.usernick);
-        session.push('usernick', () => {
-
-        });
+        session.apush('usernick');
         console.log(JSON.stringify(user));
         for (let key in user) {
             if (user.hasOwnProperty(key)) {
@@ -53,7 +50,7 @@ export class Handler {
     public async accountLogin(userinfo: IAccountInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
         const sessionService = this.app.get('sessionService');
-
+        await session.abind(user.userid.toString());
         if (!!sessionService.getByUid(user.userid.toString())) {
             return {
                 code: 502
@@ -74,7 +71,7 @@ export class Handler {
         // console.log(JSON.stringify(userinfo));
         const user = await this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
         const sessionService = this.app.get('sessionService');
-
+        await session.abind(user.userid.toString());
         if (!!sessionService.getByUid(user.userid.toString())) {
             return {
                 code: 502

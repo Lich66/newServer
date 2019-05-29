@@ -118,6 +118,23 @@ export class Club {
         }
     }
     public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club> {
+        const clubList = await tbl_club.findAll({ where: { clubid: ojson.clubid, uid: ojson.uid } });
+        if (clubList.length == 0) {
+            return null;
+        }
+        let res: [number, number];
+        try {
+            sequelize.transaction(async (t) => {
+                const clubUpdate = await tbl_club.update(njson, { where: { clubid: ojson.clubid, uid: ojson.uid }, transaction: t });
+                const roomUpdate = await tbl_room.update(njson, { where: { clubid: ojson.clubid, roomid: { [Op.regexp]: '\.' } }, transaction: t });
+                res = [clubUpdate.length, roomUpdate.length];
+            });
+        } catch (error) {
+            return null;
+        }
+        if (res[0] == 0 || res[1] == 0) {
+            return null;
+        }
         let result = await tbl_club.update(njson, { where: { clubid: ojson.clubid, uid: ojson.uid } });
         return result[1][0];
     }
