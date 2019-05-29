@@ -1,4 +1,4 @@
-import { Application, FrontendSession } from 'pinus';
+import { Application, FrontendSession, SessionService } from 'pinus';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
@@ -24,17 +24,17 @@ export class Handler {
                 code: 501
             };
         }
-        const sessionService = this.app.get('sessionService');
+        const sessionService: SessionService = this.app.get('sessionService');
 
         if (!!sessionService.getByUid(user.userid.toString())) {
-            return {
-                code: 502
-            };
+
+            sessionService.akick(user.userid.toString(), 'Other people login');
         }
         await session.abind(user.userid.toString());
         session.set('usernick', user.usernick);
         session.apush('usernick');
         console.log(JSON.stringify(user));
+        session.on('closed', this.onUserLeave);
         for (let key in user) {
             if (user.hasOwnProperty(key)) {
                 console.log(`${redisKeyPrefix.user}${user.userid}`, key, user[key]);
@@ -50,12 +50,12 @@ export class Handler {
     public async accountLogin(userinfo: IAccountInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
         const sessionService = this.app.get('sessionService');
-        await session.abind(user.userid.toString());
         if (!!sessionService.getByUid(user.userid.toString())) {
-            return {
-                code: 502
-            };
+            console.log('已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录已登录');
+            sessionService.akick(user.userid.toString(), 'Other people login');
         }
+        await session.abind(user.userid.toString());
+        session.on('closed', this.onUserLeave);
         if (user) {
             return {
                 code: 0,
@@ -71,12 +71,11 @@ export class Handler {
         // console.log(JSON.stringify(userinfo));
         const user = await this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
         const sessionService = this.app.get('sessionService');
-        await session.abind(user.userid.toString());
         if (!!sessionService.getByUid(user.userid.toString())) {
-            return {
-                code: 502
-            };
+            sessionService.akick(user.userid.toString(), 'Other people login');
         }
+        await session.abind(user.userid.toString());
+        session.on('closed', this.onUserLeave);
         if (user) {
             return {
                 code: 0,
@@ -118,44 +117,12 @@ export class Handler {
         return result;
     }
 
-    // public async joinClub(msg: IClubRequest, session: FrontendSession): Promise<IClubReturn> {
-    //     session.set('clubid', msg.clubid);
-    //     session.push('clubid', () => {
-
-    //     });
-    //     const sid = this.app.getServerId();
-    //     // session.uid, this.app.getServerId(), msg.clubid.toString(), true
-    //     let club = await this.app.rpc.club.clubRemote.joinClub.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid: msg.clubid, flag: true });
-    //     if (club) {
-    //         return {
-    //             code: 0,
-    //             data: club
-    //         };
-    //     } else {
-    //         return {
-    //             code: 500
-    //         };
-    //     }
-    // }
-
-    // public async joinClubRoom(msg: IClubRoomRequest, session: FrontendSession): Promise<IClubRoomReturn> {
-    //     session.set('roomid', msg.roomid);
-    //     session.push('roomid', () => {
-
-    //     });
-    //     const clubid = session.get('clubid');
-    //     const sid = this.app.getServerId();
-    //     let clubRoom = await this.app.rpc.clubRoom.clubRoomRemote.joinClubRoom.route(session)({ uid: Number.parseInt(session.uid, 0), sid, clubid, roomid: msg.roomid, flag: true });
-    //     if (clubRoom) {
-    //         return {
-    //             code: 0,
-    //             data: clubRoom
-    //         };
-    //     } else {
-    //         return {
-    //             code: 500
-    //         };
-    //     }
-    // }
+    public async onUserLeave(session: FrontendSession) {
+        if (!session || !session.uid) {
+            return;
+        }
+        const sessionService = this.app.get('sessionService');
+        sessionService.akick(session.uid, 'leave');
+    }
 
 }
