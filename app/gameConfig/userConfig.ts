@@ -10,6 +10,8 @@ export const userConfig = {
     invite_code: 'invite_code',
     inviter: 'inviter',
     logintime: 'logintime',
-    roomList: 'roomList'
+    roomList: 'roomList',
+    roomId: 'roomId',
+    seatNum: 'seatNum'
 };
 

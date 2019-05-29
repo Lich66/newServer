@@ -101,33 +101,34 @@ export const RoomConfig = {
  * 房间字段名
  */
 export const RoomFields = {
-    sid: 'sid',
-    roomConfig: 'roomConfig',
-    roomId: 'roomId',
-    creatorId: 'creatorId',
-    createTime: 'createTime',
-    playType: 'playType',
-    playerNum: 'playerNum',
-    basePoint: 'basePoint',
-    round: 'round',
-    payType: 'payType',
-    startType: 'startType',
-    bolusType: 'bolusType',
-    maxBankerBet: 'maxBankerBet',
-    doubleRule: 'doubleRule',
-    allContrastPlay: 'allContrastPlay',
-    takeTurnsPlay: 'takeTurnsPlay',
-    upBankerScore: 'upBankerScore',
-    specialCard: 'specialCard',
-    fastFlag: 'fastFlag',
-    halfWayAdd: 'halfWayAdd',
-    rubbingFlag: 'rubbingFlag',
-    itemUse: 'itemUse',
-    buyCode: 'buyCode',
-    bolusLimit: 'bolusLimit',
-    grabFlag: 'grabFlag',
-    doubleFlag: 'doubleFlag',
-    laiziType: 'laiziType',
-    onlookerList: 'onlookerList',
-    userList: 'userList'
+    sid: 'sid',                 // 房间所在服务器id                 
+    state: 'state',             // 房间状态(0:未开始,1开始)
+    roomConfig: 'roomConfig',   // 房间配置信息(客户端传过来的)
+    roomId: 'roomId',           // 房间id
+    creatorId: 'creatorId',     // 房主id
+    createTime: 'createTime',   // 创建时间
+    playType: 'playType',       // 支付类型
+    playerNum: 'playerNum',     // 几人桌
+    basePoint: 'basePoint',     // 底分
+    round: 'round',             // 回合数
+    payType: 'payType',         // 支付方式
+    startType: 'startType',     // 开始方式
+    bolusType: 'bolusType',     // 推注选项
+    maxBankerBet: 'maxBankerBet',       // 最大抢庄
+    doubleRule: 'doubleRule',           // 翻倍规则
+    allContrastPlay: 'allContrastPlay', // 通比玩法
+    takeTurnsPlay: 'takeTurnsPlay',     // 轮庄玩法
+    upBankerScore: 'upBankerScore',     // 上庄分数
+    specialCard: 'specialCard', // 特殊牌型         
+    fastFlag: 'fastFlag',       // 快速开始
+    halfWayAdd: 'halfWayAdd',   // 中途加入
+    rubbingFlag: 'rubbingFlag', // 进制搓牌
+    itemUse: 'itemUse',         // 禁用道具
+    buyCode: 'buyCode',         // 闲家买码
+    bolusLimit: 'bolusLimit',   // 推注限制
+    grabFlag: 'grabFlag',       // 暗抢庄家
+    doubleFlag: 'doubleFlag',   // 下注加倍
+    laiziType: 'laiziType',     // 王癞玩法
+    onlookerList: 'onlookerList',       // 旁观者
+    userList: 'userList'                // 游戏玩家
 };

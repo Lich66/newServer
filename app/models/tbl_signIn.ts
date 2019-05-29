@@ -1,7 +1,5 @@
 import { BeforeCreate, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
-const STRING64 = 64;
-const STRING32 = 32;
 const STRING512 = 512;
 
 
@@ -15,6 +13,7 @@ export class tbl_signIn extends Model<tbl_signIn> {
     public userid: number;
 
     @Column({
+        type: DataType.BIGINT('15'),
         comment: '签到时间戳'
     })
     public date: number;

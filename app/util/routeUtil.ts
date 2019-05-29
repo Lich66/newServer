@@ -46,14 +46,14 @@ export function clubRoom(session: Session, msg: any, app: Application, cb: (err:
 
 export function room(session: Session, msg: any, app: Application, cb: (err: Error, serverId?: string) => void) {
     let roomServers = app.getServersByType('room');
-
     if (!roomServers || roomServers.length === 0) {
         cb(new Error('can not find room servers.'));
         return;
     }
-
     let res = dispatch(Math.random().toString(), roomServers);
-
+    if (msg.body && msg.body.sid) {
+        res.id = msg.body.sid;
+    }
     cb(null, res.id);
 }
 

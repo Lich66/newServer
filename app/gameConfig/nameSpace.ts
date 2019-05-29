@@ -2,15 +2,15 @@ export const redisKeyPrefix = {
     /**
      * 用户存储前缀
      */
-    user: 'user_',
+    user: 'User:user_',
     /**
      * 房间列表存储前缀
      */
-    userRoomList: 'userRoomList_',
+    userRoomList: 'UserRoomList:userRoomList_',
     /**
      * 房间存储前缀
      */
-    room: 'room_',
+    room: 'Room:room_',
     /**
      * 茶楼存储前缀
      */
@@ -38,12 +38,10 @@ export const gameChannelKeyPrefix = {
      */
     club_room_game: 'club_room_game_',
     club: 'club_',
-    clubRoom: ':clubRoom_'
+    clubRoom: ':clubRoom_',
+    room: 'room_'
 };
 
-export const appKeyPrefix = {
-    roomList: 'roomList'
-};
 /**
  * 房间游戏的命名空间
  */
