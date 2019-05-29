@@ -178,9 +178,12 @@ export class GameUitl {
         // 19:暗抢庄家标志, 20:加倍标志, 21:王癞玩法
         return {
             playType: config[0],
-            playerNum: RoomConfig.playerNum[config[1]],
-            basePoint: RoomConfig.basePoint[config[2]],
-            round: RoomConfig.round[config[3]],
+            // playerNum: RoomConfig.playerNum[config[1]],
+            playerNum: config[1],
+            // basePoint: RoomConfig.basePoint[config[2]],
+            basePoint: config[2],
+            // round: RoomConfig.round[config[3]],
+            round: config[3],
             payType: config[4],
             startType: config[5],
             bolusType: RoomConfig.bolusType[config[6]],
