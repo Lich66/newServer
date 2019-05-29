@@ -1,7 +1,7 @@
 import { Application, BackendSession } from 'pinus';
-import { SignIn } from '../../../controller/hall/signIn';
+import { Hall } from '../../../controller/hall/hall';
 import { User } from '../../../controller/user/user';
-import { ITbl_signIn } from '../../../interface/models/tbl_signIn';
+import { ITbl_signIn } from '../../../interface/models/tbl_signin';
 
 export default function (app: Application) {
     return new HallHandler(app);
@@ -18,7 +18,7 @@ export class HallHandler {
      */
     public async signInInfo(obj: any, session: BackendSession) {
         let userId: number = parseInt(session.uid, 0);
-        let signInInfo = await SignIn.getSignInInfo({ userId });
+        let signInInfo = await Hall.getSignInInfo({ userId });
         console.log('1获取到的签到信息: ' + JSON.stringify(signInInfo));
         if (!signInInfo) {
             console.log('1');
@@ -28,7 +28,7 @@ export class HallHandler {
         let form: Array<number> = [];
         if (signInInfo[1]) {    // 为true时是新建的,直接返回
             console.log('新建玩家签到表');
-            let result = await SignIn.updateSignInInfo({ userId }, { form: JSON.stringify(form) });
+            let result = await Hall.updateSignInInfo({ userId }, { form: JSON.stringify(form) });
             if (!result || result === 0) {
                 console.log('2');
                 return { code: 12041 };
@@ -42,7 +42,7 @@ export class HallHandler {
             if (oldDate.getMonth() !== newDate.getMonth() || oldDate.getFullYear() !== newDate.getFullYear()) {
                 console.log('签到表过期,重新生成');
                 // 月份或年份不一致,清空数据库签到表
-                let result = await SignIn.updateSignInInfo({ userId }, { form: JSON.stringify(form) });
+                let result = await Hall.updateSignInInfo({ userId }, { form: JSON.stringify(form) });
                 if (!result || result === 0) {
                     console.log('3');
                     return { code: 12041 };
@@ -62,7 +62,7 @@ export class HallHandler {
      */
     public async signIn(obj: any, session: BackendSession) {
         let userId: number = parseInt(session.uid, 0);
-        let signInInfo = await SignIn.getSignInInfo({ userId });
+        let signInInfo = await Hall.getSignInInfo({ userId });
         console.log('2获取到的签到信息: ' + JSON.stringify(signInInfo));
         if (!signInInfo) {
             console.log('4');
@@ -83,7 +83,7 @@ export class HallHandler {
         if (!user) {
             return { code: 12043 };
         }
-        let result = await SignIn.signInTransaction(userId, JSON.stringify(form), newDate.valueOf(), (user.diamond + 1));
+        let result = await Hall.signInTransaction(userId, JSON.stringify(form), newDate.valueOf(), (user.diamond + 1));
         if (result) {
             return { code: 0, data: { diamond: user.diamond + 1 } };
         } else {
@@ -97,6 +97,33 @@ export class HallHandler {
      * @param session session
      */
     public async roomList(obj: any, session: BackendSession) {
-        
+        let userId: number = parseInt(session.uid, 0);
+        let result = Hall.getRoomList(userId);
+        console.log('获取到的玩家房间列表：' + JSON.stringify(result));
+        return { code: 0, data: result };
+    }
+
+    /**
+     * 获取玩家实名信息
+     * @param obj xx
+     * @param session session
+     */
+    public async getRealInfo(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await Hall.getRealInfo(userId);
+        console.log('获取玩家实名信息: ' + JSON.stringify(result));
+        return { code: 0, data: { realName: result.realname, idNum: result.idnum } };
+    }
+
+    /**
+     * 玩家实名认证
+     * @param msg 实名信息
+     * @param session session
+     */
+    public async certification(msg: { realName: string; idNum: string }, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await Hall.certification(userId, msg.realName, msg.idNum);
+        console.log('获取玩家实名信息: ' + JSON.stringify(result));
+        return { code: 0, data: { realName: result.realname, idNum: result.idnum } };
     }
 }

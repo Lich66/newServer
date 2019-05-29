@@ -1,11 +1,11 @@
-import { BeforeCreate, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import {  Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const STRING512 = 512;
 
 
 @Table({ timestamps: false })
 // tslint:disable-next-line: class-name
-export class tbl_signIn extends Model<tbl_signIn> {
+export class tbl_signin extends Model<tbl_signin> {
     @PrimaryKey
     @Column({
         comment: '玩家id'
