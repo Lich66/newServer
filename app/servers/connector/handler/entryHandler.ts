@@ -34,7 +34,7 @@ export class Handler {
         session.set('usernick', user.usernick);
         session.apush('usernick');
         console.log(JSON.stringify(user));
-        session.on('closed', this.onUserLeave);
+        session.on('closed', this.onUserLeave.bind(this));
         for (let key in user) {
             if (user.hasOwnProperty(key)) {
                 console.log(`${redisKeyPrefix.user}${user.userid}`, key, user[key]);
@@ -55,7 +55,7 @@ export class Handler {
             sessionService.akick(user.userid.toString(), 'Other people login');
         }
         await session.abind(user.userid.toString());
-        session.on('closed', this.onUserLeave);
+        session.on('closed', this.onUserLeave.bind(this));
         if (user) {
             return {
                 code: 0,
@@ -75,7 +75,7 @@ export class Handler {
             sessionService.akick(user.userid.toString(), 'Other people login');
         }
         await session.abind(user.userid.toString());
-        session.on('closed', this.onUserLeave);
+        session.on('closed', this.onUserLeave.bind(this));
         if (user) {
             return {
                 code: 0,
@@ -118,11 +118,13 @@ export class Handler {
     }
 
     public async onUserLeave(session: FrontendSession) {
-        if (!session || !session.uid) {
-            return;
-        }
-        const sessionService = this.app.get('sessionService');
-        sessionService.akick(session.uid, 'leave');
+        // if (!session || !session.uid) {
+        //     return;
+        // }
+        const roomid = session.get('roomid');
+        const clubid = session.get('clubid');
+        this.app.rpc.user.userRemote.kick.route(session)(Number.parseInt(session.uid, 0), Number.parseInt(clubid, 0), Number.parseInt(roomid, 0));
+
     }
 
 }
