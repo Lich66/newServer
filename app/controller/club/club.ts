@@ -1,16 +1,17 @@
 import * as Sequelize from 'sequelize';
 // const Sequelize = require('sequelize');
 import { sequelize } from '../../db/sequelize';
-import { defaultClubName } from '../../gameConfig/defaultClubName';
 import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { IClubRequest } from '../../interface/club/clubInterface';
 import { IRoom } from '../../interface/models/tbl_room';
 import { tbl_club } from '../../models/tbl_club';
 import { tbl_room } from '../../models/tbl_room';
 import { SelfUtils } from '../../util/selfUtils';
+import { Base } from '../base/base';
 import { ClubRoomList } from '../redis/clubRoomList/clubRoomList';
 import { ClubRoomState } from '../redis/clubRoomState/clubRoomState';
 import { RedisKeys } from '../redis/redisKeys/redisKeys';
+
 
 const Op = Sequelize.Op;
 const MAXCLUB = 10;
@@ -24,7 +25,7 @@ export class Club {
         if ((json.type == 0 && result.count > MAXCLUB) || (json.type == 1 && result.count > MAXCOMPETITIONCLUB)) {
             return null;
         }
-        json.name = defaultClubName[json.type];
+        json.name = Base.getDefaultClubName()[json.type];
         try {
             return await sequelize.transaction(async (t) => {
                 const club = await tbl_club.create(json, { transaction: t });
@@ -89,7 +90,7 @@ export class Club {
                     let redisarr: string[] = arr.map((item) => {
                         return `${item.roomid}`;
                     });
-                    await ClubRoomList.setClubRoomList({ clubid: club.clubid, List: redisarr });
+                    await ClubRoomList.pushClubRoomList({ clubid: club.clubid, List: redisarr });
                 }
                 return club;
             });

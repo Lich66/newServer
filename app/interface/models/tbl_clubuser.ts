@@ -1,5 +1,5 @@
 import { Model } from 'sequelize-typescript';
-export interface IClubuser {
+export interface IClubUser {
 
     cid: number;
     clubid: number;
@@ -16,6 +16,6 @@ export interface IClubuser {
 
 
 // tslint:disable-next-line: class-name
-export interface ITbl_clubuser extends Model<ITbl_clubuser>, IClubuser {
+export interface ITbl_clubuser extends Model<ITbl_clubuser>, IClubUser {
     // [key: string]: any;
 }

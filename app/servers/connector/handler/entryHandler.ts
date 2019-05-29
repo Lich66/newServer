@@ -1,10 +1,7 @@
 import { Application, FrontendSession } from 'pinus';
-import { RoomManager } from '../../../controller/room/roomManager';
 import { redisClient } from '../../../db/redis';
 import { redisKeyPrefix } from '../../../gameConfig/nameSpace';
-import { IClubRequest, IClubReturn } from '../../../interface/club/clubInterface';
-import { IClubRoomRequest, IClubRoomReturn } from '../../../interface/clubRoom/clubRoomInterface';
-import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/hallInterface';
+import { IJoinRoomRequest } from '../../../interface/hall/hallInterface';
 import { IAccountInfoRequest, IAuthReturn, ITokenInfoRequest, IUserinfoRequest, IUserResponse } from '../../../interface/user/userInterface';
 
 export default function (app: Application) {
@@ -55,6 +52,13 @@ export class Handler {
     }
     public async accountLogin(userinfo: IAccountInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         const user = await this.app.rpc.user.userRemote.accountLogin.route(session)(userinfo);
+        const sessionService = this.app.get('sessionService');
+
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 502
+            };
+        }
         if (user) {
             return {
                 code: 0,
@@ -69,6 +73,13 @@ export class Handler {
     public async tokenLogin(userinfo: ITokenInfoRequest, session: FrontendSession): Promise<IAuthReturn> {
         // console.log(JSON.stringify(userinfo));
         const user = await this.app.rpc.user.userRemote.tokenLogin.route(session)(userinfo);
+        const sessionService = this.app.get('sessionService');
+
+        if (!!sessionService.getByUid(user.userid.toString())) {
+            return {
+                code: 502
+            };
+        }
         if (user) {
             return {
                 code: 0,

@@ -1,12 +1,16 @@
-import { Application, BackendSession, ChannelService } from 'pinus';
+import { Application, BackendSession } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 // import { IUserinfo, IAccountInfo, ITokenInfo, IAuthReturn } from '../../../interface/user/handler/userInterface';
 import { Club } from '../../../controller/club/club';
+import { ClubUser } from '../../../controller/clubUsers/clubUsers';
+import { ClubRoomList } from '../../../controller/redis/clubRoomList/clubRoomList';
 import { User } from '../../../controller/user/user';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { IClubCreateRequest, IClubRequest, IClubReturn, IClubRpc, IClubUpdateRequest } from '../../../interface/club/clubInterface';
+import { IClubUserReturn, IJoinClubData } from '../../../interface/clubUsers/clubUsersInterface';
 import { GameUitl } from '../../../util/gameUitl';
+import { SelfUtils } from '../../../util/selfUtils';
 
 
 export default function (app: Application) {
@@ -29,6 +33,12 @@ export class Handler {
         //         msg: '参数错误'
         //     };
         // }
+        const configLength = 23;
+        if (!clubinfo.config || clubinfo.config.length != configLength) {
+            return {
+                code: 10003
+            };
+        }
         const json: IClubRequest = await GameUitl.parsePlayConfig(clubinfo.config);
         let result = await Club.createClub({ ...json, uid: Number.parseInt(session.uid, 0) });
         if (result) {
@@ -115,13 +125,12 @@ export class Handler {
 
     public async joinClub(clubrpc: IClubRpc, session: BackendSession): Promise<IClubReturn> {
         session.set('clubid', clubrpc.clubid);
-        session.push('clubid', () => {
-
-        });
+        await session.apush('clubid');
         const club = await Club.getClub({ clubid: clubrpc.clubid, uid: Number.parseInt(session.uid, 0) });
         if (!club) {
             return null;
         }
+        const clubUser = await ClubUser.findClubUser({ clubid: clubrpc.clubid, userid: Number.parseInt(session.uid, 0) });
         // console.log('*******************************');
         // console.log(this.app.getServerId());
 
@@ -142,9 +151,10 @@ export class Handler {
         }
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClub}`, { user }, `${gameChannelKeyPrefix.club}${clubrpc.clubid}`);
+        const data = SelfUtils.assign<IJoinClubData>(club, clubUser);
         return {
             code: 0,
-            data: club
+            data
         };
         // return club;
     }
@@ -164,16 +174,93 @@ export class Handler {
         }
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onLeaveClub}`, { user }, `${gameChannelKeyPrefix.club}${clubid}`);
+        ClubRoomList.lremClubRoomList(clubid);
         session.set('roomid', null);
-        session.push('roomid', () => {
-
-        });
+        session.apush('roomid');
         session.set('clubid', null);
-        session.push('clubid', () => {
-
-        });
+        session.apush('clubid');
         return {
             code: 0
         };
+    }
+
+    public async exitClub(json: { clubid: number }, session: BackendSession): Promise<IClubReturn> {
+        const clubuser = await ClubUser.deleteClubUser({ clubid: json.clubid, userid: Number.parseInt(session.uid, 0) });
+        return {
+            code: 0,
+            data: clubuser
+        };
+    }
+
+    public async getAllJoinClub(clubinfo: IClubRequest, session: BackendSession): Promise<IClubUserReturn> {
+
+        let result = await ClubUser.getAllClubUserbyUid({ userid: Number.parseInt(session.uid, 0) });
+        if (result) {
+            return {
+                code: 0,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
+
+    public async getAllJoinUser(clubinfo: IClubRequest, session: BackendSession): Promise<IClubUserReturn> {
+        const clubid = session.get('clubid');
+        let result = await ClubUser.getAllClubUserbyClubid({ clubid });
+        if (result) {
+            return {
+                code: 0,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
+
+    public async updateJoinUser(clubinfo: any, session: BackendSession): Promise<IClubUserReturn> {
+        const clubid = session.get('clubid');
+        const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
+        if (clubList.length == 0) {
+            return {
+                code: 500
+            };
+        }
+        let result = await ClubUser.updateClubUser({ clubid, userid: clubinfo.uid }, { points: clubinfo.points });
+        if (result) {
+            return {
+                code: 0,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
+    }
+
+    public async delJoinUser(clubinfo: any, session: BackendSession): Promise<IClubUserReturn> {
+        const clubid = session.get('clubid');
+        const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
+        if (clubList.length == 0) {
+            return {
+                code: 500
+            };
+        }
+        let result = await ClubUser.deleteClubUser({ clubid, userid: clubinfo.uid });
+        if (result) {
+            return {
+                code: 0,
+                data: result
+            };
+        } else {
+            return {
+                code: 500
+            };
+        }
     }
 }
