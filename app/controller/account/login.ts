@@ -40,7 +40,7 @@ export class Login {
             });
         } else {
             try {
-                const diamond = Base.getdefaultDiamond();
+                const diamond: number = await Base.getdefaultDiamond();
                 return sequelize.transaction(async (t) => {
                     // 这里还要生成一个token 注册时候是没有token的
                     const token = json.token;
