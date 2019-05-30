@@ -6,9 +6,8 @@ import { userConfig } from '../../gameConfig/userConfig';
 import { IRoomConfig } from '../../interface/room/roomInterfaces';
 import { GameUitl } from '../../util/gameUitl';
 import { SelfUtils } from '../../util/selfUtils';
+import { RedisKeys } from '../redis/redisKeys/redisKeys';
 import { User } from '../user/user';
-
-
 
 export class RoomManager {
     /**
@@ -75,10 +74,10 @@ export class RoomManager {
      */
     public static async joinRoom(userId: number, roomId: number) {
         let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
-        console.log('获取到的room' + JSON.stringify(room.roomId));
         if (!room) {
             return { flag: false, code: 12013 };
         }
+        console.log('获取到的room' + JSON.stringify(room.roomId));
         if (room.state === '1' && room.halfWayAdd === '1') {
             return { flag: false, code: 12015 };
         }
@@ -98,7 +97,7 @@ export class RoomManager {
         }
         let userData = {
             userNick: user.usernick,
-            userID: user.userid,
+            userId: user.userid,
             image: user.image
         };
         let userList = JSON.parse(room.userList);
@@ -159,7 +158,7 @@ export class RoomManager {
             let userList = JSON.parse(room.userList);
             for (let i of userList) {
                 let index = 0;
-                if (i.userId === userId) {
+                if (i.userid === userId) {
                     userList.splice(index, 1);
                     break;
                 }
@@ -174,7 +173,7 @@ export class RoomManager {
             let onlookerList = JSON.parse(room.onlookerList);
             for (let i of onlookerList) {
                 let index = 0;
-                if (i.userId === userId) {
+                if (i.userid === userId) {
                     onlookerList.splice(index, 1);
                     break;
                 }
@@ -185,5 +184,87 @@ export class RoomManager {
             await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
             return { flag: true, userType: 0 };
         }
+    }
+
+    /**
+     * 获取房间里的所有玩家
+     * @param roomId 房间id
+     */
+    public static async getPlayerListForRoom(roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        let onlookers = [];
+        let users = [];
+        let onlookerList = JSON.parse(room.onlookerList);
+        let userList = JSON.parse(room.userList);
+        for (const iterator of onlookerList) {
+            onlookers.push(iterator.userId);
+        }
+        for (const iterator of userList) {
+            users.push(iterator.userId);
+        }
+        return { onlookerList: onlookers, userList: users };
+    }
+
+    /**
+     * 获取房间里的游戏的玩家
+     * @param roomId 房间id
+     */
+    public static async getGamingPlayerListForRoom(roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        let users = [];
+        let userList = JSON.parse(room.userList);
+        for (const iterator of userList) {
+            users.push(iterator.userId);
+        }
+        return users;
+    }
+
+    /**
+     * 解散房间逻辑
+     * @param userId 申请解散者id
+     * @param roomId 解散房间id
+     */
+    public static async dissolveRoom(userId: number, roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        // 房间是否存在
+        if (!room) {
+            return { flag: false, code: 13001 };
+        }
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 玩家是否在房间里
+        if (!user.roomId) {
+            return { flag: false, code: 13002 };
+        }
+        // 游戏是否开始
+        if (room.state === '0') {
+            // 非房主不能解散
+            if (room.creatorId !== `${userId}`) {
+                return { flag: false, code: 13032 };
+            }
+            let result = await RoomManager.getPlayerListForRoom(roomId);
+            for (const iterator of result.onlookerList) {
+                await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+            }
+            for (const iterator of result.userList) {
+                await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+                await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.seatNum}`);
+            }
+            await redisClient.lremAsync(`${redisKeyPrefix.userRoomList}${userId}`, 1, `${roomId}`);
+            await RedisKeys.delAsync(`${redisKeyPrefix.room}${roomId}`);
+            return { flag: true, code: 0, players: result };
+        } else {
+            // todo 游戏中解散房间,发起申请 ,待测试
+            let userList = await RoomManager.getGamingPlayerListForRoom(roomId);
+            let userData = { userId, userNick: user.usernick };
+            return { flag: true, code: 1, userList, userData };
+        }
+    }
+
+    /**
+     * 解散房间的选择的逻辑
+     * @param userId 解散房间同意与否玩家id
+     */
+    public static async optionOfDestoryRoom(userId: number) {
+        // todo 打算解散房间的操作放在game中
     }
 }

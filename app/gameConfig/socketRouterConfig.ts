@@ -6,6 +6,7 @@ const socketRouter = {
     onStandUp: 'onStandUp',
     onSitDown: 'onSitDown',
     onJoinRoom: 'onJoinRoom',
+    onDestoryRoom: 'onDestoryRoom',
     onLeaveRoom: 'onLeaveRoom',
     onSendPoker: 'onSendPoker',
     onSettlement: 'onSettlement',
