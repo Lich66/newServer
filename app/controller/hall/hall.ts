@@ -127,4 +127,13 @@ export class Hall {
         }
         return { code: 0 };
     }
+
+    /**
+     * 绑定邀请码逻辑
+     * @param userId 绑定邀请码玩家id
+     * @param inviteCode 绑定的邀请码
+     */
+    public static async bindInviteCode(userId: number, inviteCode: string) {
+        return { code: 0 };
+    }
 }

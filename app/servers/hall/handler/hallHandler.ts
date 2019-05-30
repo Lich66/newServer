@@ -128,4 +128,15 @@ export class HallHandler {
         let result = await Hall.certification(userId, msg.realName, msg.idNum);
         return result;
     }
+
+    /**
+     * 玩家绑定邀请码
+     * @param msg 邀请码
+     * @param session session
+     */
+    public async bindInviteCode(msg: { inviteCode: string }, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await Hall.bindInviteCode(userId, msg.inviteCode);
+        return result;
+    }
 }
