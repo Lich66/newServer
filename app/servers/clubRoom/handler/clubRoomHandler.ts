@@ -135,16 +135,10 @@ export class Handler {
             }
             roomarr.push(json);
         }
-        if (roomarr.length > 0) {
-            return {
-                code: 0,
-                data: roomarr
-            };
-        } else {
-            return {
-                code: 15005
-            };
-        }
+        return {
+            code: 0,
+            data: roomarr
+        };
     }
     /**
      * 
@@ -195,7 +189,7 @@ export class Handler {
         const roomid = session.get('roomid');
         if (!roomid) {
             return {
-                code: 500
+                code: 15008
             };
         }
         const json: any = {};
@@ -256,6 +250,11 @@ export class Handler {
      */
     public async getClubRoomServerId(ClubRoominfo: IClubRoomRequest, session: BackendSession): Promise<IClubRoomSidReturn> {
         const clubid = session.get('clubid');
+        if (!clubid) {
+            return {
+                code: 15011
+            };
+        }
         let serverId = this.app.getServerId();
 
         const channel = this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${ClubRoominfo.roomid}`);
@@ -289,7 +288,7 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!clubid) {
             return {
-                code: 15011
+                code: 15012
             };
         }
         session.set('roomid', clubroomrpc.roomid);
@@ -297,7 +296,7 @@ export class Handler {
         const clubRoom = await ClubRoom.getClubRoom({ roomid: clubroomrpc.roomid });
         if (!clubRoom) {
             return {
-                code: 15012
+                code: 15013
             };
         }
 
@@ -343,12 +342,12 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!roomid) {
             return {
-                code: 15013
+                code: 15014
             };
         }
         if (!clubid) {
             return {
-                code: 15014
+                code: 15015
             };
         }
         const channels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
@@ -393,12 +392,12 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!roomid) {
             return {
-                code: 15015
+                code: 15016
             };
         }
         if (!clubid) {
             return {
-                code: 15016
+                code: 15017
             };
         }
         const roomChannels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
@@ -408,7 +407,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.clubRoom}${roomid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 501
+                        code: 15018
                     };
                 }
             }
@@ -420,7 +419,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 502
+                        code: 15019
                     };
                 }
             }
@@ -439,7 +438,7 @@ export class Handler {
         } while (chairIndex < 0 && chairIndex < MAXLENGTH);
         if (chairIndex < 0) {
             return {
-                code: 503
+                code: 15020
             };
         }
         // await redisClient.hsetAsync(`${gameChannelKeyPrefix.clubRoom}${roomid}`, `${session.uid}`, `${chairIndex}`);
@@ -460,12 +459,12 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!roomid) {
             return {
-                code: 15017
+                code: 15021
             };
         }
         if (!clubid) {
             return {
-                code: 15018
+                code: 15022
             };
         }
         const roomChannels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.clubRoom}${roomid}`);
@@ -475,7 +474,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.clubRoom}${roomid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 15019
+                        code: 15023
                     };
                 }
             }
@@ -487,7 +486,7 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
                 if (!ishas) {
                     return {
-                        code: 15020
+                        code: 15024
                     };
                 }
             }
@@ -495,7 +494,7 @@ export class Handler {
         const chairIndex = await ClubRoomState.getClubRoomUserState({ clubid, roomid, uid: Number.parseInt(session.uid, 0) });
         if (Number.parseInt(chairIndex, 0) < 0) {
             return {
-                code: 15021
+                code: 15025
             };
         }
         ClubRoomState.setClubRoomUserState({ clubid, roomid, uid: Number.parseInt(session.uid, 0), state: -1 });
@@ -512,12 +511,12 @@ export class Handler {
         const clubid = session.get('clubid');
         if (!roomid) {
             return {
-                code: 15022
+                code: 15026
             };
         }
         if (!clubid) {
             return {
-                code: 15023
+                code: 15027
             };
         }
         const clubroom = await ClubRoom.getClubRoom({ roomid });
