@@ -112,7 +112,8 @@ export class RoomHandler {
             data: {
                 userList: result.userList,
                 onlookerList: result.onlookerList,
-                roomconfig: result.roomConfig
+                roomconfig: result.roomConfig,
+                creatorId: result.creatorId
             }
         };
     }
@@ -160,7 +161,7 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
-        // todo 清空玩家session中的roomId,暂时不能实现
+        // todo ----- 清空玩家session中的roomId,暂时不能实现
         // let sessionService = this.app.get('sessionService');
         // for (const iterator of result.players.onlookerList) {
         //     console.log('------------------------' + JSON.stringify(iterator));
@@ -173,9 +174,24 @@ export class RoomHandler {
         //     s[0].set('roomId', null);
         // }
         if (result.code === 0) {
-            this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { code: result.code }, `${gameChannelKeyPrefix.room}${roomId}`);
+            // todo ----- 解散房间成功不通知房主,但是没有作用,原因未知
+            // let members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${roomId}`);
+            // console.log('解散房间== members1 ==: ' + JSON.stringify(members));
+            // for (const key in members) {
+            //     if (members.hasOwnProperty(key)) {
+            //         const element = members[key];
+            //         const ishas = element[`${gameChannelKeyPrefix.room}${roomId}`].includes(`${userId}`);
+            //         if (!ishas) {
+            //             await this.globalChannelStatus.leave(`${userId}`, key, `${gameChannelKeyPrefix.room}${roomId}`);
+            //         }
+            //     }
+            // }
+            // members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${roomId}`);
+            // console.log('解散房间== members2 ==: ' + JSON.stringify(members));
+            await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { userId }, `${gameChannelKeyPrefix.room}${roomId}`);
+            await this.globalChannelStatus.destroyChannel(`${gameChannelKeyPrefix.room}${roomId}`);
         } else {
-            this.globalChannelStatus.pushMessageByUids(result.userList, `${socketRouter.onDestoryRoom}`, { code: result.code, userData: result.userData });
+            await this.globalChannelStatus.pushMessageByUids(result.userList, `${socketRouter.onDestoryRoomRequest}`, { userData: result.userData });
         }
         return { code: 0 };
     }
@@ -192,5 +208,5 @@ export class RoomHandler {
     }
 
 
-  
+
 }
