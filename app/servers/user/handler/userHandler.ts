@@ -22,5 +22,4 @@ export class Handler {
             data: nuser
         };
     }
-
 }
