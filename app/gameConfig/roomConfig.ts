@@ -102,7 +102,7 @@ export const RoomConfig = {
  */
 export const RoomFields = {
     sid: 'sid',                 // 房间所在服务器id                 
-    state: 'state',             // 房间状态(0:未开始,1开始)
+    state: 'state',             // 房间状态(-1:未开始;0:开始;1:发牌;2:抢庄;3:下注;4:结算)
     roomConfig: 'roomConfig',   // 房间配置信息(客户端传过来的)
     roomId: 'roomId',           // 房间id
     creatorId: 'creatorId',     // 房主id

@@ -153,7 +153,7 @@ export class RoomManager {
         // 玩家有无座位号
         if (user.seatNum) {
             // 游戏是否开始
-            if (room.state === '1') {
+            if (room.state !== '-1') {
                 return { flag: false, code: 13022 };
             }
             let userList = JSON.parse(room.userList);
@@ -267,5 +267,95 @@ export class RoomManager {
      */
     public static async optionOfDestoryRoom(userId: number) {
         // todo 打算解散房间的操作放在game中
+    }
+
+    public static async getSeatNum(playerNum: number, playerList) {
+        console.log('===========' + JSON.stringify(playerList));
+        let len = playerList.length;
+        if (len === 0) {
+            return 0;
+        }
+        if (len === playerNum) {
+            return -1;
+        }
+        for (let i = 0; i < playerNum; i++) {
+            let flag = false;
+            for (let j = 0; j < len; j++) {
+                if (i === playerList[j].seatNum) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                return i;
+            }
+        }
+    }
+
+    /**
+     * 玩家准备逻辑
+     * @param userId 准备玩家id
+     * @param roomId 房间id
+     */
+    public static async ready(userId: number, roomId: number) {
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        // 房间是否存在
+        if (!room) {
+            return { flag: false, code: 13001 };
+        }
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 玩家是否在房间里
+        if (!user.roomId) {
+            return { flag: false, code: 13002 };
+        }
+        let userList = JSON.parse(room.userList);
+        let onlookerList = JSON.parse(room.onlookerList);
+        // todo 1:已坐下,旁观中无;2:已坐下,旁观者中有;3:未坐下:旁观者中无;4:未坐下:旁观者中有
+        // let flag1 = false;
+        // let flag2 = false;
+        // for (const iterator of userList) {
+        //     if (iterator.userId === userId) {
+        //         console.log('玩家在已坐下列表中了!');
+        //         flag1 = true;
+        //         break;
+        //     }
+        // }
+        // for (const iterator of onlookerList) {
+        //     if (iterator.userId === userId) {
+        //         console.log('玩家有在观战列表中!');
+        //         flag2 = true;
+        //         break;
+        //     }
+        // }
+
+        // 分配座位
+        let result = await RoomManager.getSeatNum(parseInt(room.playerNum, 0), userList);
+        if (result === -1) {
+            return { flag: false, code: 13052 };
+        }
+        console.log('1观战玩家列表: ' + JSON.stringify(onlookerList));
+        for (const iterator of onlookerList) {
+            let index = 0;
+            if (iterator.userId === `${userId}`) {
+                onlookerList.splice(index, 1);
+                console.log('执行删除观战玩家列表');
+                break;
+            }
+            index++;
+        }
+        console.log('2观战玩家列表: ' + JSON.stringify(onlookerList));
+        let onlookerListStr = JSON.stringify(onlookerList);
+        await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.onlookerList}`, onlookerListStr);
+        let userData = {
+            userId,
+            userNick: user.userNick,
+            image: user.image,
+            score: 0,
+            seatNum: result
+        };
+        userList.push(userData);
+        let userListStr = JSON.stringify(userList);
+        await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.userList}`, userListStr);
+        return { flag: true, userData };
     }
 }

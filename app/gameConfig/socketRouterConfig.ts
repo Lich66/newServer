@@ -8,6 +8,7 @@ const socketRouter = {
     onJoinRoom: 'onJoinRoom',
     onDestoryRoom: 'onDestoryRoom',
     onDestoryRoomRequest: 'onDestoryRoomRequest',
+    onReady: 'onReady',
     onLeaveRoom: 'onLeaveRoom',
     onSendPoker: 'onSendPoker',
     onSettlement: 'onSettlement',

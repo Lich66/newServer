@@ -188,7 +188,7 @@ export class RoomHandler {
             // }
             // members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${roomId}`);
             // console.log('解散房间== members2 ==: ' + JSON.stringify(members));
-            await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, { userId }, `${gameChannelKeyPrefix.room}${roomId}`);
+            await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, {}, `${gameChannelKeyPrefix.room}${roomId}`);
             await this.globalChannelStatus.destroyChannel(`${gameChannelKeyPrefix.room}${roomId}`);
         } else {
             await this.globalChannelStatus.pushMessageByUids(result.userList, `${socketRouter.onDestoryRoomRequest}`, { userData: result.userData });
@@ -207,6 +207,20 @@ export class RoomHandler {
         // todo  打算解散房间的操作放在game中
     }
 
-
+    /**
+     * 玩家准备
+     * @param obj xx
+     * @param session session
+     */
+    public async ready(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let roomId: number = parseInt(session.get('roomId'), 0);
+        let result = await RoomManager.ready(userId, roomId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${roomId}`);
+        return { code: 0 };
+    }
 
 }
