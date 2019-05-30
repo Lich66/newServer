@@ -98,9 +98,12 @@ export class HallHandler {
      */
     public async roomList(obj: any, session: BackendSession) {
         let userId: number = parseInt(session.uid, 0);
-        let result = Hall.getRoomList(userId);
+        let result = await Hall.getRoomList(userId);
         console.log('获取到的玩家房间列表：' + JSON.stringify(result));
-        return { code: 0, data: result };
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        return { code: 0, data: result.roomList };
     }
 
     /**

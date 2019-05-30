@@ -66,24 +66,28 @@ export class Hall {
      */
     public static async getRoomList(userId: number) {
         let roomList = [];
-        let len = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
-        for (let i = 0; i < len; i++) {
-            let roomId = await redisClient.lindexAsync(`${redisKeyPrefix.userRoomList}${userId}`, i);
-            let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
-            let roomConfig = JSON.parse(room.roomConfig);
-            let userList = JSON.parse(room.userList);
-            let roomData = {
-                roomId,
-                basePoint: roomConfig[2],
-                playType: roomConfig[0],
-                payType: roomConfig[4],
-                round: roomConfig[3],
-                playerNum: roomConfig[1],
-                gamingPlayerNum: userList.length
-            };
-            roomList.push(roomData);
+        try {
+            let len = await redisClient.llenAsync(`${redisKeyPrefix.userRoomList}${userId}`);
+            for (let i = 0; i < len; i++) {
+                let roomId = await redisClient.lindexAsync(`${redisKeyPrefix.userRoomList}${userId}`, i);
+                let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+                let roomConfig = JSON.parse(room.roomConfig);
+                let userList = JSON.parse(room.userList);
+                let roomData = {
+                    roomId,
+                    basePoint: roomConfig[2],
+                    playType: roomConfig[0],
+                    payType: roomConfig[4],
+                    round: roomConfig[3],
+                    playerNum: roomConfig[1],
+                    gamingPlayerNum: userList.length
+                };
+                roomList.push(roomData);
+            }
+            return { flag: false, roomList };
+        } catch (error) {
+            return { flag: false, code: 12121 };
         }
-        return roomList;
     }
 
     /**
