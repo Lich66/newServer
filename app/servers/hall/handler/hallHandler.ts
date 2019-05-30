@@ -126,7 +126,6 @@ export class HallHandler {
     public async certification(msg: { realName: string; idNum: string }, session: BackendSession) {
         let userId: number = parseInt(session.uid, 0);
         let result = await Hall.certification(userId, msg.realName, msg.idNum);
-        console.log('获取玩家实名信息: ' + JSON.stringify(result));
-        return { code: 0, data: { realName: result.realname, idNum: result.idnum } };
+        return result;
     }
 }

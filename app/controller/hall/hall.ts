@@ -7,6 +7,7 @@ import { ITbl_signIn } from '../../interface/models/tbl_signin';
 import { tbl_realinfo } from '../../models/tbl_realinfo';
 import { tbl_signin } from '../../models/tbl_signin';
 import { tbl_user } from '../../models/tbl_user';
+import { SelfUtils } from '../../util/selfUtils';
 
 export class Hall {
     /**
@@ -107,10 +108,23 @@ export class Hall {
      * @param idNum 玩家身份证id
      */
     public static async certification(userId: number, realName: string, idNum: string) {
-        // todo 参数验证（实名+身份证验证）
+        if (SelfUtils.checkID(idNum)) {
+            if (!SelfUtils.checkName(realName)) {
+                return { code: 12022 };
+            }
+        } else {
+            return { code: 12022 };
+        }
         // todo 判断是否已绑定
+        let realInfo = await tbl_realinfo.findOne({ where: { userid: userId } });
+        if (realInfo && realInfo.realname) {
+            return { code: 12024, data: { realName: realInfo.realname, idNum: realInfo.idnum } };
+        }
         let result = await tbl_realinfo.update({ realname: realName, idnum: idNum }, { where: { userid: userId } });
         console.log('从数据库获取的玩家实名信息为：' + JSON.stringify(result));
-        return result[1][0];
+        if (result[0] !== 1) {
+            return { code: 12023 };
+        }
+        return { code: 0 };
     }
 }

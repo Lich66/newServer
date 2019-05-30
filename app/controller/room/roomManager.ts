@@ -112,7 +112,8 @@ export class RoomManager {
             userData,
             userList,
             onlookerList,
-            roomConfig
+            roomConfig,
+            creatorId: room.creatorId
         };
     }
 
