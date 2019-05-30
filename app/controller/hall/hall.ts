@@ -84,7 +84,7 @@ export class Hall {
                 };
                 roomList.push(roomData);
             }
-            return { flag: false, roomList };
+            return { flag: true, roomList };
         } catch (error) {
             return { flag: false, code: 12121 };
         }
