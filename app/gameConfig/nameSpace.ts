@@ -12,6 +12,10 @@ export const redisKeyPrefix = {
      */
     room: 'Room:room_',
     /**
+     * 房间玩家(坐下和旁观)
+     */
+    roomUsers: ':users',
+    /**
      * 茶楼存储前缀
      */
     club: 'MAGNATE:club_',

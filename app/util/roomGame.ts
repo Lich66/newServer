@@ -25,11 +25,12 @@ export class RoomGame {
     private clubroom: ITbl_room;
     // 哪个阶段
     /**
-     * 0开始
-     * 1发牌
-     * 2抢庄
-     * 3下注
-     * 4结算
+     * -1:未开始
+     * 0:开始
+     * 1:发牌
+     * 2:抢庄
+     * 3:下注
+     * 4:结算
      */
     private step: number;
     // 玩多少局

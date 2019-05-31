@@ -73,7 +73,15 @@ export class Hall {
                 let roomId = await redisClient.lindexAsync(`${redisKeyPrefix.userRoomList}${userId}`, i);
                 let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
                 let roomConfig = JSON.parse(room.roomConfig);
-                let userList = JSON.parse(room.userList);
+                let gamingNum = 0;
+                let gamingUsers = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.chair}`);
+                for (const key in gamingUsers) {
+                    if (gamingUsers.hasOwnProperty(key)) {
+                        if (gamingUsers[key] !== '-1') {
+                            gamingNum++;
+                        }
+                    }
+                }
                 let roomData = {
                     roomId,
                     basePoint: roomConfig[2],
@@ -81,7 +89,7 @@ export class Hall {
                     payType: roomConfig[4],
                     round: roomConfig[3],
                     playerNum: roomConfig[1],
-                    gamingPlayerNum: userList.length
+                    gamingPlayerNum: gamingNum
                 };
                 roomList.push(roomData);
             }
