@@ -153,6 +153,7 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
+        // console.log('==================\n' + JSON.stringify(result));
         if (result.code === 0) {
             // todo ----- 解散房间成功不通知房主,但是没有作用,原因未知
             //     let members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${result.roomId}`);

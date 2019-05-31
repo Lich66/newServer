@@ -78,7 +78,7 @@ class GameUitl {
      */
     static getRoomRate1(playerNum, round, payType) {
         let needDiamond;
-        if (payType === 0) {
+        if (payType === 1) {
             needDiamond = roomConfig_1.RoomConfig.round[round] / 10;
         }
         else {
@@ -95,7 +95,7 @@ class GameUitl {
      */
     static getRoomRate2(playerNum, round, payType) {
         let needDiamond;
-        if (payType === 0) {
+        if (payType === 1) {
             needDiamond = round / 10;
         }
         else {

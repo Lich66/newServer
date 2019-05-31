@@ -85,8 +85,8 @@ export class RoomManager {
         }
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
         // 判断玩家的房卡是否足够
-        let needDaimond = GameUitl.getRoomRate2(parseInt(room.playerNum, 0), parseInt(room.round, 0), parseInt(room.PayType, 0));
         if (parseInt(room.PayType, 0) === 1) {
+            let needDaimond = GameUitl.getRoomRate2(parseInt(room.playerNum, 0), parseInt(room.round, 0), parseInt(room.PayType, 0));
             if (parseInt(user.diamond, 0) < needDaimond) {
                 return { flag: false, code: 12011 };
             }
@@ -213,6 +213,19 @@ export class RoomManager {
             // 非房主不能解散
             if (room.creatorId !== `${userId}`) {
                 return { flag: false, code: 13032 };
+            }
+            // 将钻石返还给房主
+            console.log('房间的支付类型:' + room.payType);
+            if (room.payType === '0') {
+                let needDaimond = await GameUitl.getRoomRate2(parseInt(room.playerNum, 0), parseInt(room.round, 0), parseInt(room.PayType, 0));
+                let userDaimond = parseInt(user.diamond, 0);
+                console.log('解散房间时: needDaimond = ' + needDaimond + ' ; 玩家剩余钻石: userDaimond = ' + userDaimond);
+                let result = await User.updateUser({ userid: userId }, { diamond: (needDaimond + userDaimond) });
+                if (result !== 1) {
+                    console.log('钻石返还给房主失败!');
+                    return { flag: false, code: 13031 };
+                }
+                await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.diamond}`, `${needDaimond + userDaimond}`);
             }
             let roomUsers = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.roomUsers}`);
             // 删除user上的roomId

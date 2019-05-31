@@ -140,7 +140,7 @@ export class GameUitl {
      */
     public static getRoomRate1(playerNum: number, round: number, payType: number): number {
         let needDiamond: number;
-        if (payType === 0) {
+        if (payType === 1) {
             needDiamond = RoomConfig.round[round] / 10;
         } else {
             needDiamond = RoomConfig.playerNum[playerNum] * RoomConfig.round[round] / NUMBER20;
@@ -157,7 +157,7 @@ export class GameUitl {
      */
     public static getRoomRate2(playerNum: number, round: number, payType: number): number {
         let needDiamond: number;
-        if (payType === 0) {
+        if (payType === 1) {
             needDiamond = round / 10;
         } else {
             needDiamond = playerNum * round / NUMBER20;
