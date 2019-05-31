@@ -177,7 +177,7 @@ export class Handler {
         }
         const user = await User.getUser({ userid: Number.parseInt(session.uid, 0) });
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onEntryClub}`, { user }, `${gameChannelKeyPrefix.club}${clubrpc.clubid}`);
-        const data = SelfUtils.assign<IJoinClubData>(club, clubUser);
+        const data = SelfUtils.assign<IJoinClubData>(club.toJSON(), clubUser.toJSON());
         return {
             code: 0,
             data
