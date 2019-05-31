@@ -52,9 +52,7 @@ export class RoomManager {
             roomId,
             creatorId: userId,
             roomConfig: JSON.stringify(config),
-            createTime: (new Date()).valueOf(),
-            onlookerList: JSON.stringify([]),
-            userList: JSON.stringify([])
+            createTime: (new Date()).valueOf()
         };
         let json: IRoomConfig = SelfUtils.assign(json2, json1);
         console.log('合并后的房间配置: ' + JSON.stringify(json));
@@ -64,9 +62,9 @@ export class RoomManager {
             }
         }
         await redisClient.rpushAsync(`${redisKeyPrefix.userRoomList}${userId}`, `${roomId}`);
-        // for (let i = 0, len = json.playerNum; i < len; i++) {
-        //     await redisClient.hsetAsync(`${redisKeyPrefix.room}${json.roomId}${redisKeyPrefix.chair}`, `${i}`, `${-1}`);
-        // }
+        for (let i = 0, len = json.playerNum; i < len; i++) {
+            await redisClient.hsetAsync(`${redisKeyPrefix.room}${json.roomId}${redisKeyPrefix.chair}`, `${i}`, `${-1}`);
+        }
         return { flag: true, json };
     }
 
@@ -81,7 +79,8 @@ export class RoomManager {
             return { flag: false, code: 12013 };
         }
         console.log('获取到的room' + JSON.stringify(room.roomId));
-        if (room.state === '1' && room.halfWayAdd === '1') {
+        // 游戏开始是否禁入
+        if (room.state !== '-1' && room.halfWayAdd === '1') {
             return { flag: false, code: 12015 };
         }
         let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
@@ -91,18 +90,13 @@ export class RoomManager {
             if (parseInt(user.diamond, 0) < needDaimond) {
                 return { flag: false, code: 12011 };
             }
-        } else {
-            if (parseInt(room.creatorId, 0) === userId) {
-                if (parseInt(user.diamond, 0) < needDaimond) {
-                    return { flag: false, code: 12011 };
-                }
-            }
         }
         let userData = {
             userNick: user.usernick,
             userId: user.userid,
             image: user.image
         };
+        await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.clubRoom_users}`, `${userId}`, `${-1}`);
         let userList = JSON.parse(room.userList);
         let onlookerList = JSON.parse(room.onlookerList);
         let roomConfig = JSON.parse(room.roomConfig);
