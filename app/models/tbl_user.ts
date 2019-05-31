@@ -1,4 +1,4 @@
-import { BeforeCreate, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const STRING64 = 64;
 const STRING32 = 32;
@@ -93,4 +93,11 @@ export class tbl_user extends Model<tbl_user> {
     comment: '每日分享时间'
   })
   public share_time: Date;
+
+  @Default(0)
+  @Column({
+    comment: '邀请状态(接收:0/拒收:1)'
+
+  })
+  public invitation_status: number;
 }

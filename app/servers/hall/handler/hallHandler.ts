@@ -139,4 +139,28 @@ export class HallHandler {
         let result = await Hall.bindInviteCode(userId, msg.inviteCode);
         return result;
     }
+
+    /**
+     * 更改玩家邮件接收状态
+     * @param msg 新状态
+     * @param session session
+     */
+    public async setInvitationStatus(msg: { state: number }, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await Hall.setInvitationStatus(userId, msg.state);
+        return result;
+    }
+
+    /**
+     * 切换账号
+     * @param obj xx
+     * @param session session
+     */
+    public async switchAccount(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        session.unbind(`${userId}`, () => {
+            console.log('session的UID已解除绑定!');
+        });
+        return { code: 0 };
+    }
 }

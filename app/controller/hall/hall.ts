@@ -8,6 +8,7 @@ import { tbl_realinfo } from '../../models/tbl_realinfo';
 import { tbl_signin } from '../../models/tbl_signin';
 import { tbl_user } from '../../models/tbl_user';
 import { SelfUtils } from '../../util/selfUtils';
+import { User } from '../user/user';
 
 export class Hall {
     /**
@@ -142,6 +143,19 @@ export class Hall {
      * @param inviteCode 绑定的邀请码
      */
     public static async bindInviteCode(userId: number, inviteCode: string) {
+        return { code: 0 };
+    }
+
+    /**
+     * 设置邀请状态(接收/拒收)逻辑
+     * @param userId 玩家id
+     * @param state 状态(接收:0/拒收:1)
+     */
+    public static async setInvitationStatus(userId: number, state: number) {
+        let result = await User.updateUser({ userid: userId }, { invitation_status: state });
+        if (result === 0) {
+            return { code: 12081 };
+        }
         return { code: 0 };
     }
 }
