@@ -25,7 +25,10 @@ export class Club {
         if ((json.type == 0 && result.count > MAXCLUB) || (json.type == 1 && result.count > MAXCOMPETITIONCLUB)) {
             return null;
         }
-        json.name = Base.getDefaultClubName()[json.type];
+        const namearr = await Base.getDefaultClubName();
+
+        json.name = namearr[json.type];
+
         try {
             return await sequelize.transaction(async (t) => {
                 const club = await tbl_club.create(json, { transaction: t });

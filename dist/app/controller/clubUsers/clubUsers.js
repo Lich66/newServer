@@ -8,11 +8,11 @@ const MAXCOMPETITIONClubUser = 30;
 // const CHAIRSTR = 'chair_';
 class ClubUser {
     static async findClubUser(json) {
-        let result = await tbl_clubuser_1.tbl_clubuser.findOrCreate({ where: { clubid: json.clubid, roomid: json.userid, cid: { [Op.regexp]: '\.' } } });
+        let result = await tbl_clubuser_1.tbl_clubuser.findOrCreate({ where: { clubid: json.clubid, userid: json.userid, cid: { [Op.regexp]: '\.' } } });
         return result[0];
     }
     static async deleteClubUser(json) {
-        return await tbl_clubuser_1.tbl_clubuser.destroy({ where: { clubid: json.clubid, roomid: json.userid, cid: { [Op.regexp]: '\.' } } });
+        return await tbl_clubuser_1.tbl_clubuser.destroy({ where: { clubid: json.clubid, userid: json.userid, cid: { [Op.regexp]: '\.' } } });
     }
     static async updateClubUser(ojson, njson) {
         let result = await tbl_clubuser_1.tbl_clubuser.update(njson, { where: { clubid: ojson.clubid, userid: ojson.userid, cid: { [Op.regexp]: '\.' } } });
