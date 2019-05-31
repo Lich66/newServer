@@ -220,6 +220,9 @@ export class RoomHandler {
             return { code: result.code };
         }
         await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${roomId}`);
+        if (result.startFlag) {
+            
+        }
         return { code: 0 };
     }
 

@@ -23,7 +23,7 @@ export const redisKeyPrefix = {
     clubRoom_users: ':users',
     clubRoom_sid: ':sid',
     /**
-     * 茶楼房间位置存储前缀
+     * 房间位置存储前缀
      */
     chair: ':chair'
 };
