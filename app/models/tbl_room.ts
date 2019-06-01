@@ -23,7 +23,6 @@ export class tbl_room extends Model<tbl_room> {
     public clubid: number;
 
     @Column({
-        type: 'TIMESTAMP',
         comment: '房间创建时间'
     })
     public create_time: Date;

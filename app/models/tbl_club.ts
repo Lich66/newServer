@@ -151,7 +151,6 @@ export class tbl_club extends Model<tbl_club> {
     public type: number;
 
     @Column({
-        type: 'TIMESTAMP',
         comment: '茶楼创建时间'
     })
     public create_time: Date;

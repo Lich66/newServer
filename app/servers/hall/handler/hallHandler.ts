@@ -1,6 +1,8 @@
 import { Application, BackendSession } from 'pinus';
+import { Base } from '../../../controller/base/base';
 import { Hall } from '../../../controller/hall/hall';
 import { User } from '../../../controller/user/user';
+import { DataBaseFields } from '../../../gameConfig/dataBaseFields';
 import { ITbl_signIn } from '../../../interface/models/tbl_signin';
 
 export default function (app: Application) {
@@ -83,7 +85,11 @@ export class HallHandler {
         if (!user) {
             return { code: 12043 };
         }
-        let result = await Hall.signInTransaction(userId, JSON.stringify(form), newDate.valueOf(), (user.diamond + 1));
+        let addDiamond = await Base.getDefaultValueByKey({ key: DataBaseFields.DailyShareAddGemsNum });
+        if (!addDiamond) {
+            return { code: 12043 };
+        }
+        let result = await Hall.signInTransaction(userId, JSON.stringify(form), newDate.valueOf(), (user.diamond + parseInt(addDiamond, 0)));
         if (result) {
             return { code: 0, data: { diamond: user.diamond + 1 } };
         } else {

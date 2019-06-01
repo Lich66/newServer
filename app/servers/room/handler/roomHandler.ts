@@ -110,7 +110,7 @@ export class RoomHandler {
             data: {
                 userList: result.userList,
                 onlookerList: result.onlookerList,
-                roomconfig: result.roomConfig,
+                roomConfig: result.roomConfig,
                 creatorId: result.creatorId
             }
         };

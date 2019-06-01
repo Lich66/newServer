@@ -1,6 +1,7 @@
 import { Transaction } from 'sequelize/types';
 import { redisClient } from '../../db/redis';
 import { sequelize } from '../../db/sequelize';
+import { DataBaseFields } from '../../gameConfig/dataBaseFields';
 import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { userConfig } from '../../gameConfig/userConfig';
 import { ITbl_signIn } from '../../interface/models/tbl_signin';
@@ -9,6 +10,7 @@ import { tbl_realinfo } from '../../models/tbl_realinfo';
 import { tbl_signin } from '../../models/tbl_signin';
 import { tbl_user } from '../../models/tbl_user';
 import { SelfUtils } from '../../util/selfUtils';
+import { Base } from '../base/base';
 import { User } from '../user/user';
 
 export class Hall {
@@ -156,11 +158,18 @@ export class Hall {
             return { code: 12063 };
         }
         // 绑定
-        let result = await User.updateUser({ userid: userId }, { inviter: inviteCode });
+        let addDiamond = await Base.getDefaultValueByKey({ key: DataBaseFields.BindingAddGemsNum });
+        if (!addDiamond) {
+            return { code: 12062 };
+        }
+        let nowDiamond = user.diamond + parseInt(addDiamond, 0);
+        let result = await User.updateUser({ userid: userId }, { inviter: inviteCode, diamond: (nowDiamond) });
         if (result === 0) {
             return { code: 12062 };
         }
-        return { code: 0 };
+        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.diamond}`, `${nowDiamond}`);
+        await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.inviter}`, inviteCode);
+        return { code: 0, diamond: nowDiamond };
     }
 
     /**

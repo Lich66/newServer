@@ -105,16 +105,16 @@ export class RoomManager {
                 let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${key}`);
                 if (roomUsers[key] !== '-1') {
                     userList.push({
-                        userId: user.userId,
-                        userNick: user.userNick,
+                        userId: user.userid,
+                        userNick: user.usernick,
                         image: user.image,
                         score: user.score,
                         seatNum: roomUsers[key]
                     });
                 } else {
                     onlookerList.push({
-                        userId: user.userId,
-                        userNick: user.userNick,
+                        userId: user.userid,
+                        userNick: user.usernick,
                         image: user.image
                     });
                 }

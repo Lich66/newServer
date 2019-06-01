@@ -30,7 +30,6 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     public chactor: number;
 
     @Column({
-        type: 'TIMESTAMP',
         comment: '加入时间'
     })
     public adtime: Date;

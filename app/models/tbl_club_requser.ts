@@ -24,7 +24,6 @@ export class tbl_club_requser extends Model<tbl_club_requser> {
     public userid: number;
 
     @Column({
-        type: 'TIMESTAMP',
         comment: '申请时间'
     })
     public req_time: Date;
