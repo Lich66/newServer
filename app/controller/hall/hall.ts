@@ -145,14 +145,17 @@ export class Hall {
      */
     public static async bindInviteCode(userId: number, inviteCode: string) {
         let user = await User.getUser({ userid: userId });
+        // 是否绑定过邀请码
         if (!!user.inviter) {
             console.log('已绑定邀请码!');
             return { code: 12061, data: { inviteCode: user.inviter } };
         }
+        // 邀请码是否存在
         let agent = await tbl_agent.findOne({ where: { invite_code: inviteCode } });
         if (!agent) {
             return { code: 12063 };
         }
+        // 绑定
         let result = await User.updateUser({ userid: userId }, { inviter: inviteCode });
         if (result === 0) {
             return { code: 12062 };
