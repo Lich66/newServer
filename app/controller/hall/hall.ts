@@ -7,6 +7,7 @@ import { userConfig } from '../../gameConfig/userConfig';
 import { ITbl_signIn } from '../../interface/models/tbl_signin';
 import { tbl_agent } from '../../models/tbl_agent';
 import { tbl_realinfo } from '../../models/tbl_realinfo';
+import { tbl_share } from '../../models/tbl_share';
 import { tbl_signin } from '../../models/tbl_signin';
 import { tbl_user } from '../../models/tbl_user';
 import { SelfUtils } from '../../util/selfUtils';
@@ -184,9 +185,28 @@ export class Hall {
         }
         return { code: 0 };
     }
+
     /**
-     * 上次分享的时间是: "2019-06-01T09:22:42.000Z"  当前的时间是: "2019-06-01T09:25:19.267Z"
+     * 获取分享信息
      */
+    public static async getShareData() {
+        let result = await tbl_share.findAll({ order: [['share_id', 'DESC']], limit: 1 });
+        if (!result || !result[0]) {
+            return { code: 12141 };
+        }
+        let photoUrl = result[0].photo_url;
+        let photoPosition = JSON.parse(result[0].photo_position);
+        let photoSize = JSON.parse(result[0].photo_size);
+        let codePosition = JSON.stringify(result[0].code_position);
+        return {
+            code: 0, data: {
+                photoUrl,
+                photoPosition,
+                photoSize,
+                codePosition
+            }
+        };
+    }
 
     /**
      * 分享游戏逻辑
