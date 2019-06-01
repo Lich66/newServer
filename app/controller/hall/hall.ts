@@ -196,8 +196,8 @@ export class Hall {
         let user = await tbl_user.findOne({ where: { userid: userId } });
         if (!!user.share_time) { // 不是首次分享
             // 今天是否已分享
-            console.log('上次分享的时间是: ' + JSON.stringify(user.share_time));
-            console.log('当前的时间是: ' + JSON.stringify(new Date()));
+            // console.log('上次分享的时间是: ' + JSON.stringify(user.share_time));
+            // console.log('当前的时间是: ' + JSON.stringify(new Date()));
             let shareDateStr = JSON.stringify(user.share_time).substr(0, 10);
             let nowDateStr = JSON.stringify(new Date()).substr(0, 10);
             if (shareDateStr === nowDateStr) {
