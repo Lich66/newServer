@@ -206,4 +206,8 @@ export class RoomHandler {
         return { code: 0 };
     }
 
+    public async start(obj: any, session: BackendSession) {
+        
+    }
+
 }

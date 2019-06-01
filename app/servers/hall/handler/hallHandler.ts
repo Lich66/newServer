@@ -169,4 +169,15 @@ export class HallHandler {
         });
         return { code: 0 };
     }
+
+    /**
+     * 分享游戏
+     * @param obj xx
+     * @param session session
+     */
+    public async shareGame(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = Hall.shareGame(userId);
+        return result;
+    }
 }
