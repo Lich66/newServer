@@ -59,15 +59,10 @@ export class tbl_user extends Model<tbl_user> {
   public sex: number;
 
   @Column({
-    type: DataType.STRING(STRING32),
-    comment: '邀请码'
+    type: DataType.STRING(7),
+    comment: '邀请人的邀请码'
   })
-  public invite_code: string;
-
-  @Column({
-    comment: '邀请人'
-  })
-  public inviter: number;
+  public inviter: string;
 
   @Column({
     comment: '最后登陆时间'

@@ -9,8 +9,7 @@ export interface IUser {
     region: string;
     ip: string;
     sex: number;
-    invite_code: string;
-    inviter: number;
+    inviter: string;
     logintime: Date;
     // [key: string]: any;
 }

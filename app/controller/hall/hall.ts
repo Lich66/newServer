@@ -4,6 +4,7 @@ import { sequelize } from '../../db/sequelize';
 import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { userConfig } from '../../gameConfig/userConfig';
 import { ITbl_signIn } from '../../interface/models/tbl_signin';
+import { tbl_agent } from '../../models/tbl_agent';
 import { tbl_realinfo } from '../../models/tbl_realinfo';
 import { tbl_signin } from '../../models/tbl_signin';
 import { tbl_user } from '../../models/tbl_user';
@@ -143,6 +144,19 @@ export class Hall {
      * @param inviteCode 绑定的邀请码
      */
     public static async bindInviteCode(userId: number, inviteCode: string) {
+        let user = await User.getUser({ userid: userId });
+        if (!!user.inviter) {
+            console.log('已绑定邀请码!');
+            return { code: 12061, data: { inviteCode: user.inviter } };
+        }
+        let agent = await tbl_agent.findOne({ where: { invite_code: inviteCode } });
+        if (!agent) {
+            return { code: 12063 };
+        }
+        let result = await User.updateUser({ userid: userId }, { inviter: inviteCode });
+        if (result === 0) {
+            return { code: 12062 };
+        }
         return { code: 0 };
     }
 

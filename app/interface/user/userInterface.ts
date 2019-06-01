@@ -14,7 +14,7 @@ export interface IUserRequest {
     ip?: string;
     sex?: number;
     invite_code?: string;
-    inviter?: number;
+    inviter?: string;
     logintime?: Date;
     invitation_status?: number;
     // [key: string]: any;
