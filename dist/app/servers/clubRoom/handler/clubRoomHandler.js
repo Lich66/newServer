@@ -42,7 +42,7 @@ class Handler {
         delete njson.roomid;
         delete njson.create_time;
         delete njson.clubid;
-        let result = await clubRoom_1.ClubRoom.updateClubRoom({ roomid: ClubRoominfo.roomid, clubid: ClubRoominfo.roomid, uid: session.uid }, njson);
+        let result = await clubRoom_1.ClubRoom.updateClubRoom({ roomid: ClubRoominfo.roomid, clubid: ClubRoominfo.clubid, uid: session.uid }, njson);
         if (result) {
             return {
                 code: 0,
@@ -61,7 +61,7 @@ class Handler {
                 code: 10003
             };
         }
-        let result = await clubRoom_1.ClubRoom.getClubRoom({ clubid: ClubRoominfo.clubid });
+        let result = await clubRoom_1.ClubRoom.getClubRoom({ roomid: ClubRoominfo.roomid });
         if (result) {
             return {
                 code: 0,
