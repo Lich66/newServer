@@ -36,44 +36,43 @@ export class Club {
                 if (club) {
                     arr = await tbl_room.bulkCreate([{
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }, {
                         ...json,
-                        clubid: club.clubid,
-                        owner: json.uid
+                        clubid: club.clubid
+
                     }], { validate: true, transaction: t });
                 }
                 if (arr.length == 0) {

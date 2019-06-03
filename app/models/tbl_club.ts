@@ -1,4 +1,4 @@
-import { AllowNull, AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AllowNull, AutoIncrement, BeforeBulkCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const BIGINT20 = '20';
 const STRING64 = 64;
@@ -154,10 +154,12 @@ export class tbl_club extends Model<tbl_club> {
         comment: '茶楼创建时间'
     })
     public create_time: Date;
-    @BeforeCreate
-    public static makeUpperCase(instance: tbl_club) {
+    @BeforeBulkCreate
+    public static makeUpperCase(instance: tbl_club[]) {
         // this will be called when an instance is created or updated
-        instance.create_time = new Date();
+        instance.map((item) => {
+            item.create_time = new Date();
+        });
     }
 
     @Default(false)
