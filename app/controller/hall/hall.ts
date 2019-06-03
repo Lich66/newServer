@@ -184,4 +184,48 @@ export class Hall {
         }
         return { code: 0 };
     }
+    /**
+     * 上次分享的时间是: "2019-06-01T09:22:42.000Z"  当前的时间是: "2019-06-01T09:25:19.267Z"
+     */
+
+    /**
+     * 分享游戏逻辑
+     * @param userId 玩家id 
+     */
+    public static async shareGame(userId: number) {
+        let user = await tbl_user.findOne({ where: { userid: userId } });
+        if (!!user.share_time) { // 不是首次分享
+            // 今天是否已分享
+            // console.log('上次分享的时间是: ' + JSON.stringify(user.share_time));
+            // console.log('当前的时间是: ' + JSON.stringify(new Date()));
+            let shareDateStr = JSON.stringify(user.share_time).substr(0, 10);
+            let nowDateStr = JSON.stringify(new Date()).substr(0, 10);
+            if (shareDateStr === nowDateStr) {
+                return { code: 12071 };
+            }
+            let addDiamond = await Base.getDefaultValueByKey({ key: DataBaseFields.DailyShareAddGemsNum });
+            if (!addDiamond) {
+                return { code: 12072 };
+            }
+            let nowDiamond = user.diamond + parseInt(addDiamond, 0);
+            let result = await tbl_user.update({ diamond: nowDiamond, share_time: new Date() }, { where: { userid: userId } });
+            if (result[0] === 0) {
+                return { code: 12072 };
+            }
+            await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.diamond}`, `${nowDiamond}`);
+            return { code: 0, diamond: nowDiamond };
+        } else { // 首次分享
+            let addDiamond = await Base.getDefaultValueByKey({ key: DataBaseFields.FirstShareAddGemsNum });
+            if (!addDiamond) {
+                return { code: 12072 };
+            }
+            let nowDiamond = user.diamond + parseInt(addDiamond, 0);
+            let result = await tbl_user.update({ diamond: nowDiamond, first_share: false, share_time: new Date() }, { where: { userid: userId } });
+            if (result[0] === 0) {
+                return { code: 12072 };
+            }
+            await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.diamond}`, `${nowDiamond}`);
+            return { code: 0, diamond: nowDiamond };
+        }
+    }
 }

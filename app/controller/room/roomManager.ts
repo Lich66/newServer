@@ -109,7 +109,7 @@ export class RoomManager {
                         userNick: user.usernick,
                         image: user.image,
                         score: user.score,
-                        seatNum: roomUsers[key]
+                        seatNum: parseInt(roomUsers[key], 0)
                     });
                 } else {
                     onlookerList.push({

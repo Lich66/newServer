@@ -68,7 +68,7 @@ export class tbl_user extends Model<tbl_user> {
     comment: '最后登陆时间'
   })
   public logintime: Date;
-
+  @Default(true)
   @Column({
     comment: '首冲标识'
   })
@@ -78,7 +78,7 @@ export class tbl_user extends Model<tbl_user> {
     comment: '推广员标识'
   })
   public generalize: number;
-
+  @Default(true)
   @Column({
     comment: '首次分享标识'
   })
