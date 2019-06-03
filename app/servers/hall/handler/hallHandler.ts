@@ -171,13 +171,34 @@ export class HallHandler {
     }
 
     /**
+     * 分享前获取信息
+     * @param obj xx
+     * @param session session
+     */
+    public async getShareData(obj: any, session: BackendSession) {
+        let userId: number = parseInt(session.uid, 0);
+        let result = await Hall.shareGame(userId);
+        return result;
+    }
+
+    /**
      * 分享游戏
      * @param obj xx
      * @param session session
      */
     public async shareGame(obj: any, session: BackendSession) {
-        let userId: number = parseInt(session.uid, 0);
-        let result = Hall.shareGame(userId);
+        let result = await Hall.getShareData();
         return result;
+    }
+
+    /**
+     * 获取公告内容
+     * @param obj xx
+     * @param session session
+     */
+    public async getNotice(obj: any, session: BackendSession) {
+        console.log('进大厅了');
+        let result = await Hall.getNotice();
+        return { code: 0, data: result };
     }
 }
