@@ -4,6 +4,7 @@ import { RoomManager } from '../../../controller/room/roomManager';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/hallInterface';
+import { RoomGame } from '../../../util/roomGame';
 
 export default function (app: Application) {
     return new RoomHandler(app);
@@ -18,6 +19,10 @@ export class RoomHandler {
         // this.channelService = app.get('channelService');
         // this.sessionServices = app.get('sessionService');
         this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
+    }
+
+    public getGlobalChannelServiceStatus(): GlobalChannelServiceStatus {
+        return this.globalChannelStatus;
     }
 
     /**
@@ -200,14 +205,25 @@ export class RoomHandler {
             return { code: result.code };
         }
         await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${result.roomId}`);
-        if (result.startFlag) {
+        if (result.room) {
             // todo 开始游戏
+            let game = new RoomGame(result.room, this);
         }
         return { code: 0 };
     }
 
+    /**
+     * 开始游戏
+     * @param obj xx
+     * @param session session
+     */
     public async start(obj: any, session: BackendSession) {
-        
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.start(userId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        let game = new RoomGame(result.room, this);
     }
 
 }

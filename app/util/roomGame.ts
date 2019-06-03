@@ -1,9 +1,9 @@
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
-import { ClubRoomState } from '../controller/redis/clubRoomState/clubRoomState';
-import { gameChannelKeyPrefix } from '../gameConfig/nameSpace';
+import { redisClient } from '../db/redis';
+import { gameChannelKeyPrefix, redisKeyPrefix } from '../gameConfig/nameSpace';
 import socketRouter from '../gameConfig/socketRouterConfig';
-import { ITbl_room } from '../interface/models/tbl_room';
-import { Handler } from '../servers/clubRoom/handler/clubRoomHandler';
+import { IRoomRedis } from '../interface/room/roomInterfaces';
+import { RoomHandler } from '../servers/Room/handler/RoomHandler';
 import { Pokers } from './poker';
 
 
@@ -17,12 +17,10 @@ const entireTime = 45000;
 export class RoomGame {
 
     private timer: NodeJS.Timer;
-    // clubid
-    private clubid: number;
     // roomid
     private roomid: number;
     // 房间的信息
-    private clubroom: ITbl_room;
+    private room: IRoomRedis;
     // 哪个阶段
     /**
      * -1:未开始
@@ -50,12 +48,11 @@ export class RoomGame {
     private betJson: { [key: number]: number };
     // 频道
     private globalChannelStatus: GlobalChannelServiceStatus;
-    public constructor(clubroom: ITbl_room, handler: Handler, clubid: number, roomid: number) {
-        this.clubroom = clubroom;
-        this.roomid = roomid;
-        this.clubid = clubid;
+    public constructor(room: IRoomRedis, handler: RoomHandler) {
+        this.room = room;
+        this.roomid = parseInt(room.roomId, 0);
         this.globalChannelStatus = handler.getGlobalChannelServiceStatus();
-        this.round = clubroom.round;
+        this.round = parseInt(room.round, 0);
         this.step = 0;
     }
     public start() {
@@ -90,7 +87,7 @@ export class RoomGame {
         this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1 }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
         // 掏出一副牌
         const pokers = new Pokers();
-        this.players = await ClubRoomState.getClubRoomAllChairsState({ clubid: this.clubid, roomid: this.roomid });
+        this.players = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.roomUsers}`);
         // 玩家数量
         let ulength = 0;
         for (const key in this.players) {
