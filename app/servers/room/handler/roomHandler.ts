@@ -223,6 +223,7 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
+        // todo 开始游戏
         let game = new RoomGame(result.room, this);
     }
 
