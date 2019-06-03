@@ -1,3 +1,4 @@
+import * as Sequelize from 'sequelize';
 import { Transaction } from 'sequelize/types';
 import { redisClient } from '../../db/redis';
 import { sequelize } from '../../db/sequelize';
@@ -6,6 +7,7 @@ import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { userConfig } from '../../gameConfig/userConfig';
 import { ITbl_signIn } from '../../interface/models/tbl_signin';
 import { tbl_agent } from '../../models/tbl_agent';
+import { tbl_notice } from '../../models/tbl_notice';
 import { tbl_realinfo } from '../../models/tbl_realinfo';
 import { tbl_share } from '../../models/tbl_share';
 import { tbl_signin } from '../../models/tbl_signin';
@@ -13,6 +15,7 @@ import { tbl_user } from '../../models/tbl_user';
 import { SelfUtils } from '../../util/selfUtils';
 import { Base } from '../base/base';
 import { User } from '../user/user';
+const Op = Sequelize.Op;
 
 export class Hall {
     /**
@@ -247,5 +250,31 @@ export class Hall {
             await redisClient.hsetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.diamond}`, `${nowDiamond}`);
             return { code: 0, diamond: nowDiamond };
         }
+    }
+
+    /**
+     * 获取公告逻辑
+     */
+    public static async getNotice() {
+        console.log('进来查询了');
+        let nowDate = new Date();
+        let result = await tbl_notice.findAll({
+            where: {
+                notice_start_time: { [Op.lte]: nowDate },
+                notice_end_time: { [Op.gte]: nowDate }
+            }
+        });
+        // console.log('获取到的系统公告信息: ' + JSON.stringify(result));
+        let data = [];
+        for (const iterator of result) {
+            let notify = {
+                NoticeType: iterator.notice_type,
+                NoticeTitle: iterator.notice_title,
+                Value: iterator.value
+            };
+            data.push(notify);
+        }
+        // console.log('整理后的系统信息: ' + JSON.stringify(data));
+        return data;
     }
 }
