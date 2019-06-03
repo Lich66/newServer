@@ -194,10 +194,11 @@ export class Hall {
         if (!result || !result[0]) {
             return { code: 12141 };
         }
+        console.log('获取到分享前信息为: ' + JSON.stringify(result));
         let photoUrl = result[0].photo_url;
         let photoPosition = JSON.parse(result[0].photo_position);
         let photoSize = JSON.parse(result[0].photo_size);
-        let codePosition = JSON.stringify(result[0].code_position);
+        let codePosition = JSON.parse(result[0].code_position);
         return {
             code: 0, data: {
                 photoUrl,
