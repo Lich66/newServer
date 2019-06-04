@@ -225,5 +225,13 @@ export class ReckonPoker {
     }
 
     // 同花顺>五小牛>炸弹牛>四十牛>葫芦牛>同花牛>顺子牛>牛牛>牛九>牛八>牛七>牛六>牛五>牛四>牛三>牛二>牛一>无牛
+    /**
+     * 普通牛判断逻辑
+     * @param cardList 排序过后的玩家的手牌
+     * @return 牛几:number
+     */
+    public static whichBull(cardList: number[][]): number {
 
+        return 0;
+    }
 }
