@@ -3,7 +3,7 @@ const num12 = 12;
 const num13 = 13;
 export class Pokers {
     private pokers = [
-        [1, 1],
+        [1, 1],     // 方片
         [1, 2],
         [1, 3],
         [1, 4],
@@ -16,7 +16,7 @@ export class Pokers {
         [1, num11],
         [1, num12],
         [1, num13],
-        [2, 1],
+        [2, 1],     // 梅花
         [2, 2],
         [2, 3],
         [2, 4],
@@ -29,7 +29,7 @@ export class Pokers {
         [2, num11],
         [2, num12],
         [2, num13],
-        [3, 1],
+        [3, 1],     // 红桃
         [3, 2],
         [3, 3],
         [3, 4],
@@ -42,7 +42,7 @@ export class Pokers {
         [3, num11],
         [3, num12],
         [3, num13],
-        [4, 1],
+        [4, 1],     // 黑桃
         [4, 2],
         [4, 3],
         [4, 4],
@@ -55,8 +55,8 @@ export class Pokers {
         [4, num11],
         [4, num12],
         [4, num13],
-        [5, 1],
-        [5, 2]
+        [5, 0], // 小王
+        [6, 0]  // 大王
     ];
     public constructor() {
         const MAXINDEX = 53;
@@ -83,7 +83,7 @@ export class Pokers {
     }
     public lpopWhitoutJoker(): number[] {
         const poker = this.pokers[0];
-        if (poker[0][0] == 5) {
+        if (poker[0][1] == 0) {
             const random = Number.parseInt((Math.random() * (this.pokers.length - 1 - 1)).toFixed(0), 0) + 1;
             this.pokers[0][0] = this.pokers[0][0] + this.pokers[random][0];
             this.pokers[random][0] = this.pokers[0][0] - this.pokers[random][0];

@@ -133,7 +133,6 @@ export class RoomGame {
         }, grabBankerTime);
     }
     public setBet() {
-
         // 下注之前决定谁是庄家
         const values = Object.values(this.bankerJSON);
         const bankerList = [];

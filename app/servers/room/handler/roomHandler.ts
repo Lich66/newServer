@@ -208,6 +208,8 @@ export class RoomHandler {
         if (result.room) {
             // todo 开始游戏
             let game = new RoomGame(result.room, this);
+            this.app.set(`${gameChannelKeyPrefix.roomGame}${result.roomId}`, game);
+            game.start();
         }
         return { code: 0 };
     }
@@ -225,6 +227,8 @@ export class RoomHandler {
         }
         // todo 开始游戏
         let game = new RoomGame(result.room, this);
+        this.app.set(`${gameChannelKeyPrefix.roomGame}${result.room.roomId}`, game);
+        game.start();
     }
 
 }
