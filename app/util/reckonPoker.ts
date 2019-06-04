@@ -231,7 +231,54 @@ export class ReckonPoker {
      * @return 牛几:number
      */
     public static whichBull(cardList: number[][]): number {
-
+        // 两个癞子
+        if (cardList[1][1] === 0) {
+            return 10;
+        }
+        // 一个癞子
+        if (cardList[0][1] === 0) {
+            // 两张10以上
+            if (cardList[3][1] >= 10) {
+                return 10;
+            }
+            // 一张10以上
+            if (cardList[4][1] >= 10) {
+                return cardList[2][1] + cardList[3][1];
+            }
+            // 零张10以上
+            return cardList[3][1] + cardList[4][1];
+        }
+        // 零个癞子 任意两张的余数等于总余数，即为牛几；不等即为无牛
+        let residue = 0;    // 余数
+        let len = cardList.length;
+        for (let i = 0; i < len; i++) {
+            if (cardList[i][1] > 10) {
+                residue += 10;
+                continue;
+            }
+            residue += cardList[i][1];
+        }
+        residue %= 10;
+        for (let i = 0; i < len - 1; i++) {
+            for (let j = i + 1; j < len; j++) {
+                let cardValue1 = cardList[i][1];
+                if (cardList[i][1] > 10) {
+                    cardValue1 -= 10;
+                }
+                let cardValue2 = cardList[j][1];
+                if (cardList[j][1] > 10) {
+                    cardValue2 -= 10;
+                }
+                if ((cardValue1 + cardValue2) % 10 === residue) {
+                    if (residue === 0) {
+                        return 10;
+                    } else {
+                        return residue;
+                    }
+                }
+            }
+        }
+        return 0;
         return 0;
     }
 }
