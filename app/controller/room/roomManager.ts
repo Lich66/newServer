@@ -151,6 +151,46 @@ export class RoomManager {
     }
 
     /**
+     * 坐下玩家判断逻辑
+     * @param userId 发送者id
+     */
+    public static async isSittingUser(userId: number) {
+        let roomId = await redisClient.hgetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+        if (!roomId) {
+            return { flag: false, code: 13002 };
+        }
+        let seatNum = await redisClient.hgetAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.roomUsers}`, `${userId}`);
+        if (!seatNum) {
+            return { flag: false, code: 13001 };
+        }
+        if (seatNum === '-1') {
+            return { flag: false, code: 13047 };
+        }
+        return { flag: true, roomId };
+    }
+
+    /**
+     * 发送道具判断逻辑
+     * @param userId 发送者id
+     * @param receiverId 接收者id
+     */
+    public static async stageProperty(userId: number, receiverId: number) {
+        let result1 = await RoomManager.isSittingUser(userId);
+        if (!result1.flag) {
+            return result1;
+        }
+        let itemUse = await redisClient.hgetAsync(`${redisKeyPrefix.room}${result1.roomId}`, `${RoomFields.itemUse}`);
+        if (!!itemUse && itemUse === '1') {
+            return { flag: false, code: 13043 };
+        }
+        let result2 = await RoomManager.isSittingUser(receiverId);
+        if (!result2.flag) {
+            return result2;
+        }
+        return { flag: true, roomId: result1.roomId };
+    }
+
+    /**
      * 离开房间逻辑
      * @param userId 离开者id 
      * @param roomId 离开房间id

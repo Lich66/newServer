@@ -176,6 +176,10 @@ export class ReckonPoker {
                 return false;
             }
         }
+        if (keys.length === 1 && map[keys[0]] === 4) {
+            console.log('葫芦牛: 非癞子牌种类=1,没有对子(1:4),不能构成葫芦牛');
+            return false;
+        }
         return true;
     }
 
