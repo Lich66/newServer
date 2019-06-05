@@ -139,7 +139,7 @@ export class RoomHandler {
 
     /**
      * 表情聊天
-     * @param msg 语音内容,时长
+     * @param msg 表情索引
      * @param session session
      */
     public async faceChat(msg: { faceNum: number }, session: BackendSession) {
@@ -155,7 +155,7 @@ export class RoomHandler {
 
     /**
      * 快捷语聊天
-     * @param msg 语音内容,时长
+     * @param msg 快捷语索引
      * @param session session
      */
     public async wordChat(msg: { wordNum: number }, session: BackendSession) {
@@ -171,7 +171,7 @@ export class RoomHandler {
 
     /**
      * 发送道具
-     * @param msg 语音内容,时长
+     * @param msg 道具索引,接收者id
      * @param session session
      */
     public async stageProperty(msg: { stagePropertyNum: number; receiverId: number }, session: BackendSession) {

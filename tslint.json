@@ -5,6 +5,7 @@
     ],
     "jsRules": {},
     "rules": {
+        "cyclomatic-complexity":false,
         "linebreak-style":false,  // 不规定是lf 还是crlf
         "no-parameter-properties":false, // 禁止给类的构造函数的参数添加修饰符
         "triple-equals":false,
