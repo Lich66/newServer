@@ -43,7 +43,8 @@ export const gameChannelKeyPrefix = {
     club_room_game: 'club_room_game_',
     club: 'club_',
     clubRoom: ':clubRoom_',
-    room: 'room_'
+    room: 'room_',
+    roomGame: 'room_game'
 };
 
 /**

@@ -4,6 +4,7 @@ import { RoomManager } from '../../../controller/room/roomManager';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
 import { ICreateRoomRequest, IJoinRoomRequest } from '../../../interface/hall/hallInterface';
+import { RoomGame } from '../../../util/roomGame';
 
 export default function (app: Application) {
     return new RoomHandler(app);
@@ -18,6 +19,10 @@ export class RoomHandler {
         // this.channelService = app.get('channelService');
         // this.sessionServices = app.get('sessionService');
         this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
+    }
+
+    public getGlobalChannelServiceStatus(): GlobalChannelServiceStatus {
+        return this.globalChannelStatus;
     }
 
     /**
@@ -117,6 +122,71 @@ export class RoomHandler {
     }
 
     /**
+     * 语音聊天
+     * @param msg 语音内容,时长
+     * @param session session
+     */
+    public async voiceChat(msg: { voiceMsg: string; time: number }, session: BackendSession) {
+        console.log('大厅服务器收到语音聊天消息:' + JSON.stringify(msg));
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.isSittingUser(userId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onVoiceChat}`, { userId, time: msg.time, voiceMsg: msg.voiceMsg }, `${gameChannelKeyPrefix.room}${result.roomId}`);
+        return { code: 0 };
+    }
+
+    /**
+     * 表情聊天
+     * @param msg 语音内容,时长
+     * @param session session
+     */
+    public async faceChat(msg: { faceNum: number }, session: BackendSession) {
+        console.log('大厅服务器收到表情聊天消息:' + JSON.stringify(msg));
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.isSittingUser(userId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onFaceChat}`, { userId, faceNum: msg.faceNum }, `${gameChannelKeyPrefix.room}${result.roomId}`);
+        return { code: 0 };
+    }
+
+    /**
+     * 快捷语聊天
+     * @param msg 语音内容,时长
+     * @param session session
+     */
+    public async wordChat(msg: { wordNum: number }, session: BackendSession) {
+        console.log('大厅服务器收到快捷语聊天消息:' + JSON.stringify(msg));
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.isSittingUser(userId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onWordChat}`, { userId, wordNum: msg.wordNum }, `${gameChannelKeyPrefix.room}${result.roomId}`);
+        return { code: 0 };
+    }
+
+    /**
+     * 发送道具
+     * @param msg 语音内容,时长
+     * @param session session
+     */
+    public async stageProperty(msg: { stagePropertyNum: number; receiverId: number }, session: BackendSession) {
+        console.log('大厅服务器收到发送道具消息:' + JSON.stringify(msg));
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.stageProperty(userId, msg.receiverId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStageProperty}`, { senderId: userId, receiverId: msg.receiverId, stagePropertyNum: msg.stagePropertyNum }, `${gameChannelKeyPrefix.room}${result.roomId}`);
+        return { code: 0 };
+    }
+
+
+    /**
      * 离开房间
      * @param obj  xx
      * @param session   session 
@@ -200,14 +270,30 @@ export class RoomHandler {
             return { code: result.code };
         }
         await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${result.roomId}`);
-        if (result.startFlag) {
+        if (result.room) {
             // todo 开始游戏
+            let game = new RoomGame(result.room, this);
+            this.app.set(`${gameChannelKeyPrefix.roomGame}${result.roomId}`, game);
+            game.start();
         }
         return { code: 0 };
     }
 
+    /**
+     * 开始游戏
+     * @param obj xx
+     * @param session session
+     */
     public async start(obj: any, session: BackendSession) {
-        
+        let userId: number = parseInt(session.uid, 0);
+        let result = await RoomManager.start(userId);
+        if (!result.flag) {
+            return { code: result.code };
+        }
+        // todo 开始游戏
+        let game = new RoomGame(result.room, this);
+        this.app.set(`${gameChannelKeyPrefix.roomGame}${result.room.roomId}`, game);
+        game.start();
     }
 
 }
