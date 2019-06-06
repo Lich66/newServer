@@ -7,7 +7,7 @@ export const sequelize: Sequelize = new Sequelize({
     // operatorsAliases: true,
     host: '192.168.1.21',
     port: 3356,
-    database: 'magnate',
+    database: 'chessdb',
     dialect: 'mysql',
     username: 'root',
     password: '123456',

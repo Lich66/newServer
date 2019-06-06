@@ -105,4 +105,29 @@ export class SelfUtils {
         }
         return true;
     }
+
+    /**
+     *
+     * 模拟延迟
+     */
+    public static async  timeout() {
+        const time = 5000;
+        return new Promise(function (resolve, reject) {
+            // ... some code
+
+            if (true) {
+                setTimeout(() => {
+                    resolve(true);
+                }, time);
+
+            } else {
+            }
+        });
+    }
+
+    public static async createHash(hashLength: number) {
+        // 范围
+        const r = 36;
+        return Array.from(Array(hashLength), () => Math.floor(Math.random() * r).toString(r)).join('');
+    }
 }

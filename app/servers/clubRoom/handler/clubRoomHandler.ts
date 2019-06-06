@@ -306,7 +306,7 @@ export class Handler {
                 const element = clubChannel[key];
                 const ishas = element[`${gameChannelKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
                 if (!ishas) {
-                    this.globalChannelStatus.add(`${session.uid}`, key, `${gameChannelKeyPrefix.club}${clubid}`);
+                    this.globalChannelStatus.leave(session.uid, key, `${gameChannelKeyPrefix.club}${clubid}`);
                 }
             }
         }
@@ -358,6 +358,17 @@ export class Handler {
                 const ishas = element[`${gameChannelKeyPrefix.clubRoom}${roomid}`].includes(`${session.uid}`);
                 if (ishas) {
                     this.globalChannelStatus.leave(`${session.uid}`, key, `${gameChannelKeyPrefix.clubRoom}${roomid}`);
+                }
+            }
+        }
+        const clubchannels = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.club}${clubid}`);
+
+        for (const key in clubchannels) {
+            if (clubchannels.hasOwnProperty(key)) {
+                const element = clubchannels[key];
+                const ishas = element[`${gameChannelKeyPrefix.club}${clubid}`].includes(`${session.uid}`);
+                if (!ishas) {
+                    this.globalChannelStatus.add(`${session.uid}`, key, `${gameChannelKeyPrefix.club}${clubid}`);
                 }
             }
         }
