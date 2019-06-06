@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AutoIncrement, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const STRING64 = 64;
 @Table({ timestamps: false })
@@ -25,4 +25,9 @@ export class tbl_account extends Model<tbl_account> {
   @Column({ type: DataType.STRING(STRING64) })
   public password: string;
 
+  @Default(new Date('2019-1-1'))
+  @Column({
+    comment: '解除封号时间'
+  })
+  public unsealtime: Date;
 }

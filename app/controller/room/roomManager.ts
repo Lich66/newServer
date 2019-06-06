@@ -151,6 +151,46 @@ export class RoomManager {
     }
 
     /**
+     * 坐下玩家判断逻辑
+     * @param userId 发送者id
+     */
+    public static async isSittingUser(userId: number) {
+        let roomId = await redisClient.hgetAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
+        if (!roomId) {
+            return { flag: false, code: 13002 };
+        }
+        let seatNum = await redisClient.hgetAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.roomUsers}`, `${userId}`);
+        if (!seatNum) {
+            return { flag: false, code: 13001 };
+        }
+        if (seatNum === '-1') {
+            return { flag: false, code: 13047 };
+        }
+        return { flag: true, roomId };
+    }
+
+    /**
+     * 发送道具判断逻辑
+     * @param userId 发送者id
+     * @param receiverId 接收者id
+     */
+    public static async stageProperty(userId: number, receiverId: number) {
+        let result1 = await RoomManager.isSittingUser(userId);
+        if (!result1.flag) {
+            return result1;
+        }
+        let itemUse = await redisClient.hgetAsync(`${redisKeyPrefix.room}${result1.roomId}`, `${RoomFields.itemUse}`);
+        if (!!itemUse && itemUse === '1') {
+            return { flag: false, code: 13043 };
+        }
+        let result2 = await RoomManager.isSittingUser(receiverId);
+        if (!result2.flag) {
+            return result2;
+        }
+        return { flag: true, roomId: result1.roomId };
+    }
+
+    /**
      * 离开房间逻辑
      * @param userId 离开者id 
      * @param roomId 离开房间id
@@ -354,6 +394,57 @@ export class RoomManager {
             score: 0,
             seatNum
         };
-        return { flag: true, roomId, userData, startFlag };
+        if (startFlag) {
+            return { flag: true, roomId, userData, room };
+        }
+        return { flag: true, roomId, userData };
+    }
+
+    /**
+     * 开始游戏判断逻辑
+     * @param userId 开始游戏玩家id
+     */
+    public static async start(userId: number) {
+        let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${userId}`);
+        // 玩家是否存在
+        if (!user) {
+            return { flag: false, code: 11005 };
+        }
+        let roomId = user.roomId;
+        let room = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}`);
+        // 房间是否存在
+        if (!room) {
+            return { flag: false, code: 13001 };
+        }
+        // 开始类型不为'房主开始'和'首位开始'时,不可能触发点击开始游戏
+        if (room.startType !== '0' && room.startType !== '2') {
+            return { flag: false, code: 13052 };
+        }
+        let users = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.roomUsers}`);
+        let usersNum = 0;
+        let firstUser = '';
+        for (const key in users) {
+            if (users.hasOwnProperty(key)) {
+                if (users[key] !== '-1') {
+                    usersNum++;
+                }
+                if (usersNum === 1) {
+                    firstUser = key;
+                }
+            }
+        }
+        // 准备人数不满2人,不能开始
+        if (usersNum < 2) {
+            return { flag: false, code: 13056 };
+        }
+        // '房主开始',玩家不为房主
+        if (room.startType === '2' && `${userId}` !== room.creatorId) {
+            return { flag: false, code: 13052 };
+        }
+        // '首位开始',玩家不为首位玩家或房主
+        if (room.startType === '0' && `${userId}` !== room.creatorId || `${userId}` !== firstUser) {
+            return { flag: false, code: 13052 };
+        }
+        return { flag: true, room };
     }
 }

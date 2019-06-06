@@ -28,3 +28,35 @@ export interface IRoomConfig {
     doubleFlag: boolean;
     laiziType: number;
 }
+
+export interface IRoomRedis {
+    'sid'?: string;
+    'state'?: string;  // 0:未开始;1:开始
+    'roomConfig'?: string;
+    'roomId'?: string;
+    'creatorId'?: string;
+    'createTime'?: string;
+    'playType'?: string;
+    'playerNum'?: string;
+    'basePoint'?: string;
+    'round'?: string;
+    'payType'?: string;
+    'startType'?: string;
+    'bolusType'?: string;
+    'maxBankerBet'?: string;
+    'doubleRule'?: string;
+    'allContrastPlay'?: string;
+    'takeTurnsPlay'?: string;
+    'upBankerScore'?: string;
+    'specialCard'?: string;
+    'fastFlag'?: string;
+    'halfWayAdd'?: string;
+    'rubbingFlag'?: string;
+    'itemUse'?: string;
+    'buyCode'?: string;
+    'bolusLimit'?: string;
+    'grabFlag'?: string;
+    'doubleFlag'?: string;
+    'laiziType'?: string;
+    [key: string]: string;
+}

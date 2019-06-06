@@ -171,7 +171,7 @@ export class tbl_club extends Model<tbl_club> {
     })
     public integral_flag: boolean;
 
-    @Default(false)
+    @Default(true)
     @Column({
         comment: '打烊标志'
     })
