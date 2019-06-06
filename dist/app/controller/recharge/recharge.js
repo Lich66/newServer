@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Bullfight_Shop_1 = require("../../models/Bullfight_Shop");
-const tbl_rechargeLog_1 = require("../../models/tbl_rechargeLog");
+const tbl_rechargelog_1 = require("../../models/tbl_rechargelog");
 const tbl_user_1 = require("../../models/tbl_user");
 const selfUtils_1 = require("../../util/selfUtils");
 class Recharge {
@@ -19,7 +19,7 @@ class Recharge {
             const data = await Bullfight_Shop_1.Bullfight_Shop.findOne({ where: { Money: money } });
             const diamond = data.Diamond;
             const extra = data.Extra;
-            await tbl_rechargeLog_1.tbl_rechargelog.create({
+            await tbl_rechargelog_1.tbl_rechargelog.create({
                 oderid,
                 userid: json.userid,
                 money,
