@@ -2,7 +2,6 @@ import { Application, BackendSession } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { Club } from '../../../controller/club/club';
 import { ClubUser } from '../../../controller/clubUsers/clubUsers';
-import { ClubRoomList } from '../../../controller/redis/clubRoomList/clubRoomList';
 import { User } from '../../../controller/user/user';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
 import socketRouter from '../../../gameConfig/socketRouterConfig';
@@ -39,6 +38,7 @@ export class Handler {
             };
         }
         const json: IClubRequest = await GameUitl.parsePlayConfig(clubinfo.config);
+        json.config_str = clubinfo.config.toString();
         let result = await Club.createClub({ ...json, uid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
@@ -47,7 +47,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14001
+                code: 140100
             };
         }
     }
@@ -66,7 +66,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14002
+                code: 140200
             };
         }
     }
@@ -91,14 +91,14 @@ export class Handler {
                 return null;
         }
         let result = await Club.updateClub({ clubid: clubinfo.clubid, uid: Number.parseInt(session.uid, 0) }, njson);
-        if (result) {
+        if (typeof result != 'number') {
             return {
                 code: 0,
                 data: result
             };
         } else {
             return {
-                code: 14003
+                code: 140300
             };
         }
     }
@@ -118,7 +118,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14004
+                code: 140400
             };
         }
     }
@@ -133,7 +133,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14004
+                code: 140400
             };
         }
     }
@@ -151,13 +151,13 @@ export class Handler {
         const club = await Club.getClub({ clubid: clubrpc.clubid, uid: Number.parseInt(session.uid, 0) });
         if (!club) {
             return {
-                code: 14005
+                code: 140500
             };
         }
         const clubUser = await ClubUser.findClubUser({ clubid: clubrpc.clubid, userid: Number.parseInt(session.uid, 0) });
         if (!clubUser) {
             return {
-                code: 14006
+                code: 140501
             };
         }
         // 某对象的整体事件
@@ -233,7 +233,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14007
+                code: 140700
             };
         }
     }
@@ -248,7 +248,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14008
+                code: 140800
             };
         }
     }
@@ -258,7 +258,7 @@ export class Handler {
         const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
         if (clubList.length == 0) {
             return {
-                code: 14009
+                code: 140900
             };
         }
         let result = await ClubUser.updateClubUser({ clubid, userid: clubinfo.uid }, { points: clubinfo.points });
@@ -269,7 +269,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14010
+                code: 140901
             };
         }
     }
@@ -279,7 +279,7 @@ export class Handler {
         const clubList = await Club.getAllClub({ clubid, uid: Number.parseInt(session.uid, 0) });
         if (clubList.length == 0) {
             return {
-                code: 14011
+                code: 141000
             };
         }
         let result = await ClubUser.deleteClubUser({ clubid, userid: clubinfo.uid });
@@ -290,7 +290,7 @@ export class Handler {
             };
         } else {
             return {
-                code: 14012
+                code: 141001
             };
         }
     }

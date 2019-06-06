@@ -119,11 +119,31 @@ export class Club {
             return null;
         }
     }
-    public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club> {
-        const clubList = await tbl_club.findAll({ where: { clubid: ojson.clubid, uid: ojson.uid } });
-        if (clubList.length == 0) {
-            return null;
+    public static async updateClub(ojson: IClubRequest, njson: IClubRequest): Promise<tbl_club | number> {
+        const clubid = ojson.clubid;
+        const uid = ojson.uid;
+        const clubnumber = await tbl_club.count({ where: { clubid, uid } });
+        const noClubCode = 140300;
+        if (clubnumber == 0) {
+            return noClubCode;
         }
+
+        const roomIdList = await ClubRoomList.getClubRoomList({ clubid });
+        for (const iterator of roomIdList) {
+            const json: any = {};
+            json.roomid = iterator;
+            json.userlist = {};
+            // const state = await redisClient.hgetallAsync(`${redisKeyPrefix.clubRoom}${iterator}`);
+            const state = await ClubRoomState.getClubRoomAllUsersState({ clubid, roomid: Number.parseInt(iterator, 0) });
+            for (const key in state) {
+                if (state.hasOwnProperty(key)) {
+                    const hasUser = 140301;
+                    return hasUser;
+                }
+            }
+        }
+
+
         let res: [number, number];
         try {
             sequelize.transaction(async (t) => {

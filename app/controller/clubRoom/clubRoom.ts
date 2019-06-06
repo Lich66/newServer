@@ -16,7 +16,7 @@ export class ClubRoom {
     }
     // 好像房间也不能改
     public static async updateClubRoom(ojson: IClubRoomCRUD, njson: IClubRoomRequest): Promise<tbl_room> {
-        let result = await tbl_room.update<ITbl_room>(njson, { where: { roomid: ojson.roomid, clubid: ojson.clubid } });
+        let result = await tbl_room.update<tbl_room>(njson, { where: { roomid: ojson.roomid, clubid: ojson.clubid } });
         // let club = ;
         return result[1][0];
     }

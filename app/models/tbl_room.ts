@@ -144,4 +144,9 @@ export class tbl_room extends Model<tbl_room> {
     })
     public laizi_type: number;
 
+    @Column({
+        comment: '基本配置数组'
+    })
+    public config_str: string;
+
 }
