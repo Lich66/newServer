@@ -7,7 +7,7 @@ exports.sequelize = new sequelize_typescript_1.Sequelize({
     // operatorsAliases: true,
     host: '192.168.1.21',
     port: 3356,
-    database: 'chessdb',
+    database: 'magante',
     dialect: 'mysql',
     username: 'root',
     password: '123456',
