@@ -132,9 +132,9 @@ export class Hall {
             return { code: 12022 };
         }
         // todo 判断是否已绑定
-        let realInfo = await tbl_realinfo.findOne({ where: { userid: userId } });
-        if (realInfo && realInfo.realname) {
-            return { code: 12024, data: { realName: realInfo.realname, idNum: realInfo.idnum } };
+        let realInfo = await tbl_realinfo.findOrCreate({ where: { userid: userId } });
+        if (!realInfo[1]) {
+            return { code: 12024, data: { realName: realInfo[0].realname, idNum: realInfo[0].idnum } };
         }
         let result = await tbl_realinfo.update({ realname: realName, idnum: idNum }, { where: { userid: userId } });
         console.log('从数据库获取的玩家实名信息为：' + JSON.stringify(result));

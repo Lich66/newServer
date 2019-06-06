@@ -1,3 +1,11 @@
+const num11 = 11;
+const num12 = 12;
+const num13 = 13;
+const num14 = 14;
+const num15 = 15;
+const num16 = 16;
+const num17 = 17;
+const num18 = 18;
 const num20 = 20;
 const num30 = 30;
 const num40 = 40;
@@ -201,6 +209,21 @@ export class ReckonPoker {
     }
 
     /**
+     * 五花牛逻辑判断
+     * 5张都是10及10以上
+     * @param cardList 排序过后的玩家的手牌
+     */
+    public static fiveFlowerBull(cardList: number[][]): boolean {
+        let len = cardList.length;
+        for (let i = 0; i < len; i++) {
+            if (cardList[i][1] !== 0 && cardList[i][1] < 10) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * 顺子牛判断逻辑
      * 顺子
      * @param cardList 排序过后的玩家的手牌
@@ -228,7 +251,6 @@ export class ReckonPoker {
         return true;
     }
 
-    // 同花顺>五小牛>炸弹牛>四十牛>葫芦牛>同花牛>顺子牛>牛牛>牛九>牛八>牛七>牛六>牛五>牛四>牛三>牛二>牛一>无牛
     /**
      * 普通牛判断逻辑
      * @param cardList 排序过后的玩家的手牌
@@ -239,50 +261,139 @@ export class ReckonPoker {
         if (cardList[1][1] === 0) {
             return 10;
         }
+        let len = cardList.length;
         // 一个癞子
         if (cardList[0][1] === 0) {
-            // 两张10以上
-            if (cardList[3][1] >= 10) {
-                return 10;
-            }
-            // 一张10以上
-            if (cardList[4][1] >= 10) {
-                return cardList[2][1] + cardList[3][1];
-            }
-            // 零张10以上
-            return cardList[3][1] + cardList[4][1];
-        }
-        // 零个癞子 任意两张的余数等于总余数，即为牛几；不等即为无牛
-        let residue = 0;    // 余数
-        let len = cardList.length;
-        for (let i = 0; i < len; i++) {
-            if (cardList[i][1] > 10) {
-                residue += 10;
-                continue;
-            }
-            residue += cardList[i][1];
-        }
-        residue %= 10;
-        for (let i = 0; i < len - 1; i++) {
-            for (let j = i + 1; j < len; j++) {
-                let cardValue1 = cardList[i][1];
-                if (cardList[i][1] > 10) {
-                    cardValue1 -= 10;
+            // 任意三张非癞子牌为10的倍数,则为牛牛
+            for (let x = 1; x < len - 2; x++) {
+                for (let y = x + 1; y < len - 1; y++) {
+                    for (let z = y + 1; z < len; z++) {
+                        let cardValue1 = cardList[x][1];
+                        if (cardList[x][1] > 10) {
+                            cardValue1 = 10;
+                        }
+                        let cardValue2 = cardList[y][1];
+                        if (cardList[y][1] > 10) {
+                            cardValue2 = 10;
+                        }
+                        let cardValue3 = cardList[z][1];
+                        if (cardList[z][1] > 10) {
+                            cardValue2 = 10;
+                        }
+                        if ((cardValue1 + cardValue2 + cardValue3) % 10 === 0) {
+                            return 10;
+                        }
+                    }
                 }
-                let cardValue2 = cardList[j][1];
-                if (cardList[j][1] > 10) {
-                    cardValue2 -= 10;
+            }
+            // 任意最大的两张非癞子牌,即为牛几
+            let max = 0;
+            for (let i = 1; i < len - 1; i++) {
+                for (let j = i + 1; j < len; j++) {
+                    let cardValue1 = cardList[i][1];
+                    if (cardList[i][1] > 10) {
+                        cardValue1 = 10;
+                    }
+                    let cardValue2 = cardList[j][1];
+                    if (cardList[j][1] > 10) {
+                        cardValue2 = 10;
+                    }
+                    if ((cardValue1 + cardValue2) > max) {
+                        max = cardValue1 + cardValue2;
+                    }
                 }
-                if ((cardValue1 + cardValue2) % 10 === residue) {
-                    if (residue === 0) {
-                        return 10;
-                    } else {
+            }
+            return max;
+        }
+        // 零个癞子 任意三张牌为10的倍数,总点数%10即为牛几
+        for (let x = 0; x < len - 2; x++) {
+            for (let y = x + 1; y < len - 1; y++) {
+                for (let z = y + 1; z < len; z++) {
+                    let cardValue1 = cardList[x][1];
+                    if (cardList[x][1] > 10) {
+                        cardValue1 = 10;
+                    }
+                    let cardValue2 = cardList[y][1];
+                    if (cardList[y][1] > 10) {
+                        cardValue2 = 10;
+                    }
+                    let cardValue3 = cardList[z][1];
+                    if (cardList[z][1] > 10) {
+                        cardValue2 = 10;
+                    }
+                    if ((cardValue1 + cardValue2 + cardValue3) % 10 === 0) {
+                        let residue = 0;    // 余数
+                        for (let i = 0; i < len; i++) {
+                            if (cardList[i][1] > 10) {
+                                residue += 10;
+                                continue;
+                            }
+                            residue += cardList[i][1];
+                        }
+                        residue %= 10;
                         return residue;
                     }
                 }
             }
         }
         return 0;
-        return 0;
+    }
+
+    /**
+     * 获取牌型(特殊牌型+牛几)  
+     * @param cardList 排序过后的玩家的手牌
+     * @param specialCard 特殊牌型规则(8位二进制)
+     * @returns 同花顺(18)>五小牛(17)>炸弹牛(16)>四十牛(15)>葫芦牛(14)>同花牛(13)>五花牛(12)>顺子牛(11)>牛牛(10)>牛九(9)>牛八(8)>牛七(7)>牛六(6)>牛五(5)>牛四(4)>牛三(3)>牛二(2)>牛一(1)>无牛(0)
+     */
+    public static getCardsType(cardList: number[][], specialCard: string): number {
+        if (specialCard.charAt(0) === '1' && ReckonPoker.straightFlush(cardList)) {
+            return num18;
+        }
+        if (specialCard.charAt(1) === '1' && ReckonPoker.fiveCalves(cardList)) {
+            return num17;
+        }
+        if (specialCard.charAt(2) === '1' && ReckonPoker.bombBull(cardList)) {
+            return num16;
+        }
+        if (specialCard.charAt(3) === '1' && ReckonPoker.FortyBull(cardList)) {
+            return num15;
+        }
+        if (specialCard.charAt(4) === '1' && ReckonPoker.gourdBull(cardList)) {
+            return num14;
+        }
+        if (specialCard.charAt(5) === '1' && ReckonPoker.flushBull(cardList)) {
+            return num13;
+        }
+        if (specialCard.charAt(6) === '1' && ReckonPoker.fiveFlowerBull(cardList)) {
+            return num12;
+        }
+        if (specialCard.charAt(7) === '1' && ReckonPoker.straightBull(cardList)) {
+            return num11;
+        }
+        return ReckonPoker.whichBull(cardList);
+    }
+    // 同花顺>五小牛>炸弹牛>四十牛>葫芦牛>同花牛>顺子牛>牛牛>牛九>牛八>牛七>牛六>牛五>牛四>牛三>牛二>牛一>无牛
+
+    /**
+     * 获取牌中的癞子数
+     * @param cardList 排序过后的玩家的手牌
+     */
+    public static getLaiZiCount(cardList: number[][]) {
+        let count = 0;
+        for (const iterator of cardList) {
+            if (iterator[1] === 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 相同牌型比较
+     * @param cardList1 排序过后的玩家的手牌1
+     * @param cardList2 排序过后的玩家的手牌2
+     */
+    public static compareCards(cardList1: number[][], cardList2: number[][], cardsType: number) {
+
     }
 }

@@ -70,7 +70,7 @@ export class SelfUtils {
                 sum += parseInt(val.substr(i, 1), 0) * factor[i];
                 console.log(sum);
             }
-            if (parity[sum % num11] == code.toUpperCase()) {
+            if (`${parity[sum % num11]}` === code.toUpperCase()) {
                 return true;
             }
         }
