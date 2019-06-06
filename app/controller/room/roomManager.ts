@@ -175,14 +175,17 @@ export class RoomManager {
      * @param receiverId 接收者id
      */
     public static async stageProperty(userId: number, receiverId: number) {
+        // 发送者是否坐下
         let result1 = await RoomManager.isSittingUser(userId);
         if (!result1.flag) {
             return result1;
         }
+        // 是否禁用道具
         let itemUse = await redisClient.hgetAsync(`${redisKeyPrefix.room}${result1.roomId}`, `${RoomFields.itemUse}`);
         if (!!itemUse && itemUse === '1') {
             return { flag: false, code: 13043 };
         }
+        // 接收者是否坐下
         let result2 = await RoomManager.isSittingUser(receiverId);
         if (!result2.flag) {
             return result2;

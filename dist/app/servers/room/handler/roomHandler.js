@@ -129,7 +129,7 @@ class RoomHandler {
     }
     /**
      * 表情聊天
-     * @param msg 语音内容,时长
+     * @param msg 表情索引
      * @param session session
      */
     async faceChat(msg, session) {
@@ -144,7 +144,7 @@ class RoomHandler {
     }
     /**
      * 快捷语聊天
-     * @param msg 语音内容,时长
+     * @param msg 快捷语索引
      * @param session session
      */
     async wordChat(msg, session) {
@@ -159,7 +159,7 @@ class RoomHandler {
     }
     /**
      * 发送道具
-     * @param msg 语音内容,时长
+     * @param msg 道具索引,接收者id
      * @param session session
      */
     async stageProperty(msg, session) {
