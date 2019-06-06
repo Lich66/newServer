@@ -394,6 +394,11 @@ export class ReckonPoker {
      * @param cardList2 排序过后的玩家的手牌2
      */
     public static compareCards(cardList1: number[][], cardList2: number[][], cardsType: number) {
+        // 有癞子的情况
+        if (ReckonPoker.getLaiZiCount(cardList1) !== 0 || ReckonPoker.getLaiZiCount(cardList2) !== 0) {
 
+        }
+        // 无癞子的情况
+        
     }
 }
