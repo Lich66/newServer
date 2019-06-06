@@ -1,6 +1,6 @@
 import { IRechargeRequest } from '../../interface/recharge/rechargeInterface';
 import { Bullfight_Shop } from '../../models/Bullfight_Shop';
-import { tbl_rechargelog } from '../../models/tbl_rechargeLog';
+import { tbl_rechargelog } from '../../models/tbl_rechargelog';
 import { tbl_user } from '../../models/tbl_user';
 import { SelfUtils } from '../../util/selfUtils';
 
