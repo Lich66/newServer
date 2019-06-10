@@ -1,4 +1,5 @@
-import { AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AutoIncrement, BeforeCreate, Column, DataType, Default, ForeignKey, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { tbl_user } from './tbl_user';
 
 const BIGINT20 = '20';
 const STRING64 = 64;
@@ -19,12 +20,13 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     })
     public clubid: number;
 
+    @ForeignKey(() => tbl_user)
     @Column({
         comment: '用户id'
     })
     public userid: number;
 
-    @Default(4)
+    @Default(5)
     @Column({
         comment: '角色'
     })
@@ -70,4 +72,6 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     })
     public pay_flag: boolean;
 
+    @HasOne(() => tbl_user)
+    public tbl_user: tbl_user;
 }

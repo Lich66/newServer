@@ -86,7 +86,7 @@ export class Game {
 
     public async sendPoker() {
         this.step = 1;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1 }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
+
         // 掏出一副牌
         const pokers = new Pokers();
         this.players = await ClubRoomState.getClubRoomAllChairsState({ clubid: this.clubid, roomid: this.roomid });
@@ -123,7 +123,7 @@ export class Game {
         this.playersId.forEach((e, i) => {
             playerPoker[e] = this.poker[i].slice(0, 4);
         });
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, playerPoker, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1, playerPoker }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
         this.grabBanker();
     }
     public grabBanker() {
@@ -169,12 +169,12 @@ export class Game {
             }
         }
         this.step = 4;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 4, bet: this.betJson }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
+
         const playerPoker = {};
         this.playersId.forEach((e, i) => {
             playerPoker[e] = this.poker[i];
         });
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSettlement}`, playerPoker, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 4, bet: this.betJson, playerPoker }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
         this.end();
     }
     public end() {

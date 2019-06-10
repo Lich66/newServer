@@ -2,6 +2,7 @@ import * as Sequelize from 'sequelize';
 // const Sequelize = require('sequelize');
 import { IClubUserRequest } from '../../interface/clubUsers/clubUsersInterface';
 import { tbl_clubuser } from '../../models/tbl_clubuser';
+import { tbl_user } from '../../models/tbl_user';
 
 
 const Op = Sequelize.Op;
@@ -34,7 +35,7 @@ export class ClubUser {
      * 获取某茶楼加入的所有用户
      */
     public static async getAllClubUserbyClubid(json: IClubUserRequest): Promise<tbl_clubuser[]> {
-        return await tbl_clubuser.findAll({ where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } } });
+        return await tbl_clubuser.findAll({ where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } }, include: [tbl_user] });
     }
 
     // public static async getClubUser(json: IClubUserRequest): Promise<tbl_ClubUser> {
