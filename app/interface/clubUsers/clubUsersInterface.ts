@@ -9,6 +9,7 @@ export interface IClubUserRequest {
     clubid?: number;
     userid?: number;
     points?: number;
+    chactor?: number;
 }
 export interface IJoinClubData extends IClub {
     points?: number;

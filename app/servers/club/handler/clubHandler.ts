@@ -40,6 +40,7 @@ export class Handler {
         const json: IClubRequest = await GameUitl.parsePlayConfig(clubinfo.config);
         json.config_str = clubinfo.config.toString();
         let result = await Club.createClub({ ...json, uid: Number.parseInt(session.uid, 0) });
+        await ClubUser.findClubUser({ clubid: result.clubid, chactor: 1, userid: Number.parseInt(session.uid, 0) });
         if (result) {
             return {
                 code: 0,
@@ -183,6 +184,19 @@ export class Handler {
             data
         };
         // return club;
+    }
+
+    public async setChactorOfClubUser(msg: { userid: number; chactor: number }, session: BackendSession) {
+        if (!msg || !msg.userid || !msg.chactor || msg.chactor < 2 || msg.chactor > 5) {
+            return {
+                code: 10003
+            };
+        }
+        const user = await ClubUser.updateClubUser({ userid: msg.userid }, { chactor: msg.chactor });
+        return {
+            code: 0,
+            data: user
+        };
     }
 
     public async leaveClub(obj: any, session: BackendSession): Promise<IClubReturn> {
