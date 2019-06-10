@@ -1,4 +1,4 @@
-import { AutoIncrement, Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AutoIncrement, BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const BIGINT20 = '20';
 const STRING64 = 64;
@@ -24,6 +24,7 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     })
     public userid: number;
 
+    @Default(4)
     @Column({
         comment: '角色'
     })
@@ -33,6 +34,11 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
         comment: '加入时间'
     })
     public adtime: Date;
+    @BeforeCreate
+    public static makeUpperCase(instance: tbl_clubuser) {
+        // this will be called when an instance is created or updated
+        instance.adtime = new Date();
+    }
 
     @Column({
         type: DataType.STRING(STRING64),
@@ -40,21 +46,25 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     })
     public invitor: string;
 
+    @Default(0)
     @Column({
         comment: '积分'
     })
     public points: number;
 
+    @Default(false)
     @Column({
         comment: '冻结标志'
     })
     public freeze_flag: boolean;
 
+    @Default(false)
     @Column({
         comment: '助手标志'
     })
     public assist_flag: boolean;
 
+    @Default(false)
     @Column({
         comment: '代付标志'
     })

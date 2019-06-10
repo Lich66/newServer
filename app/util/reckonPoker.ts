@@ -27,6 +27,55 @@ export class ReckonPoker {
     }
 
     /**
+     * 获取牌中的癞子数
+     * @param cardList 排序过后的玩家的手牌
+     */
+    public static getLaiZiCount(cardList: number[][]) {
+        if (cardList[1][1] === 0) {
+            return 2;
+        }
+        if (cardList[0][1] === 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    /**
+     * 相邻两张非癞子牌的差值之和
+     * @param cardList 排序过后的玩家的手牌
+     */
+    public static sumOfDifferences(cardList: number[][]): number {
+        let len = cardList.length - 1;
+        let sum = 0;
+        for (let i = 0; i < len; i++) {
+            if (cardList[i][1] !== 0 && cardList[i + 1][1] !== 0) {
+                sum += (cardList[i + 1][1] - cardList[i][1]);
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * 牌面统计 {牌值:张数}
+     * @param cardList 排序过后的玩家的手牌
+     */
+    public static cardStatistics(cardList: number[][]) {
+        let map = {};
+        for (const iterator of cardList) {
+            if (iterator[1] === 0) {
+                continue;
+            }
+            if (map.hasOwnProperty(iterator[1])) {
+                map[iterator[1]]++;
+            } else {
+                map[iterator[1]] = 1;
+            }
+        }
+        console.log('牌面统计: 统计后的[牌值:张数] = ' + JSON.stringify(map));
+        return map;
+    }
+
+    /**
      * 同花顺判断逻辑
      * 同花+顺子
      * @param cardList 排序过后的玩家的手牌
@@ -48,15 +97,8 @@ export class ReckonPoker {
             }
         }
         // 是否能构成顺子(相邻非癞子两牌的值相差之和不超过4)
-        let num = 0;
-        for (let i = 0; i < len; i++) {
-            if (cardList[i][1] !== 0 && cardList[i + 1][1] !== 0) {
-                num += (cardList[i + 1][1] - cardList[i][1]);
-            }
-            if (num > 4) {
-                console.log('同花顺: 构不成顺子!');
-                return false;
-            }
+        if (ReckonPoker.sumOfDifferences(cardList) > 4) {
+            return false;
         }
         return true;
     }
@@ -98,20 +140,8 @@ export class ReckonPoker {
      * @param cardList 排序过后的玩家的手牌
      */
     public static bombBull(cardList: number[][]): boolean {
-        let map = {};   // 牌值:张数
-        let count = 0;  // 癞子个数
-        for (const iterator of cardList) {
-            if (iterator[1] === 0) {
-                count++;
-                continue;
-            }
-            if (map.hasOwnProperty(iterator[1])) {
-                map[iterator[1]]++;
-            } else {
-                map[iterator[1]] = 1;
-            }
-        }
-        console.log('炸弹牛: 统计后的[牌值:张数] = ' + JSON.stringify(map));
+        let map = ReckonPoker.cardStatistics(cardList);   // 牌值:张数
+        let count = ReckonPoker.getLaiZiCount(cardList);  // 癞子个数
         let keys = Object.keys(map);
         if (keys.length > 2) {
             console.log('炸弹牛: 非癞子牌种类>2,不能构成炸弹');
@@ -159,20 +189,7 @@ export class ReckonPoker {
      * @param cardList 排序过后的玩家的手牌
      */
     public static gourdBull(cardList: number[][]): boolean {
-        let map = {};
-        let count = 0;
-        for (const iterator of cardList) {
-            if (iterator[1] === 0) {
-                count++;
-                continue;
-            }
-            if (map.hasOwnProperty(iterator[1])) {
-                map[iterator[1]]++;
-            } else {
-                map[iterator[1]] = 1;
-            }
-        }
-        console.log('葫芦牛: 统计后的[牌值:个数] = ' + JSON.stringify(map));
+        let map = ReckonPoker.cardStatistics(cardList);
         let keys = Object.keys(map);
         if (keys.length > 2) {
             console.log('葫芦牛: 非癞子牌种类>2,不能构成葫芦牛');
@@ -238,15 +255,8 @@ export class ReckonPoker {
             }
         }
         // 是否能构成顺子(相邻非癞子两牌的值相差之和不超过4)
-        let num = 0;
-        for (let i = 0; i < len; i++) {
-            if (cardList[i][1] !== 0 && cardList[i + 1][1] !== 0) {
-                num += (cardList[i + 1][1] - cardList[i][1]);
-            }
-            if (num > 4) {
-                console.log('顺子牛: 构不成顺子!');
-                return false;
-            }
+        if (ReckonPoker.sumOfDifferences(cardList) > 4) {
+            return false;
         }
         return true;
     }
@@ -346,46 +356,81 @@ export class ReckonPoker {
      * @returns 同花顺(18)>五小牛(17)>炸弹牛(16)>四十牛(15)>葫芦牛(14)>同花牛(13)>五花牛(12)>顺子牛(11)>牛牛(10)>牛九(9)>牛八(8)>牛七(7)>牛六(6)>牛五(5)>牛四(4)>牛三(3)>牛二(2)>牛一(1)>无牛(0)
      */
     public static getCardsType(cardList: number[][], specialCard: string): number {
-        if (specialCard.charAt(0) === '1' && ReckonPoker.straightFlush(cardList)) {
+        if (specialCard.charAt(6) === '1' && ReckonPoker.straightFlush(cardList)) {
             return num18;
         }
-        if (specialCard.charAt(1) === '1' && ReckonPoker.fiveCalves(cardList)) {
+        if (specialCard.charAt(5) === '1' && ReckonPoker.fiveCalves(cardList)) {
             return num17;
         }
-        if (specialCard.charAt(2) === '1' && ReckonPoker.bombBull(cardList)) {
+        if (specialCard.charAt(4) === '1' && ReckonPoker.bombBull(cardList)) {
             return num16;
         }
-        if (specialCard.charAt(3) === '1' && ReckonPoker.FortyBull(cardList)) {
+        if (specialCard.charAt(7) === '1' && ReckonPoker.FortyBull(cardList)) {
             return num15;
         }
-        if (specialCard.charAt(4) === '1' && ReckonPoker.gourdBull(cardList)) {
+        if (specialCard.charAt(3) === '1' && ReckonPoker.gourdBull(cardList)) {
             return num14;
         }
-        if (specialCard.charAt(5) === '1' && ReckonPoker.flushBull(cardList)) {
+        if (specialCard.charAt(2) === '1' && ReckonPoker.flushBull(cardList)) {
             return num13;
         }
-        if (specialCard.charAt(6) === '1' && ReckonPoker.fiveFlowerBull(cardList)) {
+        if (specialCard.charAt(1) === '1' && ReckonPoker.fiveFlowerBull(cardList)) {
             return num12;
         }
-        if (specialCard.charAt(7) === '1' && ReckonPoker.straightBull(cardList)) {
+        if (specialCard.charAt(0) === '1' && ReckonPoker.straightBull(cardList)) {
             return num11;
         }
         return ReckonPoker.whichBull(cardList);
     }
-    // 同花顺>五小牛>炸弹牛>四十牛>葫芦牛>同花牛>顺子牛>牛牛>牛九>牛八>牛七>牛六>牛五>牛四>牛三>牛二>牛一>无牛
+
+
 
     /**
-     * 获取牌中的癞子数
+     * 获取玩家用于比牌的最大手牌
      * @param cardList 排序过后的玩家的手牌
      */
-    public static getLaiZiCount(cardList: number[][]) {
-        let count = 0;
-        for (const iterator of cardList) {
-            if (iterator[1] === 0) {
-                count++;
+    public static getMaxCard(cardList: number[][], cardsType: number, laiziCount: number) {
+        // 没有癞子，炸弹牛和葫芦牛第三张即为最大，其他牌型第五张最大
+        if (laiziCount === 0) {
+            if (cardsType === num14 || cardsType === num16) {
+                return cardList[3];
             }
+            return cardList[5];
         }
-        return count;
+
+        let maxCardValue = 0;
+        let maxColorValue = 0;
+        if (laiziCount === 1) {
+            maxColorValue = cardList[0][0];
+        } else {
+            maxColorValue = cardList[1][0];
+        }
+        // 有癞子，除顺子牛，葫芦牛，炸弹牛，同花顺外，癞子即为最大
+        if (cardsType !== num11 && cardsType !== num14 && cardsType !== num16 && cardsType !== num18) {
+            return [maxColorValue, num13];
+        }
+        // 有癞子，顺子牛和同花顺
+        if (cardsType === num11 || cardsType === num18) {
+            let sum = ReckonPoker.sumOfDifferences(cardList);
+            // 相邻两张牌的差值之和为2，3，4时,最大牌值为第五张值+2，第五张值+1，第五张值;如果超过13,则最大为13
+            maxCardValue = cardList[4][1] + 4 - sum;
+            if (maxCardValue > num13) {
+                return [maxColorValue, num13];
+            }
+            return [maxColorValue, maxCardValue];
+        }
+        // 有癞子，葫芦牛
+        if (cardsType === num14) {
+            if (laiziCount === 2) {
+                maxCardValue = cardList[4][1];
+                return [maxColorValue, maxCardValue];
+            }
+            maxCardValue = cardList[3][1];
+            return [maxColorValue, maxCardValue];
+        }
+        // 有癞子，炸弹牛
+        maxCardValue = cardList[3][1];
+        return [maxColorValue, maxCardValue];
     }
 
     /**
@@ -394,6 +439,15 @@ export class ReckonPoker {
      * @param cardList2 排序过后的玩家的手牌2
      */
     public static compareCards(cardList1: number[][], cardList2: number[][], cardsType: number) {
-
+        let laiziCount1 = ReckonPoker.getLaiZiCount(cardList1);
+        let laiziCount2 = ReckonPoker.getLaiZiCount(cardList2);
+        let maxCard1 = ReckonPoker.getMaxCard(cardList1, cardsType, laiziCount1);
+        console.log('玩家1最大牌为: ' + JSON.stringify(maxCard1));
+        let maxCard2 = ReckonPoker.getMaxCard(cardList2, cardsType, laiziCount2);
+        console.log('玩家2最大牌为: ' + JSON.stringify(maxCard2));
+        if (maxCard1[1] === maxCard2[1]) {
+            return maxCard1[0] - maxCard2[0];
+        }
+        return maxCard1[1] - maxCard2[1];
     }
 }

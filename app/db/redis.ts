@@ -2,9 +2,9 @@ import { promisifyAll } from 'bluebird';
 import * as redis from 'redis';
 
 
-const port = 6379;
-const reidsHost = '192.168.1.21';
-const password = '123456';
+export const port = 6379;
+export const reidsHost = '192.168.1.21';
+export const password = '123456';
 type IDelAsync = (key: string | string[]) => Promise<number>;
 
 type ISetAsync = (key: string, value: string, mode?: string, duration?: number, flag?: string) => Promise<'OK' | undefined>;

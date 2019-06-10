@@ -63,6 +63,7 @@ interface ICreateReturn {
     double_flag: boolean;
     laizi_type: number;
     type?: number;
+    config_str: string;
 
 }
 interface IChangeReturn {
@@ -252,7 +253,8 @@ export class GameUitl {
             grab_flag: config[NUMBER19],
             double_flag: config[NUMBER20],
             laizi_type: config[NUMBER21],
-            type: config[NUMBER22]
+            type: config[NUMBER22],
+            config_str: config.toString()
         };
     }
 

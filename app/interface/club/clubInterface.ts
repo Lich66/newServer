@@ -23,6 +23,7 @@ export interface IClubRequest {
     present_times?: number;
     present_points?: number;
     clubConfig?: number[][];
+    config_str?: string;
 }
 
 export interface IClubReturn extends IResponse {

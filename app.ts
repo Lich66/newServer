@@ -1,9 +1,11 @@
 import { pinus } from 'pinus';
 import { createGlobalChannelStatusPlugin } from 'pinus-global-channel-status';
+import { password, port, reidsHost } from './app/db/redis';
 import { sequelize } from './app/db/sequelize';
 import { baseInit } from './app/util/memoryInit';
 import * as  routeUtil from './app/util/routeUtil';
 import { preload } from './preload';
+
 
 
 // 同步到数据库 别乱用   这就是从删库到跑路的第一步
@@ -58,9 +60,9 @@ app.configure('production|development', 'connector|user|hall|club|clubRoom|room'
   app.use(createGlobalChannelStatusPlugin(), {
     family: 4,           // 4 (IPv4) or 6 (IPv6)
     options: {},
-    host: '192.168.1.21',
-    password: '123456',
-    port: 6379,
+    host: reidsHost,
+    password,
+    port,
     db: 10,      // optinal, from 0 to 15 with default redis configure
     // optional
     cleanOnStartUp: app.getServerType() == 'connector'

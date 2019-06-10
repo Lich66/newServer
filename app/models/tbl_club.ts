@@ -232,4 +232,9 @@ export class tbl_club extends Model<tbl_club> {
     })
     public present_points: number;
 
+    @Column({
+        comment: '基本配置数组'
+    })
+    public config_str: string;
+
 }

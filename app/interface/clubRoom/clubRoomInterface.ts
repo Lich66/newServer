@@ -44,7 +44,7 @@ export interface IClubRoomRequest {
     grab_flag?: number;
     double_flag?: number;
     laizi_type?: number;
-    // [key: string]: any;
+    config_str?: string;
 }
 /**
  * crud 用到的 参数  必须加入到uid  用不用道再说
