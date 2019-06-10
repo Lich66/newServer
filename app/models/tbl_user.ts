@@ -1,4 +1,5 @@
-import { BeforeCreate, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { BeforeCreate, BelongsTo, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { tbl_clubuser } from './tbl_clubuser';
 
 const STRING64 = 64;
 const STRING32 = 32;
@@ -94,4 +95,6 @@ export class tbl_user extends Model<tbl_user> {
 
   })
   public invitation_status: number;
+  @BelongsTo(() => tbl_clubuser)
+  public tbl_clubuser: tbl_clubuser;
 }

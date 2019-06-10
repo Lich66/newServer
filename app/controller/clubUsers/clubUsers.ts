@@ -35,7 +35,15 @@ export class ClubUser {
      * 获取某茶楼加入的所有用户
      */
     public static async getAllClubUserbyClubid(json: IClubUserRequest): Promise<tbl_clubuser[]> {
-        return await tbl_clubuser.findAll({ where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } }, include: [tbl_user] });
+        return await tbl_clubuser.findAll({
+            where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } }, include: [{
+                model: tbl_user,
+                where: {
+                    clubid: json.clubid,
+                    userid: { [Op.regexp]: '\.' }
+                }
+            }]
+        });
     }
 
     // public static async getClubUser(json: IClubUserRequest): Promise<tbl_ClubUser> {

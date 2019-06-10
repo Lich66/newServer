@@ -1,4 +1,4 @@
-import { AutoIncrement, BeforeCreate, Column, DataType, Default, ForeignKey, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { AutoIncrement, BeforeCreate, Column, DataType, Default, HasOne, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { tbl_user } from './tbl_user';
 
 const BIGINT20 = '20';
@@ -20,7 +20,6 @@ export class tbl_clubuser extends Model<tbl_clubuser> {
     })
     public clubid: number;
 
-    @ForeignKey(() => tbl_user)
     @Column({
         comment: '用户id'
     })
