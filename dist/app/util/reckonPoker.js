@@ -346,28 +346,28 @@ class ReckonPoker {
      * @returns 同花顺(18)>五小牛(17)>炸弹牛(16)>四十牛(15)>葫芦牛(14)>同花牛(13)>五花牛(12)>顺子牛(11)>牛牛(10)>牛九(9)>牛八(8)>牛七(7)>牛六(6)>牛五(5)>牛四(4)>牛三(3)>牛二(2)>牛一(1)>无牛(0)
      */
     static getCardsType(cardList, specialCard) {
-        if (specialCard.charAt(0) === '1' && ReckonPoker.straightFlush(cardList)) {
+        if (specialCard.charAt(6) === '1' && ReckonPoker.straightFlush(cardList)) {
             return num18;
         }
-        if (specialCard.charAt(1) === '1' && ReckonPoker.fiveCalves(cardList)) {
+        if (specialCard.charAt(5) === '1' && ReckonPoker.fiveCalves(cardList)) {
             return num17;
         }
-        if (specialCard.charAt(2) === '1' && ReckonPoker.bombBull(cardList)) {
+        if (specialCard.charAt(4) === '1' && ReckonPoker.bombBull(cardList)) {
             return num16;
         }
-        if (specialCard.charAt(3) === '1' && ReckonPoker.FortyBull(cardList)) {
+        if (specialCard.charAt(7) === '1' && ReckonPoker.FortyBull(cardList)) {
             return num15;
         }
-        if (specialCard.charAt(4) === '1' && ReckonPoker.gourdBull(cardList)) {
+        if (specialCard.charAt(3) === '1' && ReckonPoker.gourdBull(cardList)) {
             return num14;
         }
-        if (specialCard.charAt(5) === '1' && ReckonPoker.flushBull(cardList)) {
+        if (specialCard.charAt(2) === '1' && ReckonPoker.flushBull(cardList)) {
             return num13;
         }
-        if (specialCard.charAt(6) === '1' && ReckonPoker.fiveFlowerBull(cardList)) {
+        if (specialCard.charAt(1) === '1' && ReckonPoker.fiveFlowerBull(cardList)) {
             return num12;
         }
-        if (specialCard.charAt(7) === '1' && ReckonPoker.straightBull(cardList)) {
+        if (specialCard.charAt(0) === '1' && ReckonPoker.straightBull(cardList)) {
             return num11;
         }
         return ReckonPoker.whichBull(cardList);
