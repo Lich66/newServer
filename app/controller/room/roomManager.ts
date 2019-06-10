@@ -3,7 +3,7 @@ import { redisClient } from '../../db/redis';
 import { redisKeyPrefix } from '../../gameConfig/nameSpace';
 import { RoomFields } from '../../gameConfig/roomConfig';
 import { userConfig } from '../../gameConfig/userConfig';
-import { IRoomConfig } from '../../interface/room/roomInterfaces';
+import { IRoomRedis } from '../../interface/room/roomInterfaces';
 import { GameUitl } from '../../util/gameUitl';
 import { SelfUtils } from '../../util/selfUtils';
 import { RedisKeys } from '../redis/redisKeys/redisKeys';
@@ -54,7 +54,7 @@ export class RoomManager {
             roomConfig: JSON.stringify(config),
             createTime: (new Date()).valueOf()
         };
-        let json: IRoomConfig = SelfUtils.assign(json2, json1);
+        let json: IRoomRedis = SelfUtils.assign(json2, json1);
         console.log('合并后的房间配置: ' + JSON.stringify(json));
         for (const key in json) {
             if (json.hasOwnProperty(key)) {
@@ -62,7 +62,7 @@ export class RoomManager {
             }
         }
         await redisClient.rpushAsync(`${redisKeyPrefix.userRoomList}${userId}`, `${roomId}`);
-        for (let i = 0, len = json.playerNum; i < len; i++) {
+        for (let i = 0, len = parseInt(json.playerNum, 0); i < len; i++) {
             await redisClient.hsetAsync(`${redisKeyPrefix.room}${json.roomId}${redisKeyPrefix.chair}`, `${i}`, `${-1}`);
         }
         return { flag: true, json };

@@ -1,4 +1,4 @@
-import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 const STRING512 = 512;
 const STRING1024 = 1024;
@@ -49,9 +49,15 @@ export class tbl_mail_personal extends Model<tbl_mail_personal> {
     })
     public endtime: Date;
 
+    @Default(0)
     @Column({
         comment: '是否已读(0:未读,1:已读)'
     })
     public isread: number;
 
+    @Default(0)
+    @Column({
+        comment: '是否已操作(0:未操作,1:已同意,2:已拒绝)'
+    })
+    public state: number;
 }

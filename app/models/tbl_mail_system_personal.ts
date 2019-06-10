@@ -1,4 +1,4 @@
-import { Column, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
 @Table({ timestamps: false })
 // tslint:disable-next-line: class-name
@@ -24,11 +24,13 @@ export class tbl_mail_system_personal extends Model<tbl_mail_system_personal> {
     })
     public isread: number;
 
+    @Default(0)
     @Column({
         comment: '是否已领取(0:未领取,1:已领取)'
     })
     public isget: number;
 
+    @Default(0)
     @Column({
         comment: '是否已删除(0:未删除,1:已删除)'
     })
