@@ -398,7 +398,7 @@ export class RoomManager {
             seatNum
         };
         if (startFlag) {
-            return { flag: true, roomId, userData, room };
+            return { flag: true, roomId, userData, startFlag };
         }
         return { flag: true, roomId, userData };
     }
@@ -448,6 +448,16 @@ export class RoomManager {
         if (room.startType === '0' && `${userId}` !== room.creatorId || `${userId}` !== firstUser) {
             return { flag: false, code: 13052 };
         }
-        return { flag: true, room };
+        this.setRoomState(parseInt(roomId, 0), 0);
+        return { flag: true, roomId };
+    }
+
+    /**
+     * 设置房间状态
+     * @param roomId 房间id 
+     * @param state 状态=> -1:未开始, 0:开始, 1:发牌,2:抢庄, 3:下注,4:结算
+     */
+    public static async setRoomState(roomId: number, state: number) {
+        await redisClient.hsetAsync(`${redisKeyPrefix.room}${roomId}`, `${RoomFields.state}`, `${state}`);
     }
 }

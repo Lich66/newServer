@@ -44,7 +44,7 @@ exports.gameChannelKeyPrefix = {
     club: 'club_',
     clubRoom: ':clubRoom_',
     room: 'room_',
-    roomGame: 'room_game'
+    roomGame: 'roomGame_'
 };
 /**
  * 房间游戏的命名空间

@@ -50,6 +50,8 @@ export class RoomHandler {
         };
         let game = new RoomGame(result.json, this);
         this.app.set(`${gameChannelKeyPrefix.roomGame}${result.json.roomId}`, game);
+        let sid = this.app.getServerId();
+        RoomManager.setRoomServerId(parseInt(result.json.roomId, 0), sid);
         return { code: 0, data: returnData };
     }
 
@@ -270,7 +272,8 @@ export class RoomHandler {
             return { code: result.code };
         }
         await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${result.roomId}`);
-        if (result.room) {
+        if (result.startFlag) {
+            await RoomManager.setRoomState(parseInt(result.roomId, 0), 0);
             let game = this.app.get(`${gameChannelKeyPrefix.roomGame}${result.roomId}`);
             game.start();
         }
@@ -288,8 +291,8 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
-        let game = new RoomGame(result.room, this);
-        this.app.set(`${gameChannelKeyPrefix.roomGame}${result.room.roomId}`, game);
+        console.log('=========>>> ' + JSON.stringify(result));
+        let game = this.app.get(`${gameChannelKeyPrefix.roomGame}${result.roomId}`);
         game.start();
     }
 
