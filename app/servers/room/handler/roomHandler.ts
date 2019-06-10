@@ -1,4 +1,4 @@
-import { Application, BackendSession, SessionService } from 'pinus';
+import { Application, BackendSession } from 'pinus';
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { RoomManager } from '../../../controller/room/roomManager';
 import { gameChannelKeyPrefix } from '../../../gameConfig/nameSpace';
@@ -11,13 +11,9 @@ export default function (app: Application) {
 }
 export class RoomHandler {
     private app: Application;
-    // private sessionService: SessionService;
-    // private channelService: ChannelService;
     private globalChannelStatus: GlobalChannelServiceStatus;
     public constructor(app: Application) {
         this.app = app;
-        // this.channelService = app.get('channelService');
-        // this.sessionServices = app.get('sessionService');
         this.globalChannelStatus = app.get(GlobalChannelServiceStatus.PLUGIN_NAME);
     }
 

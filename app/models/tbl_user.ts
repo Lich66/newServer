@@ -4,7 +4,6 @@ const STRING64 = 64;
 const STRING32 = 32;
 const STRING512 = 512;
 
-
 @Table({ timestamps: false })
 // tslint:disable-next-line: class-name
 export class tbl_user extends Model<tbl_user> {
