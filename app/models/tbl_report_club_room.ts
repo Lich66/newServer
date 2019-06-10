@@ -7,7 +7,7 @@ const STRING2048 = 2048;
 
 @Table({ timestamps: false })
 // tslint:disable-next-line: class-name
-export class tbl_report_room extends Model<tbl_report_room> {
+export class tbl_report_club_room extends Model<tbl_report_club_room> {
     @PrimaryKey
     @Column({
         comment: '战绩表id'
