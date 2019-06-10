@@ -48,6 +48,8 @@ export class RoomHandler {
             // round: result.json.roomConfig[3],
             // payType: result.json.roomConfig[4]
         };
+        let game = new RoomGame(result.json, this);
+        this.app.set(`${gameChannelKeyPrefix.roomGame}${result.json.roomId}`, game);
         return { code: 0, data: returnData };
     }
 
@@ -235,6 +237,8 @@ export class RoomHandler {
             //     }
             //    let members1 = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${result.roomId}`);
             //     console.log('解散房间== members1 ==: ' + JSON.stringify(members1));
+            let game = this.app.get(`${gameChannelKeyPrefix.roomGame}${result.roomId}`);
+            game.stopTimer();
             await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, {}, `${gameChannelKeyPrefix.room}${result.roomId}`);
             await this.globalChannelStatus.destroyChannel(`${gameChannelKeyPrefix.room}${result.roomId}`);
         } else {
@@ -267,9 +271,7 @@ export class RoomHandler {
         }
         await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onReady}`, { userData: result.userData }, `${gameChannelKeyPrefix.room}${result.roomId}`);
         if (result.room) {
-            // todo 开始游戏
-            let game = new RoomGame(result.room, this);
-            this.app.set(`${gameChannelKeyPrefix.roomGame}${result.roomId}`, game);
+            let game = this.app.get(`${gameChannelKeyPrefix.roomGame}${result.roomId}`);
             game.start();
         }
         return { code: 0 };
@@ -286,7 +288,6 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
-        // todo 开始游戏
         let game = new RoomGame(result.room, this);
         this.app.set(`${gameChannelKeyPrefix.roomGame}${result.room.roomId}`, game);
         game.start();

@@ -1,18 +1,31 @@
 import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
+import { RedisKeys } from '../controller/redis/redisKeys/redisKeys';
+import { User } from '../controller/user/user';
 import { redisClient } from '../db/redis';
 import { gameChannelKeyPrefix, redisKeyPrefix } from '../gameConfig/nameSpace';
 import socketRouter from '../gameConfig/socketRouterConfig';
+import { userConfig } from '../gameConfig/userConfig';
 import { IRoomRedis } from '../interface/room/roomInterfaces';
 import { RoomHandler } from '../servers/Room/handler/RoomHandler';
+import { GameUitl } from './gameUitl';
 import { Pokers } from './poker';
 
-
+/**
+ * 未开始,房间存在时间
+ */
+const existenceTime = 600000;  
+/**
+ * 抢庄时间
+ */
 const grabBankerTime = 10000;
-
+/**
+ * 下注时间
+ */
 const betTime = 10000;
-
+/**
+ * 每回合总时间
+ */
 const entireTime = 45000;
-
 
 export class RoomGame {
 
@@ -53,9 +66,50 @@ export class RoomGame {
         this.roomid = parseInt(room.roomId, 0);
         this.globalChannelStatus = handler.getGlobalChannelServiceStatus();
         this.round = parseInt(room.round, 0);
-        this.step = 0;
+        this.step = -1;
+        this.timer = setInterval(async () => {
+            console.log('时间到,房间还未开始游戏,进行删除数据');
+            this.stopTimer();
+            // todo 销毁房间,通知房间里的玩家,删除玩家redis中的房间数据,删除房间数据
+            let creator = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${this.room.creatorId}`);
+            // 将钻石返还给房主
+            if (parseInt(room.payType, 0) === 0) {
+                let needDaimond = await GameUitl.getRoomRate2(parseInt(room.playerNum, 0), parseInt(room.round, 0), parseInt(room.PayType, 0));
+                let userDaimond = parseInt(creator.diamond, 0);
+                let result = await User.updateUser({ userid: parseInt(creator.userid, 0) }, { diamond: (needDaimond + userDaimond) });
+                if (result !== 1) {
+                    console.log('钻石返还给房主失败!');
+                }
+                await redisClient.hsetAsync(`${redisKeyPrefix.user}${creator.userid}`, `${userConfig.diamond}`, `${needDaimond + userDaimond}`);
+            }
+            let roomUsers = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.roomUsers}`);
+            // 删除user上的roomId
+            for (const key in roomUsers) {
+                if (roomUsers.hasOwnProperty(key)) {
+                    await redisClient.hdelAsync(`${redisKeyPrefix.user}${key}`, `${userConfig.roomId}`);
+                }
+            }
+            // 删除玩家房间列表中该条房间数据
+            await redisClient.lremAsync(`${redisKeyPrefix.userRoomList}${creator.userid}`, 1, `${this.roomid}`);
+            // 删除房间
+            await RedisKeys.delAsync(`${redisKeyPrefix.room}${this.roomid}`);
+            // 删除房间用户
+            await RedisKeys.delAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.roomUsers}`);
+            // 删除房间椅子表
+            await RedisKeys.delAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.chair}`);
+            // 通知玩家房间解散
+            await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, {}, `${gameChannelKeyPrefix.room}${this.roomid}`);
+            await this.globalChannelStatus.destroyChannel(`${gameChannelKeyPrefix.room}${this.roomid}`);
+        }, existenceTime);
     }
+
+    public stopTimer() {
+        console.log('清除定时器!');
+        clearInterval(this.timer);
+    }
+
     public start() {
+        this.stopTimer();
         this.nextRound();
         this.timer = setInterval(() => {
             this.nextRound();
