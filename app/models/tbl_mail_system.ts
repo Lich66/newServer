@@ -1,5 +1,6 @@
 import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript';
 
+const STRING64 = 64;
 const STRING512 = 512;
 const STRING1024 = 1024;
 const STRING65533 = 65533;
@@ -35,6 +36,12 @@ export class tbl_mail_system extends Model<tbl_mail_system> {
         comment: '附件'
     })
     public items: string;
+
+    @Column({
+        type: DataType.STRING(STRING64),
+        comment: '署名'
+    })
+    public signature: string;
 
     @Column({
         comment: '生效时间'

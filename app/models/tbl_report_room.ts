@@ -40,6 +40,7 @@ export class tbl_report_room extends Model<tbl_report_room> {
     })
     public round: number;
 
+    @Default(0)
     @Column({
         comment: '房间类型(茶楼:[比赛场:2,休闲场:1],普通场:0)'
     })

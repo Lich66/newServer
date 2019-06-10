@@ -103,6 +103,7 @@ export class Hall {
             }
             return { flag: true, roomList };
         } catch (error) {
+            console.log('获取房间列表错误: ' + JSON.stringify(error));
             return { flag: false, code: 12121 };
         }
     }
