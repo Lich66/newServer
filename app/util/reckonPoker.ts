@@ -442,7 +442,9 @@ export class ReckonPoker {
         let laiziCount1 = ReckonPoker.getLaiZiCount(cardList1);
         let laiziCount2 = ReckonPoker.getLaiZiCount(cardList2);
         let maxCard1 = ReckonPoker.getMaxCard(cardList1, cardsType, laiziCount1);
+        console.log('玩家1最大牌为: ' + JSON.stringify(maxCard1));
         let maxCard2 = ReckonPoker.getMaxCard(cardList2, cardsType, laiziCount2);
+        console.log('玩家2最大牌为: ' + JSON.stringify(maxCard2));
         if (maxCard1[1] === maxCard2[1]) {
             return maxCard1[0] - maxCard2[0];
         }

@@ -14,6 +14,11 @@ let cardList6 = [[3, 3], [2, 3], [1, 3], [4, 3], [2, 1]];
 let cardList7 = [[2, 3], [2, 3], [1, 4], [2, 3], [2, 4]];
 let cardList8 = [[2, 3], [2, 3], [1, 4], [2, 6], [2, 4]];
 
+// 特殊牌型;['顺子牛', '五花牛', '同花牛', '葫芦牛', '炸弹牛', '五小牛', '同花顺', '四十牛'],选中为1
+let specialCard = '11111111';
+// 相同牌型比较
+let res = ReckonPoker.compareCards(ReckonPoker.sortCardList(cardList), ReckonPoker.sortCardList(cardList1), ReckonPoker.getCardsType((ReckonPoker.sortCardList(cardList)), specialCard));
+
 // 葫芦牛验证
 let result2 = ReckonPoker.gourdBull(ReckonPoker.sortCardList(cardList));
 console.log('验证葫芦牛结果: ' + result2);
