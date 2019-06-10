@@ -18,6 +18,8 @@ let cardList8 = [[2, 3], [2, 3], [1, 4], [2, 6], [2, 4]];
 let specialCard = '11111111';
 // 相同牌型比较
 let res = ReckonPoker.compareCards(ReckonPoker.sortCardList(cardList), ReckonPoker.sortCardList(cardList1), ReckonPoker.getCardsType((ReckonPoker.sortCardList(cardList)), specialCard));
+console.log('相同牌型比较结果(正数第一个大,负数第二个大): ' + res);
+
 
 // 葫芦牛验证
 let result2 = ReckonPoker.gourdBull(ReckonPoker.sortCardList(cardList));
