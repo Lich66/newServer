@@ -13,7 +13,7 @@ import { Pokers } from './poker';
 /**
  * 未开始,房间存在时间
  */
-const existenceTime = 600000;  
+const existenceTime = 600000;
 /**
  * 抢庄时间
  */
@@ -44,14 +44,12 @@ export class RoomGame {
      * 4:结算
      */
     private step: number;
-    // 玩多少局
+    // 当前对局回合
     private round: number;
     // 发的牌是什么
     private poker: number[][][];
-    // players
-    private players: any;
     // 用户id
-    private playersId: number[];
+    private playersId: number[] = [];
 
     // 抢庄的原始数据
     private bankerJSON: { [key: number]: number };
@@ -61,11 +59,24 @@ export class RoomGame {
     private betJson: { [key: number]: number };
     // 频道
     private globalChannelStatus: GlobalChannelServiceStatus;
+
+    // 开始游戏时间
+    private starttime: Date;
+    // 结束游戏时间
+    private endtime: Date;
+    // 结束类型(正常:0,解散:1)
+    private endtype: number;
+    // 玩家信息=> {账号:{账号,昵称,头像,抢庄次数,庄家次数,推注次数,总分数}}
+    private playersInfo: {} = {};
+    // 详细战绩=> [[{poker:xx,cardValue:xx,score:xx,bankerBet:xx,bet:xx},...],...] 
+    private detailreport: [][] = [];
+
+
     public constructor(room: IRoomRedis, handler: RoomHandler) {
         this.room = room;
         this.roomid = parseInt(room.roomId, 0);
         this.globalChannelStatus = handler.getGlobalChannelServiceStatus();
-        this.round = parseInt(room.round, 0);
+        this.round = 0;
         this.step = -1;
         this.timer = setInterval(async () => {
             console.log('时间到,房间还未开始游戏,进行删除数据');
@@ -104,62 +115,66 @@ export class RoomGame {
     }
 
     public stopTimer() {
-        console.log('清除定时器!');
+        console.log('关闭定时器!');
         clearInterval(this.timer);
     }
 
-    public start() {
+    public async start() {
         this.stopTimer();
+        this.starttime = new Date();
+        let players = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.chair}`);
+        // 玩家数量
+        for (const key in players) {
+            if (players.hasOwnProperty(key)) {
+                const element = parseInt(players[key], 0);
+                if (element > 0) {
+                    this.playersId.push(element);
+                }
+            }
+        }
+        for (const iterator of this.playersId) {
+            let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${iterator}`);
+            let map = { userId: user.userid, userNick: user.usernick, image: user.image, robCount: 0, bankerCount: 0, pushCount: 0, score: 0 };
+            this.playersInfo[iterator] = map;
+        }
+        console.log('开始游戏,房间内玩家信息: ' + JSON.stringify(this.playersInfo));
         this.nextRound();
         this.timer = setInterval(() => {
             this.nextRound();
         }, entireTime);
     }
 
-
-    public nextRound() {
+    public async nextRound() {
         // 初始化
         this.poker = [];
-        this.playersId = [];
-        this.players = {};
         this.step = 0;
         this.bankerJSON = {};
         this.banker = -1;
         this.betJson = {};
-        if (this.round < 1) {
+        if (this.round > parseInt(this.room.round, 0)) {
             clearInterval(this.timer);
+            // todo 游戏结束
+
             return;
         }
         // 开始当前局
-        this.round--;
+        this.round++;
+        // await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 0 }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
         this.sendPoker();
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 0 }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
     }
 
     public async sendPoker() {
         this.step = 1;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1 }, `${gameChannelKeyPrefix.clubRoom}${this.roomid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1 }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         // 掏出一副牌
         const pokers = new Pokers();
-        this.players = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.roomUsers}`);
+        let players = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.chair}`);
         // 玩家数量
-        let ulength = 0;
-        for (const key in this.players) {
-            if (this.players.hasOwnProperty(key)) {
-                const element = this.players[key];
-                if (element > 0) {
-                    ulength++;
-                    this.playersId.push(element);
-                }
-            }
-        }
-        // const ulength = this.users.length;
-
+        let ulength = this.playersId.length;
         // 玩家的index
         let uindex = 0;
         // 发多少张牌
         const sendcount = 5;
-
         // 初始化用户的牌
         while (uindex < ulength) {
             this.poker[uindex] = [];
@@ -171,6 +186,7 @@ export class RoomGame {
             } while (pindex < sendcount);
             uindex++;
         }
+        console.log('玩家手中的牌为: ' + JSON.stringify(this.poker));
         const playerPoker = {};
         this.playersId.forEach((e, i) => {
             playerPoker[e] = this.poker[i].slice(0, 4);
@@ -248,6 +264,20 @@ export class RoomGame {
         }
         this.betJson = { ...this.betJson, ...json };
         return 0;
+    }
+
+    /**
+     * 设置结束类型
+     * @param endtype 结束类型
+     */
+    public setEndType(endtype: number) {
+        this.endtype = endtype;
+    }
+    /**
+     * 获取结束类型
+     */
+    public getEndType() {
+        return this.endtype;
     }
 
 }
