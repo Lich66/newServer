@@ -1,4 +1,4 @@
-import { BeforeCreate, BelongsTo, Column, DataType, Default, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { BeforeCreate, BelongsTo, Column, DataType, Default, ForeignKey, Model, PrimaryKey, Table } from 'sequelize-typescript';
 import { tbl_clubuser } from './tbl_clubuser';
 
 const STRING64 = 64;
@@ -9,6 +9,7 @@ const STRING512 = 512;
 // tslint:disable-next-line: class-name
 export class tbl_user extends Model<tbl_user> {
   @PrimaryKey
+  @ForeignKey(() => tbl_clubuser)
   @Column({
     comment: 'uid'
   })
