@@ -96,6 +96,7 @@ export class tbl_user extends Model<tbl_user> {
 
   })
   public invitation_status: number;
+  
   @BelongsTo(() => tbl_clubuser)
   public tbl_clubuser: tbl_clubuser;
 }

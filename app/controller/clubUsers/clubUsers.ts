@@ -37,11 +37,7 @@ export class ClubUser {
     public static async getAllClubUserbyClubid(json: IClubUserRequest): Promise<tbl_clubuser[]> {
         return await tbl_clubuser.findAll({
             where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } }, include: [{
-                model: tbl_user,
-                where: {
-                    clubid: json.clubid,
-                    userid: { [Op.regexp]: '\.' }
-                }
+                model: tbl_user
             }]
         });
     }
