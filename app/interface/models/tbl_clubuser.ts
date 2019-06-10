@@ -1,7 +1,5 @@
 import { Model } from 'sequelize-typescript';
 export interface IClubUser {
-
-    cid: number;
     clubid: number;
     userid: number;
     chactor: number;

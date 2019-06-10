@@ -13,14 +13,14 @@ const MAXCOMPETITIONClubUser = 30;
 
 export class ClubUser {
     public static async findClubUser(json: IClubUserRequest): Promise<tbl_clubuser> {
-        let result = await tbl_clubuser.findOrCreate({ where: { clubid: json.clubid, userid: json.userid, cid: { [Op.regexp]: '\.' } } });
+        let result = await tbl_clubuser.findOrCreate({ where: { clubid: json.clubid, userid: json.userid } });
         return result[0];
     }
     public static async deleteClubUser(json: IClubUserRequest): Promise<number> {
-        return await tbl_clubuser.destroy({ where: { clubid: json.clubid, userid: json.userid, cid: { [Op.regexp]: '\.' } } });
+        return await tbl_clubuser.destroy({ where: { clubid: json.clubid, userid: json.userid } });
     }
     public static async updateClubUser(ojson: IClubUserRequest, njson: IClubUserRequest): Promise<tbl_clubuser> {
-        let result = await tbl_clubuser.update(njson, { where: { clubid: ojson.clubid, userid: ojson.userid, cid: { [Op.regexp]: '\.' } } });
+        let result = await tbl_clubuser.update(njson, { where: { clubid: ojson.clubid, userid: ojson.userid } });
         return result[1][0];
     }
     /**
@@ -28,7 +28,7 @@ export class ClubUser {
      * 获取某用户加入的所有茶楼
      */
     public static async getAllClubUserbyUid(json: IClubUserRequest): Promise<tbl_clubuser[]> {
-        return await tbl_clubuser.findAll({ where: { userid: json.userid, cid: { [Op.regexp]: '\.' } } });
+        return await tbl_clubuser.findAll({ where: { userid: json.userid } });
     }
     /**
      * 
@@ -36,9 +36,7 @@ export class ClubUser {
      */
     public static async getAllClubUserbyClubid(json: IClubUserRequest): Promise<tbl_clubuser[]> {
         return await tbl_clubuser.findAll({
-            where: { clubid: json.clubid, cid: { [Op.regexp]: '\.' } }, raw: true, subQuery: false, include: [{
-                model: tbl_user
-            }]
+            where: { clubid: json.clubid }, include: [tbl_user]
         });
     }
 

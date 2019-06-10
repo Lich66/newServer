@@ -7,19 +7,12 @@ const STRING64 = 64;
 // tslint:disable-next-line: class-name
 export class tbl_clubuser extends Model<tbl_clubuser> {
 
-    @AutoIncrement
-    @PrimaryKey
-    @Column({
-        type: DataType.BIGINT(BIGINT20),
-        comment: '主键'
-    })
-    public cid: number;
-
     @Column({
         comment: '茶楼id'
     })
     public clubid: number;
 
+    @PrimaryKey
     @Column({
         comment: '用户id'
     })
