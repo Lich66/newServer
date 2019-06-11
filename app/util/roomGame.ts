@@ -29,6 +29,7 @@ const entireTime = 45000;
 
 export class RoomGame {
 
+    // 计时器
     private timer: NodeJS.Timer;
     // roomid
     private roomid: number;
@@ -122,6 +123,7 @@ export class RoomGame {
     public async start() {
         this.stopTimer();
         this.starttime = new Date();
+        console.log('开始游戏的时间是: ' + JSON.stringify(this.starttime));
         await this.getGamingUser();
         this.nextRound();
         this.timer = setInterval(() => {

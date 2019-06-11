@@ -61,23 +61,24 @@ export class RoomHandler {
      * @param session  session
      */
     public async getRoomServerId(msg: { roomId: number }, session: BackendSession) {
-        let serverId = this.app.getServerId();
-        const channel = this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${msg.roomId}`);
-        let update = true;
-        for (const key in channel) {
-            if (channel.hasOwnProperty(key)) {
-                const element = channel[key];
-                const ishas = element[`${gameChannelKeyPrefix.room}${msg.roomId}`].length > 0;
-                if (ishas) {
-                    serverId = await RoomManager.getRoomServerId(msg.roomId);
-                    console.log('从redis获取的sid=>' + JSON.stringify(serverId));
-                    update = false;
-                }
-            }
-        }
-        if (update) {
-            RoomManager.setRoomServerId(msg.roomId, serverId);
-        }
+        // let serverId = this.app.getServerId();
+        // const channel = this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${msg.roomId}`);
+        // let update = true;
+        // for (const key in channel) {
+        //     if (channel.hasOwnProperty(key)) {
+        //         const element = channel[key];
+        //         const ishas = element[`${gameChannelKeyPrefix.room}${msg.roomId}`].length > 0;
+        //         if (ishas) {
+        //             serverId = await RoomManager.getRoomServerId(msg.roomId);
+        //             console.log('从redis获取的sid=>' + JSON.stringify(serverId));
+        //             update = false;
+        //         }
+        //     }
+        // }
+        // if (update) {
+        //     RoomManager.setRoomServerId(msg.roomId, serverId);
+        // }
+        let serverId = await RoomManager.getRoomServerId(msg.roomId);
         return {
             code: 0,
             data: { sid: serverId }

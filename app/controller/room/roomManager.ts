@@ -310,29 +310,6 @@ export class RoomManager {
         // todo 打算解散房间的操作放在game中
     }
 
-    public static async getSeatNum(playerNum: number, playerList) {
-        console.log('===========' + JSON.stringify(playerList));
-        let len = playerList.length;
-        if (len === 0) {
-            return 0;
-        }
-        if (len === playerNum) {
-            return -1;
-        }
-        for (let i = 0; i < playerNum; i++) {
-            let flag = false;
-            for (let j = 0; j < len; j++) {
-                if (i === playerList[j].seatNum) {
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag) {
-                return i;
-            }
-        }
-    }
-
     /**
      * 玩家准备逻辑
      * @param userId 准备玩家id
@@ -351,11 +328,12 @@ export class RoomManager {
             await redisClient.hdelAsync(`${redisKeyPrefix.user}${userId}`, `${userConfig.roomId}`);
             return { flag: false, code: 13001 };
         }
-
         // 单局游戏开始不能坐下
         if (room.state !== '-1') {
             return { flag: false, code: 13054 };
         }
+        // todo 非首局,中途禁入和快速模式下玩家也不能坐下
+        
         // 座位表中加入玩家,获取座位号,用户表中玩家改成坐下
         let chairs = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${roomId}${redisKeyPrefix.chair}`);
         let seatNum = -1;

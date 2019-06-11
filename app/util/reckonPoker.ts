@@ -98,6 +98,7 @@ export class ReckonPoker {
         }
         // 是否能构成顺子(相邻非癞子两牌的值相差之和不超过4)
         if (ReckonPoker.sumOfDifferences(cardList) > 4) {
+            console.log('同花顺: 相邻非癞子两牌的值相差之和超过4');
             return false;
         }
         return true;
