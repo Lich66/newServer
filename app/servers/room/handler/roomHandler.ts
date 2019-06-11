@@ -198,13 +198,17 @@ export class RoomHandler {
         if (!result.flag) {
             return { code: result.code };
         }
+        console.log('离开房间== result ==' + JSON.stringify(result));
         let members = await this.globalChannelStatus.getMembersByChannelName('connector', `${gameChannelKeyPrefix.room}${result.roomId}`);
-        // console.log('离开房间== members ==: ' + JSON.stringify(members));
+        console.log('离开房间== members ==: ' + JSON.stringify(members));
         for (const key in members) {
             if (members.hasOwnProperty(key)) {
                 const element = members[key];
+                console.log('element = ' + JSON.stringify(element));
                 const ishas = element[`${gameChannelKeyPrefix.room}${result.roomId}`].includes(`${userId}`);
-                if (!ishas) {
+                console.log('ishas = ' + ishas);
+                if (ishas) {
+                    console.log('开始执行leave这个方法');
                     await this.globalChannelStatus.leave(`${userId}`, key, `${gameChannelKeyPrefix.room}${result.roomId}`);
                 }
             }

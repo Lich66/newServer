@@ -186,11 +186,12 @@ export class RoomGame {
             uindex++;
         }
         console.log('玩家手中的牌为: ' + JSON.stringify(this.detailreport[this.round - 1]));
-        this.playersId.forEach((e, i) => {
+        this.playersId.forEach(async (e, i) => {
             let playerPokers = this.detailreport[this.round - 1][i].pokers.slice(0, 4);
             console.log('首次发牌: 玩家 ' + e + ' , 的前四张为: ' + JSON.stringify(playerPokers));
-            this.globalChannelStatus.pushMessageByUids(['504'], `${socketRouter.onSendPoker}`, { pokers: playerPokers });
-            this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, { pokers: playerPokers }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+            let res = await this.globalChannelStatus.pushMessageByUids(['504'], `${socketRouter.onSendPoker}`, { pokers: playerPokers });
+            console.log('1111111111111111111111111' + JSON.stringify(res));
+            // this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, { pokers: playerPokers }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         });
         // this.grabBanker();
     }
