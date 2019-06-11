@@ -270,6 +270,7 @@ export class ReckonPoker {
     public static whichBull(cardList: number[][]): number {
         // 两个癞子
         if (cardList[1][1] === 0) {
+            console.log('普通牛: 两个癞子,都为牛牛!');
             return 10;
         }
         let len = cardList.length;
@@ -292,11 +293,14 @@ export class ReckonPoker {
                             cardValue2 = 10;
                         }
                         if ((cardValue1 + cardValue2 + cardValue3) % 10 === 0) {
+                            console.log('普通牛: 一个癞子,任意三张为10的倍数!');
                             return 10;
                         }
                     }
                 }
             }
+            // todo 任意两张为10的倍数也应为牛牛
+
             // 任意最大的两张非癞子牌,即为牛几
             let max = 0;
             for (let i = 1; i < len - 1; i++) {
@@ -309,8 +313,15 @@ export class ReckonPoker {
                     if (cardList[j][1] > 10) {
                         cardValue2 = 10;
                     }
-                    if ((cardValue1 + cardValue2) > max) {
-                        max = cardValue1 + cardValue2;
+                    let temp = (cardValue1 + cardValue2);
+                    if (temp > 10) {
+                        temp %= 10;
+                        if (temp === 0) {
+                            temp = 10;
+                        }
+                    }
+                    if (temp > max) {
+                        max = temp;
                     }
                 }
             }
@@ -330,7 +341,7 @@ export class ReckonPoker {
                     }
                     let cardValue3 = cardList[z][1];
                     if (cardList[z][1] > 10) {
-                        cardValue2 = 10;
+                        cardValue3 = 10;
                     }
                     if ((cardValue1 + cardValue2 + cardValue3) % 10 === 0) {
                         let residue = 0;    // 余数
@@ -342,6 +353,9 @@ export class ReckonPoker {
                             residue += cardList[i][1];
                         }
                         residue %= 10;
+                        if (residue === 0) {
+                            return 10;
+                        }
                         return residue;
                     }
                 }
@@ -396,7 +410,7 @@ export class ReckonPoker {
             if (cardsType === num14 || cardsType === num16) {
                 return cardList[3];
             }
-            return cardList[5];
+            return cardList[4];
         }
 
         let maxCardValue = 0;

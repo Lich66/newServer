@@ -2,6 +2,7 @@ import { GlobalChannelServiceStatus } from 'pinus-global-channel-status';
 import { RedisKeys } from '../controller/redis/redisKeys/redisKeys';
 import { User } from '../controller/user/user';
 import { redisClient } from '../db/redis';
+import { GameTime } from '../gameConfig/gameTime';
 import { gameChannelKeyPrefix, redisKeyPrefix } from '../gameConfig/nameSpace';
 import socketRouter from '../gameConfig/socketRouterConfig';
 import { userConfig } from '../gameConfig/userConfig';
@@ -10,10 +11,6 @@ import { RoomHandler } from '../servers/Room/handler/RoomHandler';
 import { GameUitl } from './gameUitl';
 import { Pokers } from './poker';
 
-/**
- * 未开始,房间存在时间
- */
-const existenceTime = 600000;
 /**
  * 抢庄时间
  */
@@ -28,6 +25,26 @@ const betTime = 10000;
 const entireTime = 45000;
 
 export class RoomGame {
+    /**
+     * 房间销毁计时器,GameTime.existenceTime后销毁房间
+     */
+    private existenceTimer: NodeJS.Timer;
+    /**
+     * 抢庄计时器,GameTime.grabBankerTime后默认不抢
+     */
+    private grabBankerTimer: NodeJS.Timer;
+    /**
+     * 下注计时器,GameTime.betTime后默认下最小注
+     */
+    private betTimer: NodeJS.Timer;
+    /**
+     * 看牌计时器,GameTime.observeCardTime后自动翻牌
+     */
+    private observeCardTimer: NodeJS.Timer;
+    /**
+     * 下一回合计时器,GameTime.nextRoundTime后自动开始下一回合
+     */
+    private nextRoundTimer: NodeJS.Timer;
 
     // 计时器
     private timer: NodeJS.Timer;
@@ -38,11 +55,12 @@ export class RoomGame {
     // 哪个阶段
     /**
      * -1:未开始
-     * 0:开始
-     * 1:发牌
-     * 2:抢庄
-     * 3:下注
+     * 0:发牌
+     * 1:抢庄
+     * 2:下注
+     * 3:查看手牌
      * 4:结算
+     * 5:准备
      */
     private step: number;
     // 当前对局回合
@@ -69,8 +87,8 @@ export class RoomGame {
     private endtype: number;
     // 玩家信息=> {账号:{账号,昵称,头像,抢庄次数,庄家次数,推注次数,总分数}}
     private playersInfo: {} = {};
-    // 详细战绩=> [[{poker:xx,cardValue:xx,score:xx,bankerBet:xx,bet:xx},...],...] 
-    private detailreport: [][] = [];
+    // 详细战绩=> [[{pokers:xx,cardValue:xx,multiple:xx,score:xx,bankerBet:xx,bet:xx},...],...] 
+    private detailreport: any[][] = [];
 
 
     public constructor(room: IRoomRedis, handler: RoomHandler) {
@@ -79,9 +97,9 @@ export class RoomGame {
         this.globalChannelStatus = handler.getGlobalChannelServiceStatus();
         this.round = 0;
         this.step = -1;
-        this.timer = setInterval(async () => {
+        this.existenceTimer = setInterval(async () => {
             console.log('时间到,房间还未开始游戏,进行删除数据');
-            this.stopTimer();
+            this.stopExistenceTimer();
             // todo 销毁房间,通知房间里的玩家,删除玩家redis中的房间数据,删除房间数据
             let creator = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${this.room.creatorId}`);
             // 将钻石返还给房主
@@ -112,47 +130,42 @@ export class RoomGame {
             // 通知玩家房间解散
             await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onDestoryRoom}`, {}, `${gameChannelKeyPrefix.room}${this.roomid}`);
             await this.globalChannelStatus.destroyChannel(`${gameChannelKeyPrefix.room}${this.roomid}`);
-        }, existenceTime);
+        }, GameTime.existenceTime);
     }
 
-    public stopTimer() {
-        console.log('关闭定时器!');
-        clearInterval(this.timer);
+    public stopExistenceTimer() {
+        console.log('关闭existenceTimer定时器!');
+        clearInterval(this.existenceTimer);
     }
 
     public async start() {
-        this.stopTimer();
+        this.stopExistenceTimer();
         this.starttime = new Date();
         console.log('开始游戏的时间是: ' + JSON.stringify(this.starttime));
-        await this.getGamingUser();
         this.nextRound();
-        this.timer = setInterval(() => {
-            this.nextRound();
-        }, entireTime);
     }
 
     public async nextRound() {
         // 初始化
+        this.round++;
+        await this.getGamingUser();
         this.poker = [];
         this.step = 0;
         this.bankerJSON = {};
         this.banker = -1;
         this.betJson = {};
         if (this.round > parseInt(this.room.round, 0)) {
+            // todo 游戏结束,记得清空所有计时器
             clearInterval(this.timer);
-            // todo 游戏结束
             this.endtime = new Date();
             return;
         }
-        // 开始当前局
-        this.round++;
-        // await this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 0 }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         this.sendPoker();
     }
 
     public async sendPoker() {
-        this.step = 1;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 1 }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+        this.step = 0;
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         // 掏出一副牌
         const pokers = new Pokers();
         // 玩家数量
@@ -167,18 +180,19 @@ export class RoomGame {
             // 当前发的第几张牌
             let pindex = 0;
             do {
-                this.poker[uindex].push(pokers.lpop());
+                this.detailreport[this.round - 1][uindex].pokers.push(pokers.lpop());
                 pindex++;
             } while (pindex < sendcount);
             uindex++;
         }
-        console.log('玩家手中的牌为: ' + JSON.stringify(this.poker));
-        const playerPoker = {};
+        console.log('玩家手中的牌为: ' + JSON.stringify(this.detailreport[this.round - 1]));
         this.playersId.forEach((e, i) => {
-            playerPoker[e] = this.poker[i].slice(0, 4);
+            let playerPokers = this.detailreport[this.round - 1][i].pokers.slice(0, 4);
+            console.log('首次发牌: 玩家 ' + e + ' , 的前四张为: ' + JSON.stringify(playerPokers));
+            this.globalChannelStatus.pushMessageByUids(['504'], `${socketRouter.onSendPoker}`, { pokers: playerPokers });
+            this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, { pokers: playerPokers }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         });
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, playerPoker, `${gameChannelKeyPrefix.room}${this.roomid}`);
-        this.grabBanker();
+        // this.grabBanker();
     }
     public grabBanker() {
         // 抢庄阶段
@@ -270,20 +284,35 @@ export class RoomGame {
      */
     public async getGamingUser() {
         let players = await redisClient.hgetallAsync(`${redisKeyPrefix.room}${this.roomid}${redisKeyPrefix.chair}`);
+        let beforePlayerNum = this.playersId.length;
+        // 遍历房间椅子,将新加入的玩家加入到 this.playersId 中
         for (const key in players) {
             if (players.hasOwnProperty(key)) {
                 const element = parseInt(players[key], 0);
-                if (element > 0) {
+                if (element > 0 && this.playersId.indexOf(element) < 0) {
                     this.playersId.push(element);
                 }
             }
         }
-        for (const iterator of this.playersId) {
-            let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${iterator}`);
-            let map = { userId: user.userid, userNick: user.usernick, image: user.image, robCount: 0, bankerCount: 0, pushCount: 0, score: 0 };
-            this.playersInfo[iterator] = map;
+        if (beforePlayerNum === this.playersId.length) {
+            return;
         }
-        console.log('开始游戏,房间内玩家列表: ' + JSON.stringify(this.playersId));
-        console.log('开始游戏,房间内玩家信息: ' + JSON.stringify(this.playersInfo));
+        for (const iterator of this.playersId) {
+            if (!this.playersInfo.hasOwnProperty(iterator)) {
+                let user = await redisClient.hgetallAsync(`${redisKeyPrefix.user}${iterator}`);
+                let map = { userId: user.userid, userNick: user.usernick, image: user.image, robCount: 0, bankerCount: 0, pushCount: 0, score: 0 };
+                this.playersInfo[iterator] = map;
+            }
+            let report = { pokers: [], cardValue: -1, multiple: -1, score: -1, bankerBet: -1, bet: -1 };
+            if (!this.detailreport[this.round - 1]) {
+                console.log('初次给this.detailreport[' + (this.round - 1) + '] 赋值');
+                this.detailreport[this.round - 1] = [];
+            }
+            this.detailreport[this.round - 1].push(report);
+        }
+        console.log('刷新后,房间内玩家id列表: ' + JSON.stringify(this.playersId));
+        console.log('刷新后,房间内玩家信息: ' + JSON.stringify(this.playersInfo));
+        console.log('刷新后,当局房间内玩家的默认详细战绩: ' + JSON.stringify(this.detailreport));
+        console.log('刷新后,当局房间内玩家的默认详细战绩: ' + JSON.stringify(this.detailreport[this.round - 1]));
     }
 }
