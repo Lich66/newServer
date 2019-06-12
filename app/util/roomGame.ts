@@ -165,7 +165,8 @@ export class RoomGame {
 
     public async sendPoker() {
         this.step = 0;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+        let sendPokerTime = (this.playersId.length / 2) * 1000;
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step, time: sendPokerTime }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         // 掏出一副牌
         const pokers = new Pokers();
         // 玩家数量
@@ -193,17 +194,20 @@ export class RoomGame {
             console.log('1111111111111111111111111' + JSON.stringify(res));
             // this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onSendPoker}`, { pokers: playerPokers }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         });
-        // this.grabBanker();
+        setTimeout(() => {
+            this.grabBanker();
+        }, sendPokerTime);
     }
     public grabBanker() {
         // 抢庄阶段
-        this.step = 2;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 2 }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+        this.step = 1;
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step, time: GameTime.grabBankerTime }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         setTimeout(() => {
             this.setBet();
-        }, grabBankerTime);
+        }, GameTime.grabBankerTime);
     }
     public setBet() {
+        this.step = 2;
         // 下注之前决定谁是庄家
         const values = Object.values(this.bankerJSON);
         const bankerList = [];
@@ -224,20 +228,19 @@ export class RoomGame {
             this.banker = bankerList[Number.parseInt((Math.random() * bankerList.length).toFixed(0), 0)];
         }
         // 开始下注
-        this.step = 3;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 3, banker: this.banker }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step, banker: this.banker }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         setTimeout(() => {
             this.settlement();
         }, betTime);
     }
     public settlement() {
+        this.step = 3;
         for (const iterator of this.playersId) {
             if (!this.betJson[iterator]) {
                 this.betJson[iterator] = 100;
             }
         }
-        this.step = 4;
-        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: 4, bet: this.betJson }, `${gameChannelKeyPrefix.room}${this.roomid}`);
+        this.globalChannelStatus.pushMessageByChannelName('connector', `${socketRouter.onStep}`, { step: this.step, bet: this.betJson }, `${gameChannelKeyPrefix.room}${this.roomid}`);
         const playerPoker = {};
         this.playersId.forEach((e, i) => {
             playerPoker[e] = this.poker[i];
